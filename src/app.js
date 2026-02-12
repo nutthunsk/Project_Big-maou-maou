@@ -1,30 +1,31 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
 
-const { sequelize } = require('./models');
+const { sequelize } = require("./models");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-sequelize.authenticate()
-  .catch(err => console.error('DB error:', err));
-sequelize.sync()
-  .catch(err => console.error(err));
+sequelize.authenticate().catch((err) => console.error("DB error:", err));
+sequelize.sync().catch((err) => console.error(err));
 
 // middleware
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-const artistRoutes = require('./routes/artist.routes');
-app.use('/artists', artistRoutes);
+const artistRoutes = require("./routes/artist.routes");
+app.use("/artists", artistRoutes);
+
+//ที่จัด
+app.use("/concerts", require("./routes/concert.routes"));
 
 // view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 // test route
-app.get('/', (req, res) => {
-  res.send('Big maou maou is running ');
+app.get("/", (req, res) => {
+  res.send("Big maou maou is running ");
 });
 
 app.listen(PORT, () => {

@@ -1,18 +1,33 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const path = require('path');
+const { Sequelize, DataTypes } = require("sequelize");
+const path = require("path");
 
-// สร้าง sequelize แค่ครั้งเดียว
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: path.join(__dirname, '../../Database/database.sqlite'),
-  logging: false
+  dialect: "sqlite",
+  storage: path.join(__dirname, "../../Database/database.sqlite"),
+  logging: false,
 });
 
-// เรียก Model แบบ function (ไม่ circular)
-const Artist = require('./Artist')(sequelize, DataTypes);
+// 1️⃣ init models (ประกาศให้ครบก่อน)
+const Artist = require("./Artist")(sequelize, DataTypes);
+const Concert = require("./Concert")(sequelize, DataTypes);
+const Customer = require("./Customer")(sequelize, DataTypes);
+const Booking = require("./Booking")(sequelize, DataTypes);
 
-// export รวมที่เดียว
+// 2️⃣ relations (ค่อยผูกทีหลัง)
+Artist.hasMany(Concert);
+Concert.belongsTo(Artist);
+
+Customer.hasMany(Booking);
+Booking.belongsTo(Customer);
+
+Concert.hasMany(Booking);
+Booking.belongsTo(Concert);
+
+// 3️⃣ export ทีเดียว
 module.exports = {
   sequelize,
-  Artist
+  Artist,
+  Concert,
+  Customer,
+  Booking,
 };

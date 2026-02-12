@@ -1,0 +1,15 @@
+<h1>Create Concert</h1>
+
+<form method="POST">
+  <input name="concertName" placeholder="Concert name" required>
+  <input type="date" name="concertDate" required>
+  <input name="venue" placeholder="Venue" required>
+
+  <select name="ArtistId">
+    <% artists.forEach(a => { %>
+      <option value="<%= a.id %>"><%= a.artistName %></option>
+    <% }) %>
+  </select>
+
+  <button>Create</button>
+</form>

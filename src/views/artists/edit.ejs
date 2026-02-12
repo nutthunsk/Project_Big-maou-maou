@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Artist</title>
+</head>
+<body>
+  <h1>Edit Artist</h1>
+
+  <form action="/artists/edit/<%= artist.id %>" method="POST">
+    <input type="text" name="artistName" value="<%= artist.artistName %>" required>
+    <input type="text" name="genre" value="<%= artist.genre %>">
+    <button type="submit">Update</button>
+  </form>
+
+  <a href="/artists">Back</a>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<h1>Concerts</h1>
+<a href="/concerts/create">+ Add Concert</a>
+
+<ul>
+  <% concerts.forEach(c => { %>
+    <li>
+      <%= c.concertName %> |
+      <%= c.Artist.artistName %> |
+      <%= c.venue %>
+    </li>
+  <% }) %>
+</ul>
