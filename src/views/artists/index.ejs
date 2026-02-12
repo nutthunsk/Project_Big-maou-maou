@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Artists</title>
+</head>
+<body>
+  <h1>Artist List</h1>
+
+  <a href="/artists/create">+ Add Artist</a>
+
+  <ul>
+    <% artists.forEach(artist => { %>
+      <li>
+        <%= artist.artistName %> - <%= artist.genre %>
+        <form action="/artists/delete/<%= artist.id %>" method="POST" style="display:inline;">
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    <% }) %>
+  </ul>
+</body>
+</html>
