@@ -2,22 +2,22 @@ const express = require("express");
 const router = express.Router();
 const artistController = require("../controllers/artist.controller");
 
-// list artists
-router.get("/", artistController.getAllArtists);
+// GET /artists
+router.get("/", artistController.index);
 
-// show create form
-router.get("/create", artistController.showCreateForm);
+// GET /artists/create
+router.get("/create", artistController.createForm);
 
-// create artist
-router.post("/create", artistController.createArtist);
+// POST /artists/create
+router.post("/create", artistController.create);
 
-// delete artist
-router.post("/delete/:id", artistController.deleteArtist);
+// GET /artists/edit/:id
+router.get("/edit/:id", artistController.editForm);
 
-// show update form
-router.get("/edit/:id", artistController.showEditForm);
+// POST /artists/edit/:id
+router.post("/edit/:id", artistController.update);
 
-// update artist
-router.post("/edit/:id", artistController.updateArtist);
+// POST /artists/delete/:id
+router.post("/delete/:id", artistController.delete);
 
 module.exports = router;

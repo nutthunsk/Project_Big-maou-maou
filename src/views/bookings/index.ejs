@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>รายการจองบัตร</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme">
+
+  <h1>📋 รายการจองบัตร</h1>
+
+  <% if (bookings.length === 0) { %>
+    <p>ยังไม่มีรายการจอง</p>
+  <% } %>
+
+  <table class="booking-table">
+    <thead>
+      <tr>
+        <th>คอนเสิร์ต</th>
+        <th>ผู้จอง</th>
+        <th>จำนวน</th>
+        <th>ราคารวม</th>
+        <th>สถานะ</th>
+        <th>การจัดการ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% bookings.forEach(b => { %>
+        <tr>
+          <td><%= b.Concert?.ConcertName || "-" %></td>
+          <td>
+            <%= b.Customer?.fullname %><br>
+            <small><%= b.Customer?.email %></small>
+          </td>
+          <td><%= b.quantity %></td>
+          <td><%= b.totalPrice %> บาท</td>
+          <td>
+            <% if (b.status === "paid") { %>
+              <span class="paid">ชำระแล้ว</span>
+            <% } else { %>
+              <span class="pending">รอชำระเงิน</span>
+            <% } %>
+          </td>
+          <td>
+            <% if (b.status === "pending") { %>
+              <form action="/bookings/pay/<%= b.id %>" method="POST">
+                <button type="submit" class="btn-pay">ชำระเงิน</button>
+              </form>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <a href="/concerts" class="back-link">← กลับหน้าคอนเสิร์ต</a>
+
+</body>
+</html>

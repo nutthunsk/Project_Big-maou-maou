@@ -1,12 +1,29 @@
-<h1>Concerts</h1>
-<a href="/concerts/create">+ Add Concert</a>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Concerts</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme">
+  <h1>Concerts</h1>
 
-<ul>
-  <% concerts.forEach(c => { %>
-    <li>
-      <%= c.concertName %> |
-      <%= c.Artist.artistName %> |
-      <%= c.venue %>
-    </li>
-  <% }) %>
-</ul>
+  <% if (concerts.length === 0) { %>
+    <p>ยังไม่มีคอนเสิร์ต</p>
+  <% } %>
+
+  <div class="concert-list">
+    <% concerts.forEach(c => { %>
+      <div class="concert-card">
+        <h2><%= c.ConcertName %></h2>
+        <p>ศิลปิน: <%= c.Artist?.artistName || "-" %></p>
+        <p>สถานที่: <%= c.venue %></p>
+        <p>ราคา: <%= c.price %> บาท</p>
+
+        <a class="btn" href="/concerts/<%= c.id %>/book">
+           จองบัตร
+        </a>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

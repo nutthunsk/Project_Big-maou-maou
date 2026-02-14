@@ -1,11 +1,29 @@
 module.exports = (sequelize, DataTypes) => {
-  const Artist = sequelize.define("Artist", {
-    artistName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    genre: DataTypes.STRING,
-  });
+  return sequelize.define(
+    "Artist",
+    {
+      // ID_Artist (PK)
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
 
-  return Artist;
+      // ArtistName
+      ArtistName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+
+      // genre
+      genre: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "Artist",
+      timestamps: false,
+    },
+  );
 };

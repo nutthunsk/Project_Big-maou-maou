@@ -14,14 +14,14 @@ const Customer = require("./Customer")(sequelize, DataTypes);
 const Booking = require("./Booking")(sequelize, DataTypes);
 
 // 2️⃣ relations (ค่อยผูกทีหลัง)
-Artist.hasMany(Concert);
-Concert.belongsTo(Artist);
+Artist.hasMany(Concert, { foreignKey: "ArtistId" });
+Concert.belongsTo(Artist, { foreignKey: "ArtistId" });
 
-Customer.hasMany(Booking);
-Booking.belongsTo(Customer);
+Customer.hasMany(Booking, { foreignKey: "CustomerId" });
+Booking.belongsTo(Customer, { foreignKey: "CustomerId" });
 
-Concert.hasMany(Booking);
-Booking.belongsTo(Concert);
+Concert.hasMany(Booking, { foreignKey: "ConcertId" });
+Booking.belongsTo(Concert, { foreignKey: "ConcertId" });
 
 // 3️⃣ export ทีเดียว
 module.exports = {

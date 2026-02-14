@@ -12,10 +12,10 @@
   <ul>
     <% artists.forEach(artist => { %>
       <li>
-        <%= artist.artistName %> - <%= artist.genre %>
+        <%= artist.ArtistName %> - <%= artist.genre %>
 
         <!-- Edit -->
-        <button type="submit"><a href="/artists/edit/<%= artist.id %>">Edit</a></button>
+        <a href="/artists/edit/<%= artist.id %>">Edit</a>
 
         <!-- Delete -->
         <form action="/artists/delete/<%= artist.id %>" method="POST" style="display:inline;">

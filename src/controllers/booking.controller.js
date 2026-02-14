@@ -1,18 +1,46 @@
 const { Booking, Concert, Customer } = require("../models");
 
-exports.create = async (req, res) => {
-  await Booking.create({
-    seatNumber: req.body.seatNumber,
-    CustomerId: req.body.CustomerId,
-    ConcertId: req.body.ConcertId,
+const index = async (req, res) => {
+  const bookings = await Booking.findAll({
+    include: [Customer, Concert],
   });
+  res.json(bookings);
+};
+
+const create = async (req, res) => {
+  const { fullname, email, quantity, concertId } = req.body;
+
+  const concert = await Concert.findByPk(concertId);
+  if (!concert) return res.status(404).send("Concert not found");
+
+  let customer = await Customer.findOne({ where: { email } });
+  if (!customer) {
+    customer = await Customer.create({ fullname, email });
+  }
+
+  const totalPrice = concert.price * quantity;
+
+  await Booking.create({
+    quantity,
+    totalPrice,
+    status: "pending",
+    CustomerId: customer.id,
+    ConcertId: concert.id,
+  });
+
   res.redirect("/bookings");
 };
 
-exports.confirmPayment = async (req, res) => {
+const pay = async (req, res) => {
   await Booking.update(
-    { paymentStatus: "PAID" },
-    { where: { id: req.params.id } },
+    { status: "paid" },
+    { where: { id: req.params.id } }
   );
-  res.redirect("/bookings");
+  res.json({ message: "Payment confirmed" });
+};
+
+module.exports = {
+  index,
+  create,
+  pay,
 };

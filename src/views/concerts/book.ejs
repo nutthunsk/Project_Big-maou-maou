@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>จองบัตร - <%= concert.ConcertName %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme">
+
+  <h1>🎫 จองบัตรคอนเสิร์ต</h1>
+
+  <!-- ===== Concert Info ===== -->
+  <div class="concert-card">
+    <h2><%= concert.ConcertName %></h2>
+    <p>ศิลปิน: <%= concert.Artist?.ArtistName || "-" %></p>
+    <p>สถานที่: <%= concert.venue %></p>
+    <p>วันที่: <%= concert.ConcertDate %></p>
+    <p>ราคา/ที่นั่ง: <%= concert.price %> บาท</p>
+  </div>
+
+  <!-- ===== Booking Form ===== -->
+  <form action="/bookings/create" method="POST" class="booking-form">
+
+    <!-- ส่ง concertId แบบ hidden -->
+    <input type="hidden" name="concertId" value="<%= concert.id %>">
+
+    <label>ชื่อ-นามสกุล</label>
+    <input type="text" name="fullname" required>
+
+    <label>Email</label>
+    <input type="email" name="email" required>
+
+    <label>เบอร์โทร</label>
+    <input type="text" name="phoneNumber" required>
+
+    <label>จำนวนบัตร</label>
+    <input
+      type="number"
+      name="quantity"
+      min="1"
+      max="<%= concert.totalSeats %>"
+      required
+    >
+
+    <button type="submit" class="btn">
+      ยืนยันการจอง
+    </button>
+  </form>
+
+  <a href="/concerts" class="back-link">← กลับหน้าคอนเสิร์ต</a>
+
+</body>
+</html>
