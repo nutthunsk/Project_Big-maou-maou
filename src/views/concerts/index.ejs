@@ -17,7 +17,9 @@
         <h2><%= c.ConcertName %></h2>
         <p>
           ศิลปิน:
-          <%= c.Artist ? c.Artist.ArtistName : "-" %>
+          <%= c.Artists && c.Artists.length
+            ? c.Artists.map(a => a.ArtistName).join(", ")
+            : "-" %>
         </p>
         <p>สถานที่: <%= c.venue %></p>
         <p>ราคา: <%= c.price %> บาท</p>

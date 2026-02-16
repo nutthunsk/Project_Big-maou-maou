@@ -13,7 +13,7 @@ sequelize.sync().catch((err) => console.error(err));
 // ===== middleware =====
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json()); // ✅ เพิ่มอันนี้ (สำคัญ)
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 // ===== routes =====
 const artistRoutes = require("./routes/artist.routes");
@@ -35,7 +35,26 @@ app.get("/", (req, res) => {
   res.send("Big maou maou is running ");
 });
 
-// ===== start server =====
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+async function initDb() {
+  await sequelize.authenticate();
+  await sequelize.sync();
+}
+
+async function startServer() {
+  try {
+    await initDb();
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("DB error:", err);
+    process.exit(1);
+  }
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = app;
+module.exports.initDb = initDb;

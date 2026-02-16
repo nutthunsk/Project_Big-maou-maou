@@ -13,9 +13,9 @@
     <h2><%= concert.ConcertName %></h2>
     <p>
       ศิลปิน:
-      <% concert.Artists.forEach(a => { %>
-        <%= a.ArtistName %>
-      <% }) %>
+      <%= concert.Artists && concert.Artists.length
+        ? concert.Artists.map(a => a.ArtistName).join(", ")
+        : "-" %>
     </p>
     <p>สถานที่: <%= concert.venue %></p>
     <p>วันที่: <%= concert.ConcertDate %></p>

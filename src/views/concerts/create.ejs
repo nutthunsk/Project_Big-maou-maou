@@ -1,4 +1,5 @@
 <h1>เพิ่มคอนเสิร์ต (Admin)</h1>
+<link rel="stylesheet" href="/css/style.css">
 
 <form action="/concerts" method="POST">
   <div>
@@ -27,8 +28,8 @@
   </div>
 
   <div>
-      <label>ศิลปิน</label>
-      <select name="ArtistIds[]" multiple required>
+      <label>ศิลปิน (เลือกได้หลายคน)</label>
+      <select name="ArtistId" required>
         <% artists.forEach(a => { %>
           <option value="<%= a.id %>"><%= a.ArtistName %></option>
         <% }) %>
