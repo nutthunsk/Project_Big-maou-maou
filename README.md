@@ -24,8 +24,6 @@
 │   ├── models/
 │   ├── routes/
 │   └── views/
-├── test/
-│   └── smoke.test.js
 ├── package.json
 └── README.md
 ```
