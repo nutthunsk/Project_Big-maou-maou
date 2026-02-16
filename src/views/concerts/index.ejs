@@ -15,7 +15,12 @@
     <% concerts.forEach(c => { %>
       <div class="concert-card">
         <h2><%= c.ConcertName %></h2>
-        <p>ศิลปิน: <%= c.Artist?.artistName || "-" %></p>
+        <p>
+          ศิลปิน:
+          <% c.Artists.forEach(a => { %>
+            <%= a.ArtistName %>
+          <% }) %>
+        </p>
         <p>สถานที่: <%= c.venue %></p>
         <p>ราคา: <%= c.price %> บาท</p>
 

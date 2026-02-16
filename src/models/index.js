@@ -14,8 +14,8 @@ const Customer = require("./Customer")(sequelize, DataTypes);
 const Booking = require("./Booking")(sequelize, DataTypes);
 
 // 2️⃣ relations (ค่อยผูกทีหลัง)
-Artist.hasMany(Concert, { foreignKey: "ArtistId" });
-Concert.belongsTo(Artist, { foreignKey: "ArtistId" });
+Concert.belongsToMany(Artist, { through: "ConcertArtists" });
+Artist.belongsToMany(Concert, { through: "ConcertArtists" });
 
 Customer.hasMany(Booking, { foreignKey: "CustomerId" });
 Booking.belongsTo(Customer, { foreignKey: "CustomerId" });

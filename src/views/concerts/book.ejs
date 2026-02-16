@@ -11,7 +11,12 @@
   <!-- ===== Concert Info ===== -->
   <div class="concert-card">
     <h2><%= concert.ConcertName %></h2>
-    <p>ศิลปิน: <%= concert.Artist?.ArtistName || "-" %></p>
+    <p>
+      ศิลปิน:
+      <% concert.Artists.forEach(a => { %>
+        <%= a.ArtistName %>
+      <% }) %>
+    </p>
     <p>สถานที่: <%= concert.venue %></p>
     <p>วันที่: <%= concert.ConcertDate %></p>
     <p>ราคา/ที่นั่ง: <%= concert.price %> บาท</p>

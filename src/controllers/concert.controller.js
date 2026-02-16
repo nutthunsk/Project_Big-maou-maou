@@ -12,6 +12,12 @@ exports.index = async (req, res) => {
   }
 };
 
+// GET /concerts/create → หน้า admin เพิ่มคอนเสิร์ต
+exports.showCreateForm = async (req, res) => {
+  const artists = await Artist.findAll();
+  res.render("concerts/create", { artists });
+};
+
 // GET /concerts/:id/book → หน้า form จองบัตร
 exports.showBookingForm = async (req, res) => {
   try {
@@ -36,17 +42,23 @@ exports.create = async (req, res) => {
       ConcertDate,
       totalSeats,
       price,
-      ArtistId,
+      ArtistIds, // <-- array
     } = req.body;
 
-    await Concert.create({
+    // 1️⃣ สร้าง concert ก่อน
+    const concert = await Concert.create({
       ConcertName,
       venue,
       ConcertDate,
       totalSeats,
       price,
-      ArtistId,
+      ArtistIds
     });
+
+    // 2️⃣ ผูกศิลปินหลายคน
+    if (ArtistIds) {
+      await concert.setArtists(ArtistIds);
+    }
 
     res.redirect("/concerts");
   } catch (err) {

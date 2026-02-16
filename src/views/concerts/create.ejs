@@ -1,15 +1,39 @@
-<h1>Create Concert</h1>
+<h1>เพิ่มคอนเสิร์ต (Admin)</h1>
 
-<form method="POST">
-  <input name="concertName" placeholder="Concert name" required>
-  <input type="date" name="concertDate" required>
-  <input name="venue" placeholder="Venue" required>
+<form action="/concerts" method="POST">
+  <div>
+    <label>ชื่อคอนเสิร์ต</label>
+    <input type="text" name="ConcertName" required>
+  </div>
 
-  <select name="ArtistId">
-    <% artists.forEach(a => { %>
-      <option value="<%= a.id %>"><%= a.artistName %></option>
-    <% }) %>
-  </select>
+  <div>
+    <label>สถานที่</label>
+    <input type="text" name="venue" required>
+  </div>
 
-  <button>Create</button>
+  <div>
+    <label>วันที่แสดง</label>
+    <input type="date" name="ConcertDate" required>
+  </div>
+
+  <div>
+    <label>จำนวนที่นั่ง</label>
+    <input type="number" name="totalSeats" required>
+  </div>
+
+  <div>
+    <label>ราคา</label>
+    <input type="number" name="price" required>
+  </div>
+
+  <div>
+    <label>ศิลปิน</label>
+      <select name="ArtistId[]" multiple required>
+        <% artists.forEach(a => { %>
+          <option value="<%= a.id %>"><%= a.ArtistName %></option>
+        <% }) %>
+      </select>
+  </div>
+
+  <button type="submit">เพิ่มคอนเสิร์ต</button>
 </form>
