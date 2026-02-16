@@ -17,9 +17,7 @@
         <h2><%= c.ConcertName %></h2>
         <p>
           ศิลปิน:
-          <% c.Artists.forEach(a => { %>
-            <%= a.ArtistName %>
-          <% }) %>
+          <%= c.Artist ? c.Artist.ArtistName : "-" %>
         </p>
         <p>สถานที่: <%= c.venue %></p>
         <p>ราคา: <%= c.price %> บาท</p>
@@ -27,6 +25,12 @@
         <a class="btn" href="/concerts/<%= c.id %>/book">
            จองบัตร
         </a>
+        <form action="/concerts/<%= c.id %>/delete" method="POST"
+            onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
+          <button type="submit" style="color:red">
+          ลบคอนเสิร์ต
+          </button>
+        </form>
       </div>
     <% }) %>
   </div>

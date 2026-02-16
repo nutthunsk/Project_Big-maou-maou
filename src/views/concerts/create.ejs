@@ -27,8 +27,8 @@
   </div>
 
   <div>
-    <label>ศิลปิน</label>
-      <select name="ArtistId[]" multiple required>
+      <label>ศิลปิน</label>
+      <select name="ArtistIds[]" multiple required>
         <% artists.forEach(a => { %>
           <option value="<%= a.id %>"><%= a.ArtistName %></option>
         <% }) %>

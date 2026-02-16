@@ -2,48 +2,52 @@ module.exports = (sequelize, DataTypes) => {
   return sequelize.define(
     "Concert",
     {
-      // ID_Con (PK)
+      // PK
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
 
-      // ConcertName
+      // ชื่อคอนเสิร์ต
       ConcertName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
 
-      // venue
+      // สถานที่
       venue: {
         type: DataTypes.STRING,
         allowNull: false,
       },
 
-      // ConcertDate
+      // วันที่แสดง
       ConcertDate: {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
 
-      // totalSeats
+      // จำนวนที่นั่ง
       totalSeats: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
 
-      // price
+      // ราคา
       price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
 
-      // ArtistId → FK (สร้างจาก relation)
+      // 🔑 FK ไป Artist (สำคัญมาก)
+      ArtistId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
     {
       tableName: "Concert",
       timestamps: false,
-    },
+    }
   );
 };

@@ -2,14 +2,10 @@ const { Concert, Artist } = require("../models");
 
 // GET /concerts → หน้าเว็บแสดงคอนเสิร์ต
 exports.index = async (req, res) => {
-  try {
-    const concerts = await Concert.findAll({
-      include: Artist,
-    });
-    res.render("concerts/index", { concerts });
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
+  const concerts = await Concert.findAll({
+    include: Artist,
+  });
+  res.render("concerts/index", { concerts });
 };
 
 // GET /concerts/create → หน้า admin เพิ่มคอนเสิร์ต
@@ -24,9 +20,11 @@ exports.showBookingForm = async (req, res) => {
     const concert = await Concert.findByPk(req.params.id, {
       include: Artist,
     });
+
     if (!concert) {
       return res.status(404).send("Concert not found");
     }
+
     res.render("concerts/book", { concert });
   } catch (err) {
     res.status(500).send(err.message);
@@ -42,26 +40,36 @@ exports.create = async (req, res) => {
       ConcertDate,
       totalSeats,
       price,
-      ArtistIds, // <-- array
+      ArtistId, // ✅ One-to-Many ใช้ตัวเดียว
     } = req.body;
 
-    // 1️⃣ สร้าง concert ก่อน
-    const concert = await Concert.create({
+    await Concert.create({
       ConcertName,
       venue,
       ConcertDate,
       totalSeats,
       price,
-      ArtistIds
+      ArtistId, // ✅ FK
     });
-
-    // 2️⃣ ผูกศิลปินหลายคน
-    if (ArtistIds) {
-      await concert.setArtists(ArtistIds);
-    }
 
     res.redirect("/concerts");
   } catch (err) {
     res.status(400).send(err.message);
+  }
+};
+
+// POST /concerts/:id/delete
+exports.delete = async (req, res) => {
+  try {
+    const concert = await Concert.findByPk(req.params.id);
+
+    if (!concert) {
+      return res.status(404).send("Concert not found");
+    }
+
+    await concert.destroy();
+    res.redirect("/concerts");
+  } catch (err) {
+    res.status(500).send(err.message);
   }
 };
