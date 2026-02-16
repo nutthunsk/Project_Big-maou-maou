@@ -35,6 +35,10 @@ app.get("/", (req, res) => {
   res.send("Big maou maou is running ");
 });
 
+app.get('/concertartists', (req, res) => {
+  res.render('concertartists');
+});
+
 // ===== start server =====
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
