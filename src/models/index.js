@@ -7,14 +7,14 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
-// 1️⃣ init models (ประกาศให้ครบก่อน)
+// init models (ประกาศให้ครบก่อน)
 const Artist = require("./Artist")(sequelize, DataTypes);
 const Concert = require("./Concert")(sequelize, DataTypes);
 const Customer = require("./Customer")(sequelize, DataTypes);
 const Booking = require("./Booking")(sequelize, DataTypes);
 const ConcertArtist = require("./ConcertArtist")(sequelize, DataTypes);
 
-// 2️⃣ relations (ค่อยผูกทีหลัง)
+// relations (ค่อยผูกทีหลัง)
 Artist.hasMany(Concert, { foreignKey: "ArtistId", as: "PrimaryConcerts" });
 Concert.belongsTo(Artist, { foreignKey: "ArtistId", as: "PrimaryArtist" });
 
@@ -37,7 +37,7 @@ Booking.belongsTo(Customer, { foreignKey: "CustomerId" });
 Concert.hasMany(Booking, { foreignKey: "ConcertId" });
 Booking.belongsTo(Concert, { foreignKey: "ConcertId" });
 
-// 3️⃣ export ทีเดียว
+// export ทีเดียว
 module.exports = {
   sequelize,
   Artist,

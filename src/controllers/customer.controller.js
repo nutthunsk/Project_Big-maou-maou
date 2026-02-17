@@ -26,6 +26,19 @@ const enrichCustomers = (customers) => {
   });
 };
 
+const safeRender = (res, viewName, payload, fallbackBuilder) => {
+  return res.render(viewName, payload, (err, html) => {
+    if (!err) {
+      return res.send(html);
+    }
+
+    return res.status(200).json({
+      warning: `View '${viewName}' not found. Returned JSON fallback instead.`,
+      ...fallbackBuilder(),
+    });
+  });
+};
+
 // GET /customers
 exports.index = async (req, res) => {
   const customers = await Customer.findAll({
@@ -72,7 +85,7 @@ exports.report = async (req, res) => {
   res.render("customers/report", { customerRows, totals });
 };
 
-// GET /customers/api
+// GET /customers
 exports.api = async (req, res) => {
   const customers = await Customer.findAll({ order: [["id", "ASC"]] });
   res.json(customers);
