@@ -28,7 +28,7 @@
   </div>
 
   <div>
-      <label>ศิลปิน (เลือกได้หลายคน)</label>
+      <label>ศิลปิน (เลือกอย่างน้อย 1 คน)</label>
       <select name="ArtistId" required>
         <% artists.forEach(a => { %>
           <option value="<%= a.id %>"><%= a.ArtistName %></option>
