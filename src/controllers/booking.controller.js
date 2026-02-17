@@ -4,18 +4,19 @@ const index = async (req, res) => {
   const bookings = await Booking.findAll({
     include: [Customer, Concert],
   });
-  res.json(bookings);
+  res.render("bookings/index", { bookings });
 };
 
 const create = async (req, res) => {
-  const { fullname, email, quantity, concertId } = req.body;
-
+  const { fullname, email, phoneNumber, quantity, concertId } = req.body;
   const concert = await Concert.findByPk(concertId);
   if (!concert) return res.status(404).send("Concert not found");
 
   let customer = await Customer.findOne({ where: { email } });
   if (!customer) {
-    customer = await Customer.create({ fullname, email });
+    customer = await Customer.create({ fullname, email, phoneNumber });
+  } else if (!customer.phoneNumber && phoneNumber) {
+    await customer.update({ phoneNumber });
   }
 
   const totalPrice = concert.price * quantity;
@@ -36,7 +37,7 @@ const pay = async (req, res) => {
     { status: "paid" },
     { where: { id: req.params.id } }
   );
-  res.json({ message: "Payment confirmed" });
+  res.redirect("/bookings");
 };
 
 module.exports = {
