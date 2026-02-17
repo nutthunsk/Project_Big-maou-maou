@@ -28,8 +28,8 @@
   </div>
 
   <div>
-      <label>ศิลปิน (เลือกได้หลายคน)</label>
-      <select name="ArtistIds[]" multiple required size="6">
+      <label>ศิลปิน </label>
+      <select name="ArtistIds[]" >
         <% artists.forEach(a => { %>
           <option value="<%= a.id %>"><%= a.ArtistName %></option>
         <% }) %>

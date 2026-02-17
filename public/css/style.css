@@ -109,3 +109,44 @@ body.dark-theme {
 .btn-pay:hover {
   background: #9b5cff;
 }
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.btn-inline {
+  display: inline-block;
+  padding: 8px 14px;
+  background: #7f3cff;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.btn-inline:hover {
+  background: #9b5cff;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 16px 0 24px;
+}
+
+.report-card {
+  background: #1c1c2b;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: 16px;
+  color: #c77dff;
+  text-decoration: none;
+}

@@ -1,0 +1,59 @@
+<html>
+<head>
+  <title>Customer Report</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="dark-theme">
+  <h1>รายงานลูกค้า</h1>
+
+  <div class="report-grid">
+    <div class="report-card">
+      <h3>จำนวนลูกค้า</h3>
+      <p><%= totals.customers %> คน</p>
+    </div>
+    <div class="report-card">
+      <h3>จำนวนการจองรวม</h3>
+      <p><%= totals.bookings %> รายการ</p>
+    </div>
+    <div class="report-card">
+      <h3>จองที่ชำระแล้ว</h3>
+      <p><%= totals.paidBookings %> รายการ</p>
+    </div>
+    <div class="report-card">
+      <h3>รายได้จากลูกค้า (Paid)</h3>
+      <p><%= totals.revenue.toLocaleString() %> บาท</p>
+    </div>
+  </div>
+
+  <h2>อันดับลูกค้าที่มียอดชำระสูงสุด</h2>
+  <table class="booking-table">
+    <thead>
+      <tr>
+        <th>อันดับ</th>
+        <th>ลูกค้า</th>
+        <th>อีเมล</th>
+        <th>การจองทั้งหมด</th>
+        <th>ชำระแล้ว</th>
+        <th>ยอดชำระสะสม</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% customerRows.forEach((row, idx) => { %>
+        <tr>
+          <td><%= idx + 1 %></td>
+          <td><%= row.customer.fullname %></td>
+          <td><%= row.customer.email %></td>
+          <td><%= row.totalBookings %></td>
+          <td><%= row.paidBookings %></td>
+          <td><%= row.totalSpent.toLocaleString() %> บาท</td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <div class="action-row">
+    <a class="btn-inline" href="/customers">กลับหน้าลูกค้า</a>
+    <a class="btn-inline" href="/concerts">กลับหน้าคอนเสิร์ต</a>
+  </div>
+</body>
+</html>
