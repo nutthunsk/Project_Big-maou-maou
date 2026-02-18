@@ -1,111 +1,142 @@
 const { Booking, Concert, Customer } = require("../models");
 
-const PHONE_REGEX = /^[0-9]{8,15}$/;
+const cleanText = (value) => String(value || "").trim();
+const normalizeNumber = (value) => Number(value || 0);
 
-const calculateBookedSeats = async (concertId) => {
-  const bookings = await Booking.findAll({
-    where: { ConcertId: concertId },
-    attributes: ["quantity", "status"],
-  });
-  return bookings
-    .filter((booking) => booking.status !== "cancelled")
-    .reduce((sum, booking) => sum + Number(booking.quantity || 0), 0);
+const getRefs = async () => {
+  const [concerts, customers] = await Promise.all([
+    Concert.findAll({ order: [["ConcertDate", "ASC"]] }),
+    Customer.findAll({ order: [["fullname", "ASC"]] }),
+  ]);
+  return { concerts, customers };
 };
 
-const index = async (req, res) => {
+exports.index = async (_req, res) => {
   try {
     const bookings = await Booking.findAll({
-      include: [Customer, Concert],
+      include: [Concert, Customer],
       order: [["id", "DESC"]],
     });
 
     return res.render("bookings/index", { bookings });
   } catch (err) {
     console.error("Booking index error:", err);
-    return res.status(500).send("ไม่สามารถโหลดรายการจองได้");
+    return res.redirect("/?error=ไม่สามารถโหลดรายการจองได้");
   }
 };
 
-const create = async (req, res) => {
+exports.show = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, quantity, concertId } = req.body;
-
-  const normalizedQty = Number(quantity);
-    if (!Number.isInteger(normalizedQty) || normalizedQty <= 0) {
-      return res.status(400).send("จำนวนบัตรต้องเป็นตัวเลขจำนวนเต็มและมากกว่า 0");
-    }
-
-    if (!PHONE_REGEX.test(String(phoneNumber || ""))) {
-      return res.status(400).send("เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก");
-    }
-
-    const concert = await Concert.findByPk(concertId);
-    if (!concert) {
-      return res.status(404).send("Concert not found");
-    }
-
-  const bookedSeats = await calculateBookedSeats(concert.id);
-    const totalSeats = Number(concert.totalSeats || 0);
-    const availableSeats = Math.max(totalSeats - bookedSeats, 0);
-
-    if (availableSeats <= 0) {
-      return res.status(400).send("บัตรหมด");
-    }
-
-    if (normalizedQty > availableSeats) {
-      return res
-        .status(400)
-        .send(`จำนวนที่นั่งคงเหลือไม่พอ (คงเหลือ ${availableSeats} ที่นั่ง)`);
-    }
-
-    let customer = await Customer.findOne({ where: { email } });
-    if (!customer) {
-      customer = await Customer.create({ fullname, email, phoneNumber });
-    } else {
-      await customer.update({
-        fullname: fullname || customer.fullname,
-        phoneNumber,
-      });
-    }
-
-    const totalPrice = Number(concert.price) * normalizedQty;
-
-    await Booking.create({
-      quantity: normalizedQty,
-      totalPrice,
-      status: "pending",
-      CustomerId: customer.id,
-      ConcertId: concert.id,
+        const booking = await Booking.findByPk(req.params.id, {
+      include: [Concert, Customer],
     });
 
-    return res.redirect("/bookings");
+    if (!booking) return res.status(404).send("Booking not found");
+        return res.render("bookings/show", { booking });
+      } catch (err) {
+        console.error("Booking show error:", err);
+        return res.redirect("/bookings?error=ไม่สามารถโหลดรายละเอียดการจองได้");
+      }
+};
+
+exports.newForm = async (_req, res) => {
+  try {
+    const { concerts, customers } = await getRefs();
+    return res.render("bookings/create", { concerts, customers });
   } catch (err) {
-    console.error("Booking create error:", err);
-    return res.status(500).send("เกิดข้อผิดพลาดในการจองบัตร");
+    console.error("Booking new form error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มเพิ่มการจองได้");
   }
 };
 
-const pay = async (req, res) => {
+exports.create = async (req, res) => {
   try {
-    const [updatedRows] = await Booking.update(
-      { status: "paid" },
-      { where: { id: req.params.id, status: "pending" } }
-    );
+    const ConcertId = normalizeNumber(req.body.ConcertId);
+    const CustomerId = normalizeNumber(req.body.CustomerId);
+    const quantity = normalizeNumber(req.body.quantity);
+    const status = cleanText(req.body.status) || "pending";
 
-    if (!updatedRows) {
-      return res.status(404).send("ไม่พบรายการที่รอชำระ");
+    if (!ConcertId || !CustomerId || quantity <= 0) {
+      return res.redirect("/bookings/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
     }
 
-    return res.redirect("/bookings");
+    const concert = await Concert.findByPk(ConcertId);
+    if (!concert) {
+      return res.redirect("/bookings/new?error=ไม่พบข้อมูลคอนเสิร์ต");
+    }
+
+    const totalPrice = Number(concert.price) * quantity;
+
+    await Booking.create({
+      ConcertId,
+      CustomerId,
+      quantity,
+      status,
+      totalPrice,
+    });
+
+    return res.redirect("/bookings?success=เพิ่มการจองเรียบร้อย");
   } catch (err) {
-    console.error("Booking pay error:", err);
-    return res.status(500).send("ไม่สามารถอัปเดตสถานะการชำระเงินได้");
+    console.error("Booking create error:", err);
+    return res.redirect("/bookings/new?error=ไม่สามารถเพิ่มการจองได้");
   }
 };
 
-module.exports = {
-  index,
-  create,
-  pay,
-  calculateBookedSeats,
+exports.editForm = async (req, res) => {
+  try {
+        const booking = await Booking.findByPk(req.params.id);
+    if (!booking) return res.status(404).send("Booking not found");
+
+const { concerts, customers } = await getRefs();
+    return res.render("bookings/edit", { booking, concerts, customers });
+  } catch (err) {
+    console.error("Booking edit form error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มแก้ไขการจองได้");
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const booking = await Booking.findByPk(req.params.id);
+    if (!booking) return res.status(404).send("Booking not found");
+
+    const ConcertId = normalizeNumber(req.body.ConcertId);
+    const CustomerId = normalizeNumber(req.body.CustomerId);
+    const quantity = normalizeNumber(req.body.quantity);
+    const status = cleanText(req.body.status) || "pending";
+
+    if (!ConcertId || !CustomerId || quantity <= 0) {
+      return res.redirect(`/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`);
+    }
+
+    const concert = await Concert.findByPk(ConcertId);
+    if (!concert) {
+      return res.redirect(`/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`);
+    }
+
+    const totalPrice = Number(concert.price) * quantity;
+
+    await booking.update({
+      ConcertId,
+      CustomerId,
+      quantity,
+      status,
+      totalPrice,
+    });
+
+    return res.redirect(`/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`);
+  } catch (err) {
+    console.error("Booking update error:", err);
+    return res.redirect(`/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`);
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    await Booking.destroy({ where: { id: req.params.id } });
+    return res.redirect("/bookings?success=ลบการจองเรียบร้อย");
+  } catch (err) {
+    console.error("Booking delete error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถลบการจองได้");
+  }
 };

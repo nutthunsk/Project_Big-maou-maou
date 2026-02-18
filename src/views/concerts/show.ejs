@@ -1,0 +1,32 @@
+<%- include('../partials/header', { title: 'Concert detail' }) %>
+
+<h1><%= concert.ConcertName %></h1>
+<p><strong>Venue:</strong> <%= concert.venue %></p>
+<p><strong>Date:</strong> <%= concert.ConcertDate %></p>
+<p>
+  <strong>Artists:</strong>
+  <%
+    var artistNames = '-';
+    if (concert.Artists && concert.Artists.length > 0) {
+      artistNames = concert.Artists.map(function (artist) {
+        return artist.ArtistName;
+      }).join(', ');
+    }
+  %>
+  <%= artistNames %>
+</p>
+<p><strong>Total Seats:</strong> <%= concert.totalSeats %></p>
+<p><strong>Price:</strong> <%= Number(concert.price).toLocaleString() %> บาท</p>
+
+<h2>จำนวนการจองทั้งหมด: <%= (concert.Bookings || []).length %></h2>
+
+<div class="action-row">
+  <a class="btn-ghost" href="/concerts">กลับ</a>
+  <a class="btn-inline" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
+  <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+    <input type="hidden" name="_method" value="DELETE" />
+    <button class="btn-danger" type="submit">ลบ</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

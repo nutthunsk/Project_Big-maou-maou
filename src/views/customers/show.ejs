@@ -1,0 +1,42 @@
+<%- include('../partials/header', { title: 'Customer detail' }) %>
+
+<h1><%= customer.fullname %></h1>
+<p><strong>Email:</strong> <%= customer.email %></p>
+<p><strong>Phone:</strong> <%= customer.phoneNumber %></p>
+
+<h2>ประวัติการจอง</h2>
+<table class="booking-table">
+  <thead>
+    <tr>
+      <th>Concert</th>
+      <th>Quantity</th>
+      <th>Total</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!customer.Bookings || !customer.Bookings.length) { %>
+      <tr><td colspan="4" class="empty-state">ยังไม่มีรายการจอง</td></tr>
+    <% } %>
+
+    <% (customer.Bookings || []).forEach((booking) => { %>
+      <tr>
+        <td><%= booking.Concert ? booking.Concert.ConcertName : '-' %></td>
+        <td><%= booking.quantity %></td>
+        <td><%= Number(booking.totalPrice).toLocaleString() %></td>
+        <td><%= booking.status %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<div class="action-row">
+  <a class="btn-ghost" href="/customers">กลับ</a>
+  <a class="btn-inline" href="/customers/<%= customer.id %>/edit">แก้ไข</a>
+  <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('ยืนยันการลบลูกค้านี้?')">
+    <input type="hidden" name="_method" value="DELETE" />
+    <button class="btn-danger" type="submit">ลบ</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,78 +1,61 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Big Maou Maou | Concert Platform</title>
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body class="site-body">
-  <% const safeStats = stats || { artistCount: 0, concertCount: 0, customerCount: 0 }; %>
-  <% const safeFeaturedConcerts = Array.isArray(featuredConcerts) ? featuredConcerts : []; %>
-  <header class="hero hero-home">
-    <nav class="top-nav">
-      <div class="brand">BIG MAOU MAOU</div>
-      <div class="top-links">
-        <a href="/artists">ศิลปิน/ผู้จัด</a>
-        <a href="/concerts">คอนเสิร์ต</a>
-        <a href="/customers">ลูกค้า</a>
-      </div>
-    </nav>
+<%- include('partials/header', { title: 'Dashboard' }) %>
 
-    <div class="hero-content">
-      <p class="eyebrow">LIVE ENTERTAINMENT PLATFORM</p>
-      <h1>BIG MAOU MAOU คอนเสิร์ต</h1>
-      <p class="hero-subtitle">
-        เพื่อให้ทีมงานสามารถทำงานได้สะดวกและง่ายขี้น: <strong>ศิลปิน/ผู้จัด</strong>,
-        <strong>คอนเสิร์ต</strong> และ <strong>ลูกค้า</strong> เพื่อให้ทีมเริ่มใช้งานได้เร็วที่สุด
-      </p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="/concerts">ดูรายการคอนเสิร์ต</a>
-        <a class="btn-ghost" href="/artists">จัดการศิลปิน/ผู้จัด</a>
-      </div>
-    </div>
+    <section class="page-head">
+  <h1>Dashboard ระบบจัดการคอนเสิร์ต</h1>
+</section>
 
-    <section class="stat-grid">
-      <article class="stat-card">
-        <p>ศิลปิน/ผู้จัด</p>
-        <h2><%= safeStats.artistCount %></h2>
-      </article>
-      <article class="stat-card">
-        <p>คอนเสิร์ตในระบบ</p>
-        <h2><%= safeStats.concertCount %></h2>
-      </article>
-      <article class="stat-card">
-        <p>ลูกค้าธุรกิจ</p>
-        <h2><%= safeStats.customerCount %></h2>
-      </article>
-    </section>
-  </header>
+    <section class="report-grid">
+  <article class="report-card">
+    <h3>จำนวน Artists</h3>
+    <p><%= stats.artistCount %></p>
+  </article>
+  <article class="report-card">
+    <h3>จำนวน Concerts</h3>
+    <p><%= stats.concertCount %></p>
+  </article>
+  <article class="report-card">
+    <h3>จำนวน Customers</h3>
+    <p><%= stats.customerCount %></p>
+  </article>
+  <article class="report-card">
+    <h3>จำนวน Bookings</h3>
+    <p><%= stats.bookingCount %></p>
+  </article>
+</section>
 
-  <main class="section-wrap">
-    <section>
-      <div class="page-head">
-        <h2>คอนเสิร์ตแนะนำ</h2>
-        <a href="/concerts" class="btn-inline btn-small">ดูทั้งหมด</a>
-      </div>
+  <section>
+  <div class="page-head">
+    <h2>รายการจองล่าสุด</h2>
+    <a href="/bookings" class="btn-inline btn-small">ดูทั้งหมด</a>
+  </div>
 
-      <% if (safeFeaturedConcerts.length === 0) { %>
-        <p class="empty-state">ยังไม่มีคอนเสิร์ต ลองเพิ่มจากเมนูคอนเสิร์ตก่อน</p>
-      <% } else { %>
-        <div class="feature-grid featured-booking-grid">
-          <% safeFeaturedConcerts.forEach(c => { %>
-            <a class="feature-card featured-book-card" href="/concerts/<%= c.id %>/book">
-              <h3><%= c.ConcertName %></h3>
-              <p><strong>ศิลปิน/ผู้จัด:</strong>
-                <%= c.Artists && c.Artists.length ? c.Artists.map(a => a.ArtistName).join(', ') : '-' %>
-              </p>
-              <p><strong>สถานที่:</strong> <%= c.venue %></p>
-              <p><strong>ราคา:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
-              <span class="book-hint">กดเพื่อดูรายละเอียดและจองบัตร →</span>
-            </a>
-          <% }) %>
-        </div>
+      <table class="booking-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Concert</th>
+        <th>Customer</th>
+        <th>จำนวน</th>
+        <th>สถานะ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (!latestBookings.length) { %>
+        <tr>
+          <td colspan="5" class="empty-state">ยังไม่มีรายการจอง</td>
+        </tr>
       <% } %>
-    </section>
-  </main>
-</body>
-</html>
+    <% latestBookings.forEach((booking) => { %>
+        <tr>
+          <td><%= booking.id %></td>
+          <td><%= booking.Concert ? booking.Concert.ConcertName : '-' %></td>
+          <td><%= booking.Customer ? booking.Customer.fullname : '-' %></td>
+          <td><%= booking.quantity %></td>
+          <td><%= booking.status %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</section>
+
+<%- include('partials/footer') %>

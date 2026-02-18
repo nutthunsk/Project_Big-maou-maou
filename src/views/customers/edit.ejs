@@ -1,0 +1,23 @@
+<%- include('../partials/header', { title: 'Edit customer' }) %>
+
+<h1>แก้ไข Customer</h1>
+
+<form class="stack-form" method="POST" action="/customers/<%= customer.id %>">
+  <input type="hidden" name="_method" value="PUT" />
+
+  <label for="fullname">ชื่อลูกค้า</label>
+  <input id="fullname" name="fullname" type="text" value="<%= customer.fullname %>" required maxlength="120" />
+
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" value="<%= customer.email %>" required maxlength="160" />
+
+  <label for="phoneNumber">เบอร์โทร</label>
+  <input id="phoneNumber" name="phoneNumber" type="text" value="<%= customer.phoneNumber %>" required pattern="[0-9]{8,15}" maxlength="15" />
+
+  <div class="action-row">
+    <button class="btn-primary" type="submit">อัปเดต</button>
+    <a class="btn-ghost" href="/customers/<%= customer.id %>">ยกเลิก</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

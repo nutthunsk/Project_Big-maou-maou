@@ -1,0 +1,42 @@
+<%- include('../partials/header', { title: 'Edit booking' }) %>
+
+<h1>แก้ไข Booking</h1>
+
+<form class="stack-form" method="POST" action="/bookings/<%= booking.id %>">
+  <input type="hidden" name="_method" value="PUT" />
+
+  <label for="ConcertId">Concert (Foreign Key)</label>
+  <select id="ConcertId" name="ConcertId" required>
+    <% concerts.forEach((concert) => { %>
+      <option value="<%= concert.id %>" <%= Number(booking.ConcertId) === concert.id ? 'selected' : '' %>>
+        <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> บาท
+      </option>
+    <% }) %>
+  </select>
+
+  <label for="CustomerId">Customer (Foreign Key)</label>
+  <select id="CustomerId" name="CustomerId" required>
+    <% customers.forEach((customer) => { %>
+      <option value="<%= customer.id %>" <%= Number(booking.CustomerId) === customer.id ? 'selected' : '' %>>
+        <%= customer.fullname %>
+      </option>
+    <% }) %>
+  </select>
+
+  <label for="quantity">จำนวนบัตร</label>
+  <input id="quantity" name="quantity" type="number" min="1" value="<%= booking.quantity %>" required />
+
+  <label for="status">สถานะ</label>
+  <select id="status" name="status" required>
+    <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>pending</option>
+    <option value="paid" <%= booking.status === 'paid' ? 'selected' : '' %>>paid</option>
+    <option value="cancelled" <%= booking.status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+  </select>
+
+  <div class="action-row">
+    <button class="btn-primary" type="submit">อัปเดต</button>
+    <a class="btn-ghost" href="/bookings/<%= booking.id %>">ยกเลิก</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

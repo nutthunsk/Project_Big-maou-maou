@@ -1,0 +1,21 @@
+<%- include('../partials/header', { title: 'Create customer' }) %>
+
+<h1>เพิ่ม Customer</h1>
+
+<form class="stack-form" method="POST" action="/customers">
+  <label for="fullname">ชื่อลูกค้า</label>
+  <input id="fullname" name="fullname" type="text" required maxlength="120" />
+
+  <label for="email">Email</label>
+  <input id="email" name="email" type="email" required maxlength="160" />
+
+  <label for="phoneNumber">เบอร์โทร</label>
+  <input id="phoneNumber" name="phoneNumber" type="text" required pattern="[0-9]{8,15}" maxlength="15" />
+
+  <div class="action-row">
+    <button class="btn-primary" type="submit">บันทึก</button>
+    <a class="btn-ghost" href="/customers">ยกเลิก</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

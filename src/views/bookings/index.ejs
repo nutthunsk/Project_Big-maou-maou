@@ -1,60 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>รายการจองบัตร</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="dark-theme">
+<%- include('../partials/header', { title: 'Bookings' }) %>
 
-  <h1>รายการจองบัตร</h1>
+  <div class="page-head">
+  <h1>Bookings</h1>
+  <a class="btn-primary btn-small" href="/bookings/new">+ เพิ่มใหม่</a>
+</div>
 
-  <% if (bookings.length === 0) { %>
-    <p>ยังไม่มีรายการจอง</p>
-  <% } %>
+<table class="booking-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Concert</th>
+      <th>Customer</th>
+      <th>Qty</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!bookings.length) { %>
+      <tr><td colspan="7" class="empty-state">ยังไม่มีข้อมูล</td></tr>
+    <% } %>
 
-  <table class="booking-table">
-    <thead>
+<% bookings.forEach((booking) => { %>
       <tr>
-        <th>คอนเสิร์ต</th>
-        <th>ผู้จอง</th>
-        <th>จำนวน</th>
-        <th>ราคารวม</th>
-        <th>สถานะ</th>
-        <th>การจัดการ</th>
+        <td><%= booking.id %></td>
+        <td><%= booking.Concert ? booking.Concert.ConcertName : '-' %></td>
+        <td><%= booking.Customer ? booking.Customer.fullname : '-' %></td>
+        <td><%= booking.quantity %></td>
+        <td><%= Number(booking.totalPrice).toLocaleString() %></td>
+        <td><%= booking.status %></td>
+        <td class="action-row">
+          <a class="btn-inline btn-small" href="/bookings/<%= booking.id %>">ดู</a>
+          <a class="btn-ghost btn-small" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
+          <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('ยืนยันการลบรายการจองนี้?')">
+            <input type="hidden" name="_method" value="DELETE" />
+            <button class="btn-danger btn-small" type="submit">ลบ</button>
+          </form>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% bookings.forEach(b => { %>
-        <tr>
-          <td><%= b.Concert?.ConcertName || "-" %></td>
-          <td>
-            <%= b.Customer?.fullname %><br>
-            <small><%= b.Customer?.email %></small>
-          </td>
-          <td><%= b.quantity %></td>
-          <td><%= b.totalPrice %> บาท</td>
-          <td>
-            <% if (b.status === "paid") { %>
-              <span class="paid">ชำระแล้ว</span>
-            <% } else { %>
-              <span class="pending">รอชำระเงิน</span>
-            <% } %>
-          </td>
-          <td>
-            <% if (b.status === "pending") { %>
-              <form action="/bookings/pay/<%= b.id %>" method="POST">
-                <button type="submit" class="btn-pay">ชำระเงิน</button>
-              </form>
-            <% } else { %>
-              -
-            <% } %>
-          </td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <% }) %>
+  </tbody>
+</table>
 
-  <a href="/concerts" class="back-link">← กลับหน้าคอนเสิร์ต</a>
-
-</body>
-</html>
+<%- include('../partials/footer') %>

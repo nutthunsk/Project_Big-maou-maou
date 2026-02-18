@@ -1,0 +1,44 @@
+<%- include('../partials/header', { title: 'Customer Spending Report' }) %>
+
+<div class="page-head">
+  <h1>รายงานการใช้จ่ายลูกค้า</h1>
+</div>
+
+<form class="stack-form" method="GET" action="/reports/customer-spending">
+  <label for="minSpent">ขั้นต่ำยอดใช้จ่าย</label>
+  <input id="minSpent" type="number" min="0" name="minSpent" value="<%= minSpent %>" />
+  <button class="btn-primary" type="submit">ดูรายงาน</button>
+</form>
+
+<section class="report-grid">
+  <article class="report-card"><h3>จำนวนลูกค้า</h3><p><%= summary.customerCount %></p></article>
+  <article class="report-card"><h3>จำนวนการจอง</h3><p><%= summary.bookingCount %></p></article>
+  <article class="report-card"><h3>ยอดรวม</h3><p><%= Number(summary.revenue).toLocaleString() %> บาท</p></article>
+</section>
+
+<table class="booking-table">
+  <thead>
+    <tr>
+      <th>ลูกค้า</th>
+      <th>Email</th>
+      <th>จำนวนการจอง</th>
+      <th>ยอดใช้จ่าย</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!rows.length) { %>
+      <tr><td colspan="4" class="empty-state">ไม่พบข้อมูล</td></tr>
+    <% } %>
+
+    <% rows.forEach((row) => { %>
+      <tr>
+        <td><%= row.customer.fullname %></td>
+        <td><%= row.customer.email %></td>
+        <td><%= row.bookings %></td>
+        <td><%= Number(row.totalSpent).toLocaleString() %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('../partials/footer') %>

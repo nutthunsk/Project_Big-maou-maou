@@ -1,59 +1,41 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ลูกค้า</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="site-body">
-  <main class="page-shell">
-    <div class="page-head">
-      <h1>ลูกค้า</h1>
-      <div class="action-row">
-        <a class="btn-inline" href="/customers/report">ดูรายงานเชิงธุรกิจ</a>
-        <a class="btn-ghost btn-small" href="/">กลับหน้าแรก</a>
-      </div>
-    </div>
+<%- include('../partials/header', { title: 'Customers' }) %>
 
-    <% if (customerRows.length === 0) { %>
-      <p class="empty-state">ยังไม่มีข้อมูลลูกค้า</p>
-    <% } else { %>
-      <table class="booking-table">
-        <thead>
-          <tr>
-            <th>คอนเสิร์ต</th>
-            <th>ชื่อ-นามสกุล</th>
-            <th>อีเมล</th>
-            <th>เบอร์โทร</th>
-            <th>จำนวนการจอง</th>
-            <th>สถานะการชำระเงิน</th>
-            <th>ยอดชำระสะสม</th>
-            <th>จองล่าสุด</th>
-            <th>การจัดการ</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% customerRows.forEach((row, idx) => { %>
-            <tr>
-              <td><%= idx + 1 %></td>
-              <td><%= row.customer.fullname %></td>
-              <td><%= row.customer.email %></td>
-              <td><%= row.customer.phoneNumber %></td>
-              <td><%= row.totalBookings %></td>
-              <td><%= row.paymentSummary %></td>
-              <td><%= row.totalSpent.toLocaleString() %> บาท</td>
-              <td><%= row.lastBookingDate ? row.lastBookingDate.toLocaleString('th-TH') : '-' %></td>
-              <td>
-                <form action="/customers/<%= row.customer.id %>/delete" method="POST" onsubmit="return confirm('ยืนยันการลบข้อมูลลูกค้ารายนี้?')">
-                  <button type="submit" class="btn-danger">ลบข้อมูล</button>
-                </form>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
+    <div class="page-head">
+  <h1>Customers</h1>
+  <a class="btn-primary btn-small" href="/customers/new">+ เพิ่มใหม่</a>
+</div>
+
+<table class="booking-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ชื่อ</th>
+      <th>Email</th>
+      <th>เบอร์โทร</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!customers.length) { %>
+      <tr><td colspan="5" class="empty-state">ยังไม่มีข้อมูล</td></tr>
     <% } %>
-  </main>
-</body>
-</html>
+    <% customers.forEach((customer) => { %>
+      <tr>
+        <td><%= customer.id %></td>
+        <td><%= customer.fullname %></td>
+        <td><%= customer.email %></td>
+        <td><%= customer.phoneNumber %></td>
+        <td class="action-row">
+          <a class="btn-inline btn-small" href="/customers/<%= customer.id %>">ดู</a>
+          <a class="btn-ghost btn-small" href="/customers/<%= customer.id %>/edit">แก้ไข</a>
+          <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('ยืนยันการลบลูกค้านี้?')">
+            <input type="hidden" name="_method" value="DELETE" />
+            <button class="btn-danger btn-small" type="submit">ลบ</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<%- include('../partials/footer') %>

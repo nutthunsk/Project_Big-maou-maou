@@ -1,95 +1,90 @@
 const express = require("express");          // framework สำหรับสร้างเว็บเซิร์ฟเวอร์
 const path = require("path");                // จัดการ path ไฟล์ให้ทำงานได้ทุก OS
-
-const { sequelize, Artist, Concert, Customer } = require("./models");
+const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
+const artistRoutes = require("./routes/artist.routes");
+const concertRoutes = require("./routes/concert.routes");
+const bookingRoutes = require("./routes/booking.routes");
+const customerRoutes = require("./routes/customer.routes");
+const reportRoutes = require("./routes/report.routes");
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// ===== port config =====
-const PORT = process.env.PORT || 3000;       // ใช้ PORT จาก env ถ้าไม่มีใช้ 3000
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
-const DEFAULT_HOME_PAYLOAD = {
-  stats: { artistCount: 0, concertCount: 0, customerCount: 0 },
-  featuredConcerts: [],
-};
-
-// ===== DB (เช็ค + sync ทันที) =====
-sequelize.authenticate().catch((err) =>
-  console.error("DB error:", err)             // ตรวจสอบการเชื่อมต่อ DB
-);
-
-sequelize.sync().catch((err) =>
-  console.error(err)                          // sync model กับ database
-);
-
-// ===== middleware =====
 app.use(express.urlencoded({ extended: false }));
-// รับข้อมูลจาก form (application/x-www-form-urlencoded)
 
 app.use(express.json());
-// รับข้อมูล JSON จาก request body
 
 app.use(express.static(path.join(__dirname, "../public")));
-// ให้เข้าถึงไฟล์ static เช่น css, js, รูปภาพ
 
-// ===== routes =====
-const artistRoutes = require("./routes/artist.routes");     // route ศิลปิน
-const concertRoutes = require("./routes/concert.routes");   // route คอนเสิร์ต
-const bookingRoutes = require("./routes/booking.routes");   // route การจอง
-const customerRoutes = require("./routes/customer.routes"); // route ลูกค้า
+app.use((req, _res, next) => {
+  if (req.body && typeof req.body === "object" && req.body._method) {
+    req.method = String(req.body._method).toUpperCase();
+    delete req.body._method;
+  }
+  next();
+});
 
-// ผูก route เข้ากับ prefix
+app.use((req, res, next) => {
+  res.locals.flash = {
+    success: req.query.success || "",
+    error: req.query.error || "",
+  };
+  next();
+});
+
 app.use("/artists", artistRoutes);
 app.use("/concerts", concertRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/customers", customerRoutes);
+app.use("/reports", reportRoutes);
 
-// ===== view engine =====
-app.set("view engine", "ejs");                // ใช้ EJS เป็น template engine
-app.set("views", path.join(__dirname, "views"));
-// กำหนดโฟลเดอร์เก็บไฟล์ .ejs
-
-// ===== homepage =====
-app.get("/", async (req, res) => {
+app.get("/", async (_req, res) => {
   try {
-    const [artistCount, concertCount, customerCount, featuredConcerts] = await Promise.all([
+     const [artistCount, concertCount, customerCount, bookingCount, latestBookings] = await Promise.all([
       Artist.count(),
       Concert.count(),
       Customer.count(),
-      Concert.findAll({
-        include: [{ association: "Artists", through: { attributes: [] } }],
-        order: [["ConcertDate", "ASC"]],
-        limit: 3,
+      Booking.count(),
+      Booking.findAll({
+        include: [Concert, Customer],
+        order: [["id", "DESC"]],
+        limit: 5,
       }),
     ]);
 
     return res.render("home", {
-      stats: { artistCount, concertCount, customerCount },
-      featuredConcerts,
+      stats: { artistCount, concertCount, customerCount, bookingCount },
+      latestBookings,
     });
   } catch (err) {
     console.error("Home page data error:", err.message);
-    return res.render("home", DEFAULT_HOME_PAYLOAD);
+    return res.render("home", {
+      stats: { artistCount: 0, concertCount: 0, customerCount: 0, bookingCount: 0 },
+      latestBookings: [],
+    });
   }
 });
 
 // ===== function: init database =====
 async function initDb() {
-  await sequelize.authenticate(); // ตรวจสอบการเชื่อมต่อ DB
-  await sequelize.sync();         // sync ตารางกับ model
+  await sequelize.authenticate();
+  await sequelize.sync();
 }
 
 // ===== function: start server =====
 async function startServer() {
   try {
-    await initDb();               // เชื่อม DB ก่อนเปิด server
+    await initDb();
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error("DB error:", err);
-    process.exit(1);              // ถ้า DB พัง ให้หยุดโปรแกรม
+    process.exit(1);
   }
 }
 
@@ -99,5 +94,5 @@ if (require.main === module) {
 }
 
 // ===== export =====
-module.exports = app;             // export app (ใช้กับ test)
-module.exports.initDb = initDb;   // export initDb เผื่อเรียกจากไฟล์อื่น
+module.exports = app;
+module.exports.initDb = initDb;

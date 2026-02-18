@@ -1,0 +1,19 @@
+<%- include('../partials/header', { title: 'Booking detail' }) %>
+
+<h1>Booking #<%= booking.id %></h1>
+<p><strong>Concert:</strong> <%= booking.Concert ? booking.Concert.ConcertName : '-' %></p>
+<p><strong>Customer:</strong> <%= booking.Customer ? booking.Customer.fullname : '-' %></p>
+<p><strong>Quantity:</strong> <%= booking.quantity %></p>
+<p><strong>Total:</strong> <%= Number(booking.totalPrice).toLocaleString() %> บาท</p>
+<p><strong>Status:</strong> <%= booking.status %></p>
+
+<div class="action-row">
+  <a class="btn-ghost" href="/bookings">กลับ</a>
+  <a class="btn-inline" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
+  <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('ยืนยันการลบรายการจองนี้?')">
+    <input type="hidden" name="_method" value="DELETE" />
+    <button class="btn-danger" type="submit">ลบ</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>

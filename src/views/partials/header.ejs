@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || 'Project Big maou maou' %></title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="site-body">
+  <header class="app-header">
+    <nav class="top-nav">
+      <a class="brand" href="/">Project Big maou maou</a>
+      <div class="top-links">
+        <a href="/">หน้าแรก</a>
+        <a href="/artists">Artists</a>
+        <a href="/concerts">Concerts</a>
+        <a href="/customers">Customers</a>
+        <a href="/bookings">Bookings</a>
+        <a href="/reports/concert-sales">Report: Sales</a>
+        <a href="/reports/customer-spending">Report: Customers</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-shell">
+    <% if (flash && flash.success) { %>
+      <div class="flash flash-success"><%= flash.success %></div>
+    <% } %>
+
+    <% if (flash && flash.error) { %>
+      <div class="flash flash-error"><%= flash.error %></div>
+    <% } %>

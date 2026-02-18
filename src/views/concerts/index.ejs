@@ -1,57 +1,53 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>คอนเสิร์ต</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="site-body">
-  <main class="page-shell">
-    <div class="page-head">
-      <h1>คอนเสิร์ต</h1>
-      <div class="action-row">
-        <a class="btn-primary btn-small" href="/concerts/create">+ เพิ่มคอนเสิร์ต</a>
-        <a class="btn-ghost btn-small" href="/">กลับหน้าแรก</a>
-      </div>
-    </div>
+<%- include('../partials/header', { title: 'Concerts' }) %>\
+<div class="page-head">
+  <h1>Concerts</h1>
+  <a class="btn-primary btn-small" href="/concerts/new">+ เพิ่มใหม่</a>
+</div>
 
-        <% if (concerts.length === 0) { %>
-      <p class="empty-state">ยังไม่มีคอนเสิร์ตในระบบ</p>
+<table class="booking-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Venue</th>
+      <th>Date</th>
+      <th>Artists</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!concerts || concerts.length === 0) { %>
+      <tr>
+        <td colspan="5" class="empty-state">ยังไม่มีข้อมูล</td>
+      </tr>
     <% } else { %>
-      <div class="concert-list">
-        <% concerts.forEach(c => { %>
-          <article class="concert-card">
-            <h2><%= c.ConcertName %></h2>
-            <p><strong>ศิลปิน/ผู้จัด:</strong>
-              <%= c.Artists && c.Artists.length ? c.Artists.map(a => a.ArtistName).join(', ') : '-' %>
-            </p>
-            <p><strong>สถานที่:</strong> <%= c.venue %></p>
-            <p><strong>ราคาเริ่มต้น:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
-            <p><strong>ที่นั่งทั้งหมด:</strong> <%= c.seatStats.totalSeats %> ที่นั่ง</p>
-            <p><strong>จองแล้ว:</strong> <%= c.seatStats.bookedSeats %> ที่นั่ง</p>
-            <p><strong>คงเหลือ:</strong>
-              <% if (c.seatStats.isSoldOut) { %>
-                <span class="sold-out-text">บัตรหมด</span>
-              <% } else { %>
-                <%= c.seatStats.remainingSeats %> ที่นั่ง
-              <% } %>
-            </p>
-
-            <div class="action-row">
-              <% if (c.seatStats.isSoldOut) { %>
-                <span class="btn-danger btn-small">บัตรหมด</span>
-              <% } else { %>
-                <a class="btn-inline" href="/concerts/<%= c.id %>/book">จองบัตร</a>
-              <% } %>
-              <form action="/concerts/<%= c.id %>/delete" method="POST" onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
-                <button type="submit" class="btn-danger">ลบคอนเสิร์ต</button>
-              </form>
-            </div>
-          </article>
-        <% }) %>
-      </div>
+      <% concerts.forEach(function (concert) { %>
+        <tr>
+          <td><%= concert.ConcertName %></td>
+          <td><%= concert.venue %></td>
+          <td><%= concert.ConcertDate %></td>
+          <td>
+            <%
+              var artistNames = '-';
+              if (concert.Artists && concert.Artists.length > 0) {
+                artistNames = concert.Artists.map(function (artist) {
+                  return artist.ArtistName;
+                }).join(', ');
+              }
+            %>
+            <%= artistNames %>
+          </td>
+          <td class="action-row">
+            <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>">ดู</a>
+            <a class="btn-ghost btn-small" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
+            <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+              <input type="hidden" name="_method" value="DELETE" />
+              <button class="btn-danger btn-small" type="submit">ลบ</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
     <% } %>
-  </main>
-</body>
-</html>
+    </tbody>
+</table>
+
+<%- include('../partials/footer') %>

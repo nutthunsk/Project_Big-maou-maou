@@ -1,45 +1,35 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>เพิ่มคอนเสิร์ต</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="site-body">
-  <main class="page-shell form-shell">
-    <h1>เพิ่มคอนเสิร์ต</h1>
+<%- include('../partials/header', { title: 'Create concert' }) %>
 
-    <form class="stack-form" action="/concerts" method="POST">
-      <label>ชื่อคอนเสิร์ต</label>
-      <input type="text" name="ConcertName" required>
+<h1>เพิ่ม Concert</h1>
 
-      <label>สถานที่</label>
-        <input type="text" name="venue" required>
+<form class="stack-form" method="POST" action="/concerts">
+  <label for="ConcertName">ชื่อคอนเสิร์ต</label>
+  <input id="ConcertName" name="ConcertName" type="text" required maxlength="150" />
 
-      <label>วันที่แสดง</label>
-        <input type="date" name="ConcertDate" required>
+  <label for="venue">สถานที่</label>
+  <input id="venue" name="venue" type="text" required maxlength="120" />
 
-      <label>จำนวนที่นั่ง</label>
-         <input type="number" name="totalSeats" min="1" step="1" required>
+  <label for="ConcertDate">วันที่</label>
+  <input id="ConcertDate" name="ConcertDate" type="date" required />
 
-      <label>ราคา</label>
-        <input type="number" name="price" min="1" step="0.01" required>
+  <label for="totalSeats">จำนวนที่นั่ง</label>
+  <input id="totalSeats" name="totalSeats" type="number" min="1" required />
 
-      <label>ศิลปิน/ผู้จัด</label>
-      <select name="ArtistIds[]" required>
-        <% artists.forEach(a => { %>
-          <option value="<%= a.id %>"><%= a.ArtistName %></option>
-        <% }) %>
-      </select>
+  <label for="price">ราคา</label>
+  <input id="price" name="price" type="number" min="1" step="0.01" required />
 
-      <div class="action-row">
-        <button class="btn-primary btn-small" type="submit">บันทึก</button>
-        <a class="btn-ghost btn-small" href="/concerts">ย้อนกลับ</a>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
+  <label for="ArtistId">ศิลปินหลัก (Foreign Key)</label>
+  <select id="ArtistId" name="ArtistId" required>
+    <option value="">เลือกศิลปิน</option>
+    <% (artists || []).forEach(function (artist) { %>
+      <option value="<%= artist.id %>"><%= artist.ArtistName %></option>
+    <% }); %>
+  </select>
 
+  <div class="action-row">
+    <button class="btn-primary" type="submit">บันทึก</button>
+    <a class="btn-ghost" href="/concerts">ยกเลิก</a>
+  </div>
 </form>
+
+<%- include('../partials/footer') %>

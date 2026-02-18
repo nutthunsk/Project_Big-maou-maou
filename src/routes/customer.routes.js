@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const controller = require("../controllers/customer.controller");
 
-const customerController = require("../controllers/customer.controller");
-
-router.get("/", customerController.index);
-router.get("/report", customerController.report);
-router.get("/api", customerController.api);
-router.post("/create", customerController.create);
-router.post("/:id/delete", customerController.delete);
+router.get("/", controller.index);
+router.get("/new", controller.newForm);
+router.post("/", controller.create);
+router.get("/:id", controller.show);
+router.get("/:id/edit", controller.editForm);
+router.put("/:id", controller.update);
+router.delete("/:id", controller.delete);
 
 module.exports = router;

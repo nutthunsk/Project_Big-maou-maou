@@ -1,0 +1,40 @@
+<%- include('../partials/header', { title: 'Create booking' }) %>
+
+<h1>เพิ่ม Booking</h1>
+
+<form class="stack-form" method="POST" action="/bookings">
+  <label for="ConcertId">Concert (Foreign Key)</label>
+  <select id="ConcertId" name="ConcertId" required>
+    <option value="">เลือก Concert</option>
+    <% concerts.forEach((concert) => { %>
+      <option value="<%= concert.id %>">
+        <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> บาท
+      </option>
+    <% }) %>
+  </select>
+
+  <label for="CustomerId">Customer (Foreign Key)</label>
+  <select id="CustomerId" name="CustomerId" required>
+    <option value="">เลือก Customer</option>
+    <% customers.forEach((customer) => { %>
+      <option value="<%= customer.id %>"><%= customer.fullname %></option>
+    <% }) %>
+  </select>
+
+  <label for="quantity">จำนวนบัตร</label>
+  <input id="quantity" name="quantity" type="number" min="1" required />
+
+  <label for="status">สถานะ</label>
+  <select id="status" name="status" required>
+    <option value="pending">pending</option>
+    <option value="paid">paid</option>
+    <option value="cancelled">cancelled</option>
+  </select>
+
+  <div class="action-row">
+    <button class="btn-primary" type="submit">บันทึก</button>
+    <a class="btn-ghost" href="/bookings">ยกเลิก</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>

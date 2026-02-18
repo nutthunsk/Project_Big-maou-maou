@@ -1,26 +1,18 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>เพิ่มศิลปิน/ผู้จัด</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="site-body">
-  <main class="page-shell form-shell">
-    <h1>เพิ่มศิลปิน / ผู้จัด</h1>
-    <form class="stack-form" action="/artists/create" method="POST">
-      <label>ชื่อศิลปิน/ผู้จัด</label>
-      <input type="text" name="ArtistName" placeholder="เช่น Bodyslam / AEG Presents" required>>
+<%- include('../partials/header', { title: 'Create artist' }) %>
 
-      <label>แนวเพลง/ประเภท</label>
-      <input type="text" name="genre" placeholder="Pop, Rock, Festival Organizer">
+<h1>เพิ่ม Artist</h1>
 
-         <div class="action-row">
-        <button class="btn-primary btn-small" type="submit">บันทึก</button>
-        <a href="/artists" class="btn-ghost btn-small">ย้อนกลับ</a>
-      </div>
-    </form>
-  </main>
-</body>
-</html>
+<form class="stack-form" method="POST" action="/artists">
+  <label for="ArtistName">ชื่อศิลปิน</label>
+  <input id="ArtistName" name="ArtistName" type="text" required maxlength="120" />
+
+  <label for="genre">Genre</label>
+  <input id="genre" name="genre" type="text" required maxlength="120" />
+
+  <div class="action-row">
+    <button class="btn-primary" type="submit">บันทึก</button>
+    <a class="btn-ghost" href="/artists">ยกเลิก</a>
+  </div>
+</form>
+
+<%- include('../partials/footer') %>
