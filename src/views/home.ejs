@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big Maou Maou | Concert Platform</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="site-body">
+  <header class="hero hero-home">
+    <nav class="top-nav">
+      <div class="brand">BIG MAOU MAOU</div>
+      <div class="top-links">
+        <a href="/artists">ศิลปิน/ผู้จัด</a>
+        <a href="/concerts">คอนเสิร์ต</a>
+        <a href="/customers">ลูกค้าธุรกิจ</a>
+      </div>
+    </nav>
+
+    <div class="hero-content">
+      <p class="eyebrow">LIVE ENTERTAINMENT PLATFORM</p>
+      <h1>Platform สำหรับงานคอนเสิร์ตแบบมืออาชีพ</h1>
+      <p class="hero-subtitle">
+        โฟกัสเฉพาะ 3 โมดูลหลักที่ต้องใช้จริงตอนนี้: <strong>ศิลปิน/ผู้จัด</strong>,
+        <strong>คอนเสิร์ต</strong> และ <strong>ลูกค้าธุรกิจ</strong> เพื่อให้ทีมเริ่มใช้งานได้เร็วที่สุด
+      </p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="/concerts">ดูรายการคอนเสิร์ต</a>
+        <a class="btn-ghost" href="/artists">จัดการศิลปิน/ผู้จัด</a>
+      </div>
+    </div>
+
+    <section class="stat-grid">
+      <article class="stat-card">
+        <p>ศิลปิน/ผู้จัด</p>
+        <h2><%= stats.artistCount %></h2>
+      </article>
+      <article class="stat-card">
+        <p>คอนเสิร์ตในระบบ</p>
+        <h2><%= stats.concertCount %></h2>
+      </article>
+      <article class="stat-card">
+        <p>ลูกค้าธุรกิจ</p>
+        <h2><%= stats.customerCount %></h2>
+      </article>
+    </section>
+  </header>
+
+  <main class="section-wrap">
+    <section>
+      <div class="page-head">
+        <h2>คอนเสิร์ตแนะนำ</h2>
+        <a href="/concerts" class="btn-inline btn-small">ดูทั้งหมด</a>
+      </div>
+
+      <% if (featuredConcerts.length === 0) { %>
+        <p class="empty-state">ยังไม่มีคอนเสิร์ต ลองเพิ่มจากเมนูคอนเสิร์ตก่อน</p>
+      <% } else { %>
+        <div class="feature-grid">
+          <% featuredConcerts.forEach(c => { %>
+            <article class="feature-card">
+              <h3><%= c.ConcertName %></h3>
+              <p><strong>ศิลปิน/ผู้จัด:</strong>
+                <%= c.Artists && c.Artists.length ? c.Artists.map(a => a.ArtistName).join(', ') : '-' %>
+              </p>
+              <p><strong>สถานที่:</strong> <%= c.venue %></p>
+              <p><strong>ราคา:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
+            </article>
+          <% }) %>
+        </div>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

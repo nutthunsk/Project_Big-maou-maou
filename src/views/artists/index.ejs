@@ -1,28 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-  <title>Artists</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ศิลปิน/ผู้จัด</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-  <h1>Artist List</h1>
+<body class="site-body">
+  <main class="page-shell">
+    <div class="page-head">
+      <h1>ศิลปิน / ผู้จัด</h1>
+      <div class="action-row">
+        <a href="/artists/create" class="btn-primary btn-small">+ เพิ่มศิลปิน/ผู้จัด</a>
+        <a href="/" class="btn-ghost btn-small">กลับหน้าแรก</a>
+      </div>
+    </div>
 
-  <a href="/artists/create">+ Add Artist</a>
-
-  <ul>
-    <% artists.forEach(artist => { %>
-      <li>
-        <%= artist.ArtistName %> - <%= artist.genre %>
-
-        <!-- Edit -->
-        <a href="/artists/edit/<%= artist.id %>">Edit</a>
-
-        <!-- Delete -->
-        <form action="/artists/delete/<%= artist.id %>" method="POST" style="display:inline;">
-          <button type="submit">Delete</button>
-        </form>
-      </li>
-    <% }) %>
-  </ul>
+  <% if (artists.length === 0) { %>
+      <p class="empty-state">ยังไม่มีข้อมูลศิลปินหรือผู้จัด</p>
+    <% } else { %>
+      <div class="entity-grid">
+        <% artists.forEach(artist => { %>
+          <article class="entity-card">
+            <h2><%= artist.ArtistName %></h2>
+            <p>แนวเพลง/ประเภท: <%= artist.genre || '-' %></p>
+            <div class="action-row">
+              <a class="btn-inline" href="/artists/edit/<%= artist.id %>">แก้ไข</a>
+              <form action="/artists/delete/<%= artist.id %>" method="POST">
+                <button class="btn-danger" type="submit">ลบ</button>
+              </form>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
 </body>
 </html>

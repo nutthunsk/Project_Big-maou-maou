@@ -1,40 +1,46 @@
-<h1>เพิ่มคอนเสิร์ต (Admin)</h1>
-<link rel="stylesheet" href="/css/style.css">
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เพิ่มคอนเสิร์ต</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="site-body">
+  <main class="page-shell form-shell">
+    <h1>เพิ่มคอนเสิร์ต</h1>
 
-<form action="/concerts" method="POST">
-  <div>
-    <label>ชื่อคอนเสิร์ต</label>
-    <input type="text" name="ConcertName" required>
-  </div>
+    <form class="stack-form" action="/concerts" method="POST">
+      <label>ชื่อคอนเสิร์ต</label>
+      <input type="text" name="ConcertName" required>
 
-  <div>
-    <label>สถานที่</label>
-    <input type="text" name="venue" required>
-  </div>
+      <label>สถานที่</label>
+        <input type="text" name="venue" required>
 
-  <div>
-    <label>วันที่แสดง</label>
-    <input type="date" name="ConcertDate" required>
-  </div>
+      <label>วันที่แสดง</label>
+        <input type="date" name="ConcertDate" required>
 
-  <div>
-    <label>จำนวนที่นั่ง</label>
-    <input type="number" name="totalSeats" required>
-  </div>
+      <label>จำนวนที่นั่ง</label>
+        <input type="number" name="totalSeats" required>
 
-  <div>
-    <label>ราคา</label>
-    <input type="number" name="price" required>
-  </div>
+      <label>ราคา</label>
+        <input type="number" name="price" required>
 
-  <div>
-      <label>ศิลปิน </label>
-      <select name="ArtistIds[]" >
+      <label>ศิลปิน/ผู้จัด</label>
+      <select name="ArtistIds[]" required>
         <% artists.forEach(a => { %>
           <option value="<%= a.id %>"><%= a.ArtistName %></option>
         <% }) %>
       </select>
-  </div>
+
+      <div class="action-row">
+        <button class="btn-primary btn-small" type="submit">บันทึก</button>
+        <a class="btn-ghost btn-small" href="/concerts">ย้อนกลับ</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>
 
   <button type="submit">เพิ่มคอนเสิร์ต</button>
 </form>

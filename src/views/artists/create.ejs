@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-  <title>Create Artist</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เพิ่มศิลปิน/ผู้จัด</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-  <h1>Add Artist</h1>
+<body class="site-body">
+  <main class="page-shell form-shell">
+    <h1>เพิ่มศิลปิน / ผู้จัด</h1>
+    <form class="stack-form" action="/artists/create" method="POST">
+      <label>ชื่อศิลปิน/ผู้จัด</label>
+      <input type="text" name="ArtistName" placeholder="เช่น Bodyslam / AEG Presents" required>>
 
-  <form action="/artists/create" method="POST">
-    <input type="text" name="ArtistName" placeholder="Artist name" required>
-    <input type="text" name="genre" placeholder="Genre">
-    <button type="submit">Save</button>
-  </form>
+      <label>แนวเพลง/ประเภท</label>
+      <input type="text" name="genre" placeholder="Pop, Rock, Festival Organizer">
 
-  <a href="/artists">Back</a>
+         <div class="action-row">
+        <button class="btn-primary btn-small" type="submit">บันทึก</button>
+        <a href="/artists" class="btn-ghost btn-small">ย้อนกลับ</a>
+      </div>
+    </form>
+  </main>
 </body>
 </html>

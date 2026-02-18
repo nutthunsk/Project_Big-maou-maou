@@ -1,44 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-  <title>Concerts</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>คอนเสิร์ต</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="dark-theme">
-  <h1>Concerts</h1>
-  
-  <div class="action-row">
-    <a class="btn-inline" href="/bookings">รายการจอง</a>
-  </div>
-
-  <% if (concerts.length === 0) { %>
-    <p>ยังไม่มีคอนเสิร์ต</p>
-  <% } %>
-
-  <div class="concert-list">
-    <% concerts.forEach(c => { %>
-      <div class="concert-card">
-        <h2><%= c.ConcertName %></h2>
-        <p>
-          ศิลปิน:
-          <%= c.Artists && c.Artists.length
-            ? c.Artists.map(a => a.ArtistName).join(", ")
-            : "-" %>
-        </p>
-        <p>สถานที่: <%= c.venue %></p>
-        <p>ราคา: <%= c.price %> บาท</p>
-
-        <a class="btn" href="/concerts/<%= c.id %>/book">
-           จองบัตร
-        </a>
-        <form action="/concerts/<%= c.id %>/delete" method="POST"
-            onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
-          <button type="submit" style="color:red">
-          ลบคอนเสิร์ต
-          </button>
-        </form>
+<body class="site-body">
+  <main class="page-shell">
+    <div class="page-head">
+      <h1>คอนเสิร์ต</h1>
+      <div class="action-row">
+        <a class="btn-primary btn-small" href="/concerts/create">+ เพิ่มคอนเสิร์ต</a>
+        <a class="btn-ghost btn-small" href="/">กลับหน้าแรก</a>
       </div>
-    <% }) %>
-  </div>
+    </div>
+
+        <% if (concerts.length === 0) { %>
+      <p class="empty-state">ยังไม่มีคอนเสิร์ตในระบบ</p>
+    <% } else { %>
+      <div class="concert-list">
+        <% concerts.forEach(c => { %>
+          <article class="concert-card">
+            <h2><%= c.ConcertName %></h2>
+            <p><strong>ศิลปิน/ผู้จัด:</strong>
+              <%= c.Artists && c.Artists.length ? c.Artists.map(a => a.ArtistName).join(', ') : '-' %>
+            </p>
+            <p><strong>สถานที่:</strong> <%= c.venue %></p>
+            <p><strong>ราคาเริ่มต้น:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
+            <div class="action-row">
+              <form action="/concerts/<%= c.id %>/delete" method="POST" onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
+                <button type="submit" class="btn-danger">ลบคอนเสิร์ต</button>
+              </form>
+            </div>
+          </article>
+        <% }) %>
+  <% } %>
+  </main>
 </body>
 </html>
