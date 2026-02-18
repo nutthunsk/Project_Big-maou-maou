@@ -27,16 +27,16 @@ exports.index = async (_req, res) => {
 
 exports.show = async (req, res) => {
   try {
-        const booking = await Booking.findByPk(req.params.id, {
+    const booking = await Booking.findByPk(req.params.id, {
       include: [Concert, Customer],
     });
 
     if (!booking) return res.status(404).send("Booking not found");
-        return res.render("bookings/show", { booking });
-      } catch (err) {
-        console.error("Booking show error:", err);
-        return res.redirect("/bookings?error=ไม่สามารถโหลดรายละเอียดการจองได้");
-      }
+    return res.render("bookings/show", { booking });
+  } catch (err) {
+    console.error("Booking show error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถโหลดรายละเอียดการจองได้");
+  }
 };
 
 exports.newForm = async (_req, res) => {
@@ -84,10 +84,10 @@ exports.create = async (req, res) => {
 
 exports.editForm = async (req, res) => {
   try {
-        const booking = await Booking.findByPk(req.params.id);
+    const booking = await Booking.findByPk(req.params.id);
     if (!booking) return res.status(404).send("Booking not found");
 
-const { concerts, customers } = await getRefs();
+    const { concerts, customers } = await getRefs();
     return res.render("bookings/edit", { booking, concerts, customers });
   } catch (err) {
     console.error("Booking edit form error:", err);
@@ -106,12 +106,16 @@ exports.update = async (req, res) => {
     const status = cleanText(req.body.status) || "pending";
 
     if (!ConcertId || !CustomerId || quantity <= 0) {
-      return res.redirect(`/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`);
+      return res.redirect(
+        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
+      );
     }
 
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
-      return res.redirect(`/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`);
+      return res.redirect(
+        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`,
+      );
     }
 
     const totalPrice = Number(concert.price) * quantity;
@@ -127,7 +131,9 @@ exports.update = async (req, res) => {
     return res.redirect(`/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`);
   } catch (err) {
     console.error("Booking update error:", err);
-    return res.redirect(`/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`);
+    return res.redirect(
+      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`,
+    );
   }
 };
 

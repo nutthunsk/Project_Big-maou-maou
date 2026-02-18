@@ -27,11 +27,11 @@ exports.index = async (req, res) => {
         const bookings = concert.Bookings || [];
         const totalQty = bookings.reduce(
           (s, b) => s + Number(b.quantity || 0),
-          0
+          0,
         );
         const totalRevenue = bookings.reduce(
           (s, b) => s + Number(b.totalPrice || 0),
-          0
+          0,
         );
 
         return { concert, totalQty, totalRevenue };
@@ -44,7 +44,7 @@ exports.index = async (req, res) => {
           a.totalRevenue += r.totalRevenue;
           return a;
         },
-        { totalConcerts: 0, totalTickets: 0, totalRevenue: 0 }
+        { totalConcerts: 0, totalTickets: 0, totalRevenue: 0 },
       );
 
       return res.render("reports/index", {
@@ -85,7 +85,7 @@ exports.index = async (req, res) => {
           a.revenue += r.totalSpent;
           return a;
         },
-        { customerCount: 0, bookingCount: 0, revenue: 0 }
+        { customerCount: 0, bookingCount: 0, revenue: 0 },
       );
 
       return res.render("reports/index", {

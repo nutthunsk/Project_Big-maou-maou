@@ -2,8 +2,8 @@
 // app.js (FINAL VERSION)
 // ===============================
 
-const express = require("express");          // framework สำหรับเว็บเซิร์ฟเวอร์
-const path = require("path");                // จัดการ path ให้ข้าม OS ได้
+const express = require("express"); // framework สำหรับเว็บเซิร์ฟเวอร์
+const path = require("path"); // จัดการ path ให้ข้าม OS ได้
 const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
 
 // ===== routes =====

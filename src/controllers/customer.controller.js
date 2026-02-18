@@ -40,7 +40,6 @@ exports.show = async (req, res) => {
   }
 };
 
-
 exports.newForm = (_req, res) => res.render("customers/create");
 
 exports.create = async (req, res) => {
@@ -52,13 +51,16 @@ exports.create = async (req, res) => {
     };
 
     const error = validatePayload(payload);
-    if (error) return res.redirect(`/customers/new?error=${encodeURIComponent(error)}`);
+    if (error)
+      return res.redirect(`/customers/new?error=${encodeURIComponent(error)}`);
 
     await Customer.create(payload);
     return res.redirect("/customers?success=เพิ่มลูกค้าเรียบร้อย");
   } catch (err) {
     console.error("Customer create error:", err);
-    return res.redirect("/customers/new?error=ไม่สามารถเพิ่มลูกค้าได้ (อีเมลอาจซ้ำ)");
+    return res.redirect(
+      "/customers/new?error=ไม่สามารถเพิ่มลูกค้าได้ (อีเมลอาจซ้ำ)",
+    );
   }
 };
 
@@ -87,15 +89,21 @@ exports.update = async (req, res) => {
 
     const error = validatePayload(payload);
     if (error) {
-      return res.redirect(`/customers/${customer.id}/edit?error=${encodeURIComponent(error)}`);
+      return res.redirect(
+        `/customers/${customer.id}/edit?error=${encodeURIComponent(error)}`,
+      );
     }
 
     await customer.update(payload);
-    return res.redirect(`/customers/${customer.id}?success=แก้ไขข้อมูลลูกค้าเรียบร้อย`);
-    } catch (err) {
-      console.error("Customer update error:", err);
-      return res.redirect(`/customers/${req.params.id}/edit?error=ไม่สามารถแก้ไขลูกค้าได้`);
-    }
+    return res.redirect(
+      `/customers/${customer.id}?success=แก้ไขข้อมูลลูกค้าเรียบร้อย`,
+    );
+  } catch (err) {
+    console.error("Customer update error:", err);
+    return res.redirect(
+      `/customers/${req.params.id}/edit?error=ไม่สามารถแก้ไขลูกค้าได้`,
+    );
+  }
 };
 
 // POST /customers/:id/delete

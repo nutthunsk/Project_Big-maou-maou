@@ -29,7 +29,7 @@ exports.show = async (req, res) => {
 
 // POST /artists/create
 exports.create = async (req, res) => {
-try {
+  try {
     const ArtistName = cleanText(req.body.ArtistName);
     const genre = cleanText(req.body.genre);
 
@@ -68,14 +68,20 @@ exports.update = async (req, res) => {
     const genre = cleanText(req.body.genre);
 
     if (!ArtistName || !genre) {
-      return res.redirect(`/artists/${artist.id}/edit?error=กรุณากรอกข้อมูลให้ครบถ้วน`);
+      return res.redirect(
+        `/artists/${artist.id}/edit?error=กรุณากรอกข้อมูลให้ครบถ้วน`,
+      );
     }
 
     await artist.update({ ArtistName, genre });
-    return res.redirect(`/artists/${artist.id}?success=แก้ไขข้อมูลศิลปินเรียบร้อย`);
+    return res.redirect(
+      `/artists/${artist.id}?success=แก้ไขข้อมูลศิลปินเรียบร้อย`,
+    );
   } catch (err) {
     console.error("Artist update error:", err);
-    return res.redirect(`/artists/${req.params.id}/edit?error=ไม่สามารถแก้ไขศิลปินได้`);
+    return res.redirect(
+      `/artists/${req.params.id}/edit?error=ไม่สามารถแก้ไขศิลปินได้`,
+    );
   }
 };
 
@@ -85,9 +91,13 @@ exports.delete = async (req, res) => {
     const artist = await Artist.findByPk(req.params.id);
     if (!artist) return res.status(404).send("Artist not found");
 
-    const concertCount = await Concert.count({ where: { ArtistId: artist.id } });
+    const concertCount = await Concert.count({
+      where: { ArtistId: artist.id },
+    });
     if (concertCount > 0) {
-      return res.redirect("/artists?error=ไม่สามารถลบศิลปินที่มีคอนเสิร์ตผูกอยู่ได้");
+      return res.redirect(
+        "/artists?error=ไม่สามารถลบศิลปินที่มีคอนเสิร์ตผูกอยู่ได้",
+      );
     }
 
     await artist.destroy();

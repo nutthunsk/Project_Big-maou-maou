@@ -18,7 +18,12 @@ body,
 .site-body {
   margin: 0;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top right, #2a2350, #131328 35%, var(--bg) 70%);
+  background: radial-gradient(
+    circle at top right,
+    #2a2350,
+    #131328 35%,
+    var(--bg) 70%
+  );
   color: var(--text);
   min-height: 100vh;
 }
@@ -241,7 +246,6 @@ a {
 .empty-state {
   color: var(--muted);
 }
-
 
 .report-grid {
   display: grid;
@@ -479,7 +483,10 @@ a {
 }
 
 .featured-book-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .featured-book-card:hover {
@@ -800,7 +807,10 @@ a:focus {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .concert-card:hover {

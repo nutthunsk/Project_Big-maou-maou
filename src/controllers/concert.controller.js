@@ -4,8 +4,7 @@ const { Concert, Artist, Booking } = require("../models");
 const normalizeNumber = (value) => Number(value || 0);
 const cleanText = (value) => String(value || "").trim();
 
-const getArtists = () =>
-  Artist.findAll({ order: [["ArtistName", "ASC"]] });
+const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 
 const attachSeatStats = async (concerts) => {
   const concertRows = Array.isArray(concerts) ? concerts : [];
@@ -171,7 +170,7 @@ exports.update = async (req, res) => {
       price <= 0
     ) {
       return res.redirect(
-        `/concerts/${concert.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`
+        `/concerts/${concert.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
       );
     }
 
@@ -189,7 +188,7 @@ exports.update = async (req, res) => {
   } catch (err) {
     console.error("Concert update error:", err);
     res.redirect(
-      `/concerts/${req.params.id}/edit?error=ไม่สามารถแก้ไขคอนเสิร์ตได้`
+      `/concerts/${req.params.id}/edit?error=ไม่สามารถแก้ไขคอนเสิร์ตได้`,
     );
   }
 };
