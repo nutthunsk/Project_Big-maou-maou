@@ -5,38 +5,35 @@
   <a class="btn-primary btn-small" href="/artists/new">+ เพิ่มใหม่</a>
 </div>
 
-<table class="booking-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Genre</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if (!artists || artists.length === 0) { %>
-      <tr>
-        <td colspan="4" class="empty-state">ยังไม่มีข้อมูล</td>
-      </tr>
-    <% } else { %>
-    <% artists.forEach(function (artist) { %>
-        <tr>
-          <td><%= artist.id %></td>
-          <td><%= artist.ArtistName %></td>
-          <td><%= artist.genre %></td>
-          <td class="action-row">
-            <a class="btn-inline btn-small" href="/artists/<%= artist.id %>">ดู</a>
-            <a class="btn-ghost btn-small" href="/artists/<%= artist.id %>/edit">แก้ไข</a>
-            <form method="POST" action="/artists/<%= artist.id %>" onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')">
-              <input type="hidden" name="_method" value="DELETE" />
-              <button class="btn-danger btn-small" type="submit">ลบ</button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    <% } %>
-    </tbody>
-</table>
+<section class="entity-grid">
+  <% if (!artists || artists.length === 0) { %>
+    <p class="empty-state">ยังไม่มีข้อมูลศิลปิน</p>
+  <% } else { %>
+    <% artists.forEach((artist) => { %>
+      <article class="entity-card artist-card">
+        <h3><%= artist.ArtistName %></h3>
+        <p>แนวเพลง/ประเภท: <%= artist.genre %></p>
+
+        <div class="action-row">
+          <a class="btn-inline btn-small" href="/artists/<%= artist.id %>">ดู</a>
+          <a class="btn-inline btn-small" href="/artists/<%= artist.id %>/edit">
+            แก้ไข
+          </a>
+
+          <form
+            method="POST"
+            action="/artists/<%= artist.id %>"
+            onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')"
+          >
+            <input type="hidden" name="_method" value="DELETE" />
+            <button class="btn-danger btn-small" type="submit">
+              ลบ
+            </button>
+          </form>
+        </div>
+      </article>
+    <% }) %>
+  <% } %>
+</section>
 
 <%- include('../partials/footer') %>

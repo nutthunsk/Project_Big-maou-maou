@@ -1,61 +1,74 @@
 const { Concert, Booking, Customer } = require("../models");
 
-exports.concertSales = async (req, res) => {
+exports.index = async (req, res) => {
+  const type = req.query.type || "concert"; // concert | customer
+
   try {
-    const status = req.query.status || "all";
-    const where = status === "all" ? undefined : { status };
+    // =========================
+    // REPORT: CONCERT SALES
+    // =========================
+    if (type === "concert") {
+      const status = req.query.status || "all";
 
-    const concerts = await Concert.findAll({
-      include: [
-        { association: "Artists", through: { attributes: [] } },
-        { model: Booking, where, required: false, include: [Customer] },
-      ],
-      order: [["ConcertDate", "ASC"]],
-    });
+      const bookingInclude =
+        status === "all"
+          ? { model: Booking, required: false }
+          : { model: Booking, where: { status }, required: false };
 
-    const rows = concerts.map((concert) => {
-      const bookings = concert.Bookings || [];
-      const totalQty = bookings.reduce((sum, booking) => sum + Number(booking.quantity || 0), 0);
-      const totalRevenue = bookings.reduce(
-        (sum, booking) => sum + Number(booking.totalPrice || 0),
-        0,
+      const concerts = await Concert.findAll({
+        include: [
+          { association: "Artists", through: { attributes: [] } },
+          bookingInclude,
+        ],
+        order: [["ConcertDate", "ASC"]],
+      });
+
+      const rows = concerts.map((concert) => {
+        const bookings = concert.Bookings || [];
+        const totalQty = bookings.reduce(
+          (s, b) => s + Number(b.quantity || 0),
+          0
+        );
+        const totalRevenue = bookings.reduce(
+          (s, b) => s + Number(b.totalPrice || 0),
+          0
+        );
+
+        return { concert, totalQty, totalRevenue };
+      });
+
+      const summary = rows.reduce(
+        (a, r) => {
+          a.totalConcerts++;
+          a.totalTickets += r.totalQty;
+          a.totalRevenue += r.totalRevenue;
+          return a;
+        },
+        { totalConcerts: 0, totalTickets: 0, totalRevenue: 0 }
       );
 
-      return { concert, totalQty, totalRevenue };
-    });
+      return res.render("reports/index", {
+        type,
+        status,
+        rows,
+        summary,
+      });
+    }
 
-    const summary = rows.reduce(
-      (acc, row) => {
-        acc.totalConcerts += 1;
-        acc.totalTickets += row.totalQty;
-        acc.totalRevenue += row.totalRevenue;
-        return acc;
-      },
-      { totalConcerts: 0, totalTickets: 0, totalRevenue: 0 },
-    );
+    // =========================
+    // REPORT: CUSTOMER SPENDING
+    // =========================
+    if (type === "customer") {
+      const customers = await Customer.findAll({
+        include: [{ model: Booking }],
+        order: [["fullname", "ASC"]],
+      });
 
-    return res.render("reports/concert-sales", { rows, status, summary });
-  } catch (err) {
-    console.error("Report concert sales error:", err);
-    return res.redirect("/?error=ไม่สามารถโหลดรายงานยอดขายคอนเสิร์ตได้");
-  }
-};
-
-exports.customerSpending = async (req, res) => {
-  try {
-    const minSpent = Number(req.query.minSpent || 0);
-
-    const customers = await Customer.findAll({
-      include: [{ model: Booking, include: [Concert] }],
-      order: [["fullname", "ASC"]],
-    });
-
-    const rows = customers
-      .map((customer) => {
+      const rows = customers.map((customer) => {
         const bookings = customer.Bookings || [];
-        const totalSpent = bookings.reduce((sum, booking) => {
-          if (booking.status === "cancelled") return sum;
-          return sum + Number(booking.totalPrice || 0);
+        const totalSpent = bookings.reduce((sum, b) => {
+          if (b.status === "cancelled") return sum;
+          return sum + Number(b.totalPrice || 0);
         }, 0);
 
         return {
@@ -63,22 +76,26 @@ exports.customerSpending = async (req, res) => {
           bookings: bookings.length,
           totalSpent,
         };
-      })
-      .filter((row) => row.totalSpent >= minSpent);
+      });
 
-    const summary = rows.reduce(
-      (acc, row) => {
-        acc.customerCount += 1;
-        acc.bookingCount += row.bookings;
-        acc.revenue += row.totalSpent;
-        return acc;
-      },
-      { customerCount: 0, bookingCount: 0, revenue: 0 },
-    );
+      const summary = rows.reduce(
+        (a, r) => {
+          a.customerCount++;
+          a.bookingCount += r.bookings;
+          a.revenue += r.totalSpent;
+          return a;
+        },
+        { customerCount: 0, bookingCount: 0, revenue: 0 }
+      );
 
-    return res.render("reports/customer-spending", { rows, minSpent, summary });
+      return res.render("reports/index", {
+        type,
+        rows,
+        summary,
+      });
+    }
   } catch (err) {
-    console.error("Report customer spending error:", err);
-    return res.redirect("/?error=ไม่สามารถโหลดรายงานการใช้จ่ายลูกค้าได้");
+    console.error("Report error:", err);
+    return res.redirect("/?error=โหลดรายงานไม่สำเร็จ");
   }
 };

@@ -1,25 +1,21 @@
 <%- include('partials/header', { title: 'Dashboard' }) %>
 
     <section class="page-head">
-  <h1>Dashboard ระบบจัดการคอนเสิร์ต</h1>
+  <h1>BIG MAOU MAOU CONCERTS</h1>
 </section>
 
     <section class="report-grid">
   <article class="report-card">
-    <h3>จำนวน Artists</h3>
+    <h3>Artists</h3>
     <p><%= stats.artistCount %></p>
   </article>
   <article class="report-card">
-    <h3>จำนวน Concerts</h3>
+    <h3>Concerts</h3>
     <p><%= stats.concertCount %></p>
   </article>
   <article class="report-card">
-    <h3>จำนวน Customers</h3>
+    <h3>Customers</h3>
     <p><%= stats.customerCount %></p>
-  </article>
-  <article class="report-card">
-    <h3>จำนวน Bookings</h3>
-    <p><%= stats.bookingCount %></p>
   </article>
 </section>
 
@@ -32,11 +28,10 @@
       <table class="booking-table">
     <thead>
       <tr>
-        <th>#</th>
         <th>Concert</th>
         <th>Customer</th>
-        <th>จำนวน</th>
-        <th>สถานะ</th>
+        <th>Count</th>
+        <th>Status</th>
       </tr>
     </thead>
     <tbody>
@@ -47,7 +42,6 @@
       <% } %>
     <% latestBookings.forEach((booking) => { %>
         <tr>
-          <td><%= booking.id %></td>
           <td><%= booking.Concert ? booking.Concert.ConcertName : '-' %></td>
           <td><%= booking.Customer ? booking.Customer.fullname : '-' %></td>
           <td><%= booking.quantity %></td>

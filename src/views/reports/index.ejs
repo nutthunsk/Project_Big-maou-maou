@@ -1,0 +1,122 @@
+<%- include('../partials/header', { title: 'Reports' }) %>
+
+<body class="site-body">
+  <header class="app-header">
+    <h1>รายงาน</h1>
+  </header>
+
+  <main class="page-shell">
+
+    <!-- ===== filter form ===== -->
+    <form method="GET" action="/reports" class="stack-form" style="margin-bottom:20px">
+      <div>
+        <label>เลือกประเภทรายงาน</label>
+        <select name="type" onchange="this.form.submit()">
+          <option value="concert" <%= type === 'concert' ? 'selected' : '' %>>
+            Concert Sales
+          </option>
+          <option value="customer" <%= type === 'customer' ? 'selected' : '' %>>
+            Customer Spending
+          </option>
+        </select>
+      </div>
+
+      <% if (type === 'concert') { %>
+        <div>
+          <label>สถานะการจอง</label>
+          <select name="status" onchange="this.form.submit()">
+            <option value="all" <%= status === 'all' ? 'selected' : '' %>>ทั้งหมด</option>
+            <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>pending</option>
+            <option value="paid" <%= status === 'paid' ? 'selected' : '' %>>paid</option>
+            <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+          </select>
+        </div>
+      <% } %>
+    </form>
+
+    <!-- ================= CONCERT REPORT ================= -->
+    <% if (type === 'concert') { %>
+      <h2>รายงานยอดขายคอนเสิร์ต</h2>
+
+      <section class="report-grid">
+        <div class="report-card">
+          <h3>คอนเสิร์ตทั้งหมด</h3>
+          <p><%= summary.totalConcerts %></p>
+        </div>
+        <div class="report-card">
+          <h3>บัตรทั้งหมด</h3>
+          <p><%= summary.totalTickets %></p>
+        </div>
+        <div class="report-card">
+          <h3>รายได้รวม</h3>
+          <p><%= Number(summary.totalRevenue).toLocaleString() %> บาท</p>
+        </div>
+      </section>
+
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>Concert</th>
+            <th>Artists</th>
+            <th>Tickets</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(r => { %>
+            <tr>
+              <td><%= r.concert.ConcertName %></td>
+              <td><%= r.concert.Artists.map(a => a.ArtistName).join(', ') %></td>
+              <td><%= r.totalQty %></td>
+              <td><%= Number(r.totalRevenue).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
+    <!-- ================= CUSTOMER REPORT ================= -->
+    <% if (type === 'customer') { %>
+      <h2>รายงานการใช้จ่ายลูกค้า</h2>
+
+      <section class="report-grid">
+        <div class="report-card">
+          <h3>ลูกค้า</h3>
+          <p><%= summary.customerCount %></p>
+        </div>
+        <div class="report-card">
+          <h3>การจอง</h3>
+          <p><%= summary.bookingCount %></p>
+        </div>
+        <div class="report-card">
+          <h3>รายได้รวม</h3>
+          <p><%= Number(summary.revenue).toLocaleString() %> บาท</p>
+        </div>
+      </section>
+
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Bookings</th>
+            <th>Total Spent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(r => { %>
+            <tr>
+              <td><%= r.customer.fullname %></td>
+              <td><%= r.customer.email %></td>
+              <td><%= r.bookings %></td>
+              <td><%= Number(r.totalSpent).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+
+  </main>
+</body>
+
+<%- include('../partials/footer') %>

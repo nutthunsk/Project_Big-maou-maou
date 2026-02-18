@@ -783,3 +783,55 @@ a:focus {
 .booking-table tbody tr:hover {
   background: rgba(124, 77, 255, 0.12);
 }
+
+/* ===== concerts card layout (no table) ===== */
+
+.concert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.concert-card {
+  background: linear-gradient(145deg, #1a1e35, #14162b);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.concert-card:hover {
+  transform: translateY(-4px);
+  border-color: #4b57a3;
+  box-shadow: 0 14px 34px rgba(20, 30, 90, 0.35);
+}
+
+.concert-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.concert-meta {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.concert-meta strong {
+  color: #fff;
+}
+
+.concert-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.concert-actions form {
+  margin: 0;
+}

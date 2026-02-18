@@ -1,53 +1,60 @@
-<%- include('../partials/header', { title: 'Concerts' }) %>\
+<%- include('../partials/header', { title: 'คอนเสิร์ต' }) %>
+
 <div class="page-head">
-  <h1>Concerts</h1>
-  <a class="btn-primary btn-small" href="/concerts/new">+ เพิ่มใหม่</a>
+  <h1>คอนเสิร์ต</h1>
+  <div class="page-actions">
+    <a class="btn-primary btn-small" href="/concerts/new">+ เพิ่มคอนเสิร์ต</a>
+    <a class="btn-ghost btn-small" href="/">กลับหน้าหลัก</a>
+  </div>
 </div>
 
-<table class="booking-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Venue</th>
-      <th>Date</th>
-      <th>Artists</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if (!concerts || concerts.length === 0) { %>
-      <tr>
-        <td colspan="5" class="empty-state">ยังไม่มีข้อมูล</td>
-      </tr>
-    <% } else { %>
-      <% concerts.forEach(function (concert) { %>
-        <tr>
-          <td><%= concert.ConcertName %></td>
-          <td><%= concert.venue %></td>
-          <td><%= concert.ConcertDate %></td>
-          <td>
-            <%
-              var artistNames = '-';
-              if (concert.Artists && concert.Artists.length > 0) {
-                artistNames = concert.Artists.map(function (artist) {
-                  return artist.ArtistName;
-                }).join(', ');
-              }
-            %>
-            <%= artistNames %>
-          </td>
-          <td class="action-row">
-            <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>">ดู</a>
-            <a class="btn-ghost btn-small" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
-            <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
-              <input type="hidden" name="_method" value="DELETE" />
-              <button class="btn-danger btn-small" type="submit">ลบ</button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    <% } %>
-    </tbody>
-</table>
+<section class="concert-grid">
+  <% if (!concerts || concerts.length === 0) { %>
+    <p class="empty-state">ยังไม่มีคอนเสิร์ตในระบบ</p>
+  <% } %>
+
+  <% concerts.forEach((concert) => { 
+    const total = concert.seatStats?.totalSeats || 0;
+    const booked = concert.seatStats?.bookedSeats || 0;
+    const remaining = concert.seatStats?.remainingSeats || 0;
+  %>
+    <article class="concert-card">
+      <h3 class="concert-title"><%= concert.ConcertName %></h3>
+
+      <p>
+        <strong>ศิลปิน/ผู้จัด:</strong>
+        <%= concert.Artists && concert.Artists.length
+          ? concert.Artists.map(a => a.ArtistName).join(', ')
+          : '-' %>
+      </p>
+
+      <p><strong>สถานที่:</strong> <%= concert.venue %></p>
+      <p><strong>ราคาเริ่มต้น:</strong> <%= concert.price %> บาท</p>
+
+      <p><strong>ที่นั่งทั้งหมด:</strong> <%= total %> ที่นั่ง</p>
+      <p><strong>จองแล้ว:</strong> <%= booked %> ที่นั่ง</p>
+      <p><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</p>
+
+      <div class="concert-actions">
+        <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/book">
+          ดู
+        </a>
+        <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
+          แก้ไข
+        </a>
+
+
+        <form method="POST"
+              action="/concerts/<%= concert.id %>"
+              onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+          <input type="hidden" name="_method" value="DELETE">
+          <button class="btn-danger btn-small" type="submit">
+            ลบคอนเสิร์ต
+          </button>
+        </form>
+      </div>
+    </article>
+  <% }) %>
+</section>
 
 <%- include('../partials/footer') %>
