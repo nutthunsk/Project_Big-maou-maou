@@ -21,10 +21,10 @@
         <input type="date" name="ConcertDate" required>
 
       <label>จำนวนที่นั่ง</label>
-        <input type="number" name="totalSeats" required>
+         <input type="number" name="totalSeats" min="1" step="1" required>
 
       <label>ราคา</label>
-        <input type="number" name="price" required>
+        <input type="number" name="price" min="1" step="0.01" required>
 
       <label>ศิลปิน/ผู้จัด</label>
       <select name="ArtistIds[]" required>

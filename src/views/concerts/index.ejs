@@ -28,8 +28,22 @@
             </p>
             <p><strong>สถานที่:</strong> <%= c.venue %></p>
             <p><strong>ราคาเริ่มต้น:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
+            <p><strong>ที่นั่งทั้งหมด:</strong> <%= c.seatStats.totalSeats %> ที่นั่ง</p>
+            <p><strong>จองแล้ว:</strong> <%= c.seatStats.bookedSeats %> ที่นั่ง</p>
+            <p><strong>คงเหลือ:</strong>
+              <% if (c.seatStats.isSoldOut) { %>
+                <span class="sold-out-text">บัตรหมด</span>
+              <% } else { %>
+                <%= c.seatStats.remainingSeats %> ที่นั่ง
+              <% } %>
+            </p>
+
             <div class="action-row">
-              <a class="btn-inline" href="/concerts/<%= c.id %>/book">จองบัตร</a>
+              <% if (c.seatStats.isSoldOut) { %>
+                <span class="btn-danger btn-small">บัตรหมด</span>
+              <% } else { %>
+                <a class="btn-inline" href="/concerts/<%= c.id %>/book">จองบัตร</a>
+              <% } %>
               <form action="/concerts/<%= c.id %>/delete" method="POST" onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
                 <button type="submit" class="btn-danger">ลบคอนเสิร์ต</button>
               </form>

@@ -726,3 +726,23 @@ a {
     font-size: 30px;
   }
 }
+
+.poster-card-fallback {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(165deg, #431863 0%, #23235a 40%, #131322 100%);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.sold-out-text {
+  color: #ff5b73;
+  font-weight: 700;
+}
+
+.ticket-buy-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}

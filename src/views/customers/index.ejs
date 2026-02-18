@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ลูกค้าธุรกิจ</title>
+  <title>ลูกค้า</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="site-body">
   <main class="page-shell">
     <div class="page-head">
-      <h1>ลูกค้าธุรกิจ</h1>
+      <h1>ลูกค้า</h1>
       <div class="action-row">
         <a class="btn-inline" href="/customers/report">ดูรายงานเชิงธุรกิจ</a>
         <a class="btn-ghost btn-small" href="/">กลับหน้าแรก</a>
@@ -17,19 +17,20 @@
     </div>
 
     <% if (customerRows.length === 0) { %>
-      <p class="empty-state">ยังไม่มีข้อมูลลูกค้าธุรกิจ</p>
+      <p class="empty-state">ยังไม่มีข้อมูลลูกค้า</p>
     <% } else { %>
       <table class="booking-table">
         <thead>
           <tr>
-            <th>#</th>
+            <th>คอนเสิร์ต</th>
             <th>ชื่อ-นามสกุล</th>
             <th>อีเมล</th>
             <th>เบอร์โทร</th>
             <th>จำนวนการจอง</th>
-            <th>จองแล้วชำระ</th>
+            <th>สถานะการชำระเงิน</th>
             <th>ยอดชำระสะสม</th>
             <th>จองล่าสุด</th>
+            <th>การจัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -40,9 +41,14 @@
               <td><%= row.customer.email %></td>
               <td><%= row.customer.phoneNumber %></td>
               <td><%= row.totalBookings %></td>
-              <td><%= row.paidBookings %></td>
+              <td><%= row.paymentSummary %></td>
               <td><%= row.totalSpent.toLocaleString() %> บาท</td>
               <td><%= row.lastBookingDate ? row.lastBookingDate.toLocaleString('th-TH') : '-' %></td>
+              <td>
+                <form action="/customers/<%= row.customer.id %>/delete" method="POST" onsubmit="return confirm('ยืนยันการลบข้อมูลลูกค้ารายนี้?')">
+                  <button type="submit" class="btn-danger">ลบข้อมูล</button>
+                </form>
+              </td>
             </tr>
           <% }) %>
         </tbody>
