@@ -49,7 +49,6 @@ app.set("view engine", "ejs");                // ใช้ EJS เป็น temp
 app.set("views", path.join(__dirname, "views"));
 // กำหนดโฟลเดอร์เก็บไฟล์ .ejs
 
-// ===== test route =====
 // ===== homepage =====
 app.get("/", async (req, res) => {
   try {

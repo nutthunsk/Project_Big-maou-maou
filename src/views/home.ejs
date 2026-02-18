@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body class="site-body">
+  <% const safeStats = stats || { artistCount: 0, concertCount: 0, customerCount: 0 }; %>
+  <% const safeFeaturedConcerts = Array.isArray(featuredConcerts) ? featuredConcerts : []; %>
   <header class="hero hero-home">
     <nav class="top-nav">
       <div class="brand">BIG MAOU MAOU</div>
@@ -33,15 +35,15 @@
     <section class="stat-grid">
       <article class="stat-card">
         <p>ศิลปิน/ผู้จัด</p>
-        <h2><%= stats.artistCount %></h2>
+        <h2><%= safeStats.artistCount %></h2>
       </article>
       <article class="stat-card">
         <p>คอนเสิร์ตในระบบ</p>
-        <h2><%= stats.concertCount %></h2>
+        <h2><%= safeStats.concertCount %></h2>
       </article>
       <article class="stat-card">
         <p>ลูกค้าธุรกิจ</p>
-        <h2><%= stats.customerCount %></h2>
+        <h2><%= safeStats.customerCount %></h2>
       </article>
     </section>
   </header>
@@ -53,19 +55,20 @@
         <a href="/concerts" class="btn-inline btn-small">ดูทั้งหมด</a>
       </div>
 
-      <% if (featuredConcerts.length === 0) { %>
+      <% if (safeFeaturedConcerts.length === 0) { %>
         <p class="empty-state">ยังไม่มีคอนเสิร์ต ลองเพิ่มจากเมนูคอนเสิร์ตก่อน</p>
       <% } else { %>
-        <div class="feature-grid">
-          <% featuredConcerts.forEach(c => { %>
-            <article class="feature-card">
+        <div class="feature-grid featured-booking-grid">
+          <% safeFeaturedConcerts.forEach(c => { %>
+            <a class="feature-card featured-book-card" href="/concerts/<%= c.id %>/book">
               <h3><%= c.ConcertName %></h3>
               <p><strong>ศิลปิน/ผู้จัด:</strong>
                 <%= c.Artists && c.Artists.length ? c.Artists.map(a => a.ArtistName).join(', ') : '-' %>
               </p>
               <p><strong>สถานที่:</strong> <%= c.venue %></p>
               <p><strong>ราคา:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
-            </article>
+              <span class="book-hint">กดเพื่อดูรายละเอียดและจองบัตร →</span>
+            </a>
           <% }) %>
         </div>
       <% } %>

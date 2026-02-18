@@ -8,7 +8,7 @@
 </head>
 <body class="site-body booking-page">
   <main class="booking-shell">
-    <a href="/concerts" class="booking-back">← รายละเอียด</a>
+    <a href="/" class="booking-back">← กลับหน้า Home</a>
 
     <section class="booking-hero">
       <div class="poster-wrap">
@@ -45,12 +45,7 @@
         <p class="ticket-price">฿<%= Number(concert.price).toLocaleString() %></p>
       </div>
 
-      <a href="#booking-form" class="ticket-buy-btn">ซื้อบัตร</a>
-    </section>
-
-    <section class="booking-tabs">
-      <button class="tab tab-active" type="button">รายละเอียดคอนเสิร์ต</button>
-      <button class="tab" type="button">ขั้นตอนการซื้อบัตร</button>
+      <a href="/concerts" class="ticket-buy-btn">ซื้อบัตร</a>
     </section>
 
     <section class="booking-detail-card">
@@ -62,27 +57,6 @@
         <li>กรุณาตรวจสอบชื่อ อีเมล และเบอร์โทรให้ถูกต้องก่อนยืนยัน</li>
         <li>หลังชำระเงินสำเร็จ ระบบจะส่งหลักฐานการจองไปทางอีเมล</li>
       </ul>
-    </section>
-
-    <section class="booking-form-card" id="booking-form">
-      <h2>กรอกข้อมูลเพื่อจองบัตร</h2>
-      <form action="/bookings/create" method="POST" class="booking-form-grid">
-        <input type="hidden" name="concertId" value="<%= concert.id %>">
-
-        <label>ชื่อ-นามสกุล</label>
-        <input type="text" name="fullname" required>
-
-        <label>Email</label>
-        <input type="email" name="email" required>
-
-        <label>เบอร์โทร</label>
-        <input type="text" name="phoneNumber" required>
-
-        <label>จำนวนบัตร</label>
-        <input type="number" name="quantity" min="1" max="6" required>
-
-        <button type="submit" class="btn-primary">ยืนยันการจอง</button>
-      </form>
     </section>
   </main>
 

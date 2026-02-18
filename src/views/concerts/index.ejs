@@ -29,13 +29,15 @@
             <p><strong>สถานที่:</strong> <%= c.venue %></p>
             <p><strong>ราคาเริ่มต้น:</strong> <%= Number(c.price).toLocaleString() %> บาท</p>
             <div class="action-row">
+              <a class="btn-inline" href="/concerts/<%= c.id %>/book">จองบัตร</a>
               <form action="/concerts/<%= c.id %>/delete" method="POST" onsubmit="return confirm('แน่ใจว่าจะลบคอนเสิร์ตนี้?')">
                 <button type="submit" class="btn-danger">ลบคอนเสิร์ต</button>
               </form>
             </div>
           </article>
         <% }) %>
-  <% } %>
+      </div>
+    <% } %>
   </main>
 </body>
 </html>
