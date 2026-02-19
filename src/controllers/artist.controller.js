@@ -6,7 +6,10 @@ const normalizeArtistName = (value) => cleanText(value).toUpperCase();
 
 exports.index = async (_req, res) => {
   try {
-    const artists = await Artist.findAll({ order: [["id", "ASC"]] });
+    const artists = await Artist.findAll({
+      include: [{ association: "Concerts", through: { attributes: [] } }],
+      order: [["id", "ASC"]],
+    });
     return res.render("artists/index", { artists });
   } catch (err) {
     console.error("Artist index error:", err);

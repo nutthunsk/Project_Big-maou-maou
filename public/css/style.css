@@ -918,3 +918,41 @@ a:focus {
   line-height: 1;
   padding: 0;
 }
+
+.compact-grid {
+  gap: 12px;
+}
+
+.compact-card {
+  padding: 16px;
+}
+
+.concert-meta-list {
+  margin: 8px 0 0;
+  padding-left: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.concert-meta-list li {
+  margin: 0;
+  color: var(--muted);
+}
+
+.concert-title {
+  margin: 0 0 8px;
+}
+
+.compact-actions {
+  margin-top: 14px;
+}
+
+.artist-concert-list {
+  margin-top: 4px;
+}
+
+.muted-inline {
+  color: var(--muted);
+  font-size: 13px;
+}

@@ -10,11 +10,30 @@
     <p class="empty-state">ยังไม่มีข้อมูลศิลปิน</p>
   <% } else { %>
     <% artists.forEach((artist) => { %>
-      <article class="entity-card artist-card">
+      <article class="entity-card artist-card compact-card">
         <h3><%= artist.ArtistName %></h3>
         <p>แนวเพลง/ประเภท: <%= artist.genre %></p>
 
-        <div class="action-row">
+         <p><strong>คอนเสิร์ตที่แสดง:</strong></p>
+        <% if (!artist.Concerts || !artist.Concerts.length) { %>
+          <p class="empty-state">- ยังไม่มีรายการ -</p>
+        <% } else { %>
+          <ul class="concert-meta-list artist-concert-list">
+            <% artist.Concerts.slice(0, 4).forEach((concert) => {
+              const d = new Date(`${concert.ConcertDate}T00:00:00`);
+            %>
+              <li>
+                <%= concert.ConcertName %>
+                <span class="muted-inline">(
+                  <%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                )</span>
+              </li>
+            <% }) %>
+            <% if (artist.Concerts.length > 4) { %>
+              <li class="muted-inline">และอีก <%= artist.Concerts.length - 4 %> รายการ</li>
+            <% } %>
+          </ul>
+        <% } %>
           <a class="btn-inline btn-small" href="/artists/<%= artist.id %>">ดู</a>
           <a class="btn-inline btn-small" href="/artists/<%= artist.id %>/edit">
             แก้ไข

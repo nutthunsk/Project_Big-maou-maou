@@ -8,41 +8,53 @@
   </div>
 </div>
 
-<section class="concert-grid">
+<section class="concert-grid compact-grid">
   <% if (!concerts || concerts.length === 0) { %>
     <p class="empty-state">ยังไม่มีคอนเสิร์ตในระบบ</p>
   <% } %>
 
-  <% concerts.forEach((concert) => { 
+  <% concerts.forEach((concert) => {
     const total = concert.seatStats?.totalSeats || 0;
     const booked = concert.seatStats?.bookedSeats || 0;
     const remaining = concert.seatStats?.remainingSeats || 0;
+    const dateObj = new Date(`${concert.ConcertDate}T00:00:00`);
+    const displayDate = dateObj.toLocaleDateString('th-TH', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    const displayTime = dateObj.toLocaleTimeString('th-TH', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
   %>
-    <article class="concert-card">
+    <article class="concert-card compact-card">
       <h3 class="concert-title"><%= concert.ConcertName %></h3>
 
-      <p>
-        <strong>ศิลปิน/ผู้จัด:</strong>
-        <%= concert.Artists && concert.Artists.length
-          ? concert.Artists.map(a => a.ArtistName).join(', ')
-          : '-' %>
-      </p>
+      <ul class="concert-meta-list">
+        <li><strong>วันแสดง:</strong> <%= displayDate %></li>
+        <li><strong>เวลา:</strong> <%= displayTime %> น.</li>
+        <li>
+          <strong>ศิลปิน/ผู้จัด:</strong>
+          <%= concert.Artists && concert.Artists.length
+            ? concert.Artists.map(a => a.ArtistName).join(', ')
+            : '-' %>
+        </li>
+        <li><strong>สถานที่:</strong> <%= concert.venue %></li>
+        <li><strong>ราคาเริ่มต้น:</strong> <%= Number(concert.price).toLocaleString() %> บาท</li>
+        <li><strong>ที่นั่งทั้งหมด:</strong> <%= total %> ที่นั่ง</li>
+        <li><strong>จองแล้ว:</strong> <%= booked %> ที่นั่ง</li>
+        <li><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</li>
+      </ul>
 
-      <p><strong>สถานที่:</strong> <%= concert.venue %></p>
-      <p><strong>ราคาเริ่มต้น:</strong> <%= concert.price %> บาท</p>
-
-      <p><strong>ที่นั่งทั้งหมด:</strong> <%= total %> ที่นั่ง</p>
-      <p><strong>จองแล้ว:</strong> <%= booked %> ที่นั่ง</p>
-      <p><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</p>
-
-      <div class="concert-actions">
+      <div class="concert-actions compact-actions">
         <a class="btn-inline btn-small" href="/bookings/new?concertId=<%= concert.id %>">
           จองบัตร
         </a>
         <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
           แก้ไข
         </a>
-
 
         <form method="POST"
               action="/concerts/<%= concert.id %>"
