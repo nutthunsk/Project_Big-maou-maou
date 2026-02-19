@@ -1,31 +1,30 @@
-<%- include('../partials/header', { title: 'Artist detail' }) %>
+<%- include('../partials/header', { title: 'Concert detail' }) %>
 
-<h1><%= artist.ArtistName %></h1>
-<p><strong>Genre:</strong> <%= artist.genre %></p>
+<h1><%= concert.ConcertName %></h1>
+<p><strong>Venue:</strong> <%= concert.venue %></p>
+<p><strong>Date:</strong> <%= concert.ConcertDate %></p>
+<p>
+  <strong>Artists:</strong>
+  <%
+    var artistNames = '-';
+    if (concert.Artists && concert.Artists.length > 0) {
+      artistNames = concert.Artists.map(function (artist) {
+        return artist.ArtistName;
+      }).join(', ');
+    }
+  %>
+  <%= artistNames %>
+</p>
+<p><strong>Total Seats:</strong> <%= concert.totalSeats %></p>
+<p><strong>Price:</strong> <%= Number(concert.price).toLocaleString() %> บาท</p>
 
-<h2>Concerts ที่เกี่ยวข้อง</h2>
-<ul class="concert-meta-list artist-concert-list">
-  <% if (!artist.Concerts || !artist.Concerts.length) { %>
-    <li>- ไม่มีรายการ -</li>
-  <% } else { %>
-    <% artist.Concerts.forEach((concert) => { %>
-      <li>
-        <strong><%= concert.ConcertName %></strong>
-        <span class="muted-inline">
-          <% if (concert.ConcertDate) { %>
-            (<%= new Date(`${concert.ConcertDate}T00:00:00`).toLocaleDateString('th-TH', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) %>)
-          <% } %>
-        </span>
-      </li>
-    <% }) %>
-  <% } %>
+<h2>จำนวนการจองทั้งหมด: <%= (concert.Bookings || []).length %></h2>
 
-  </ul>
-
-<div class="action-row compact-actions">
-  <a class="btn-ghost" href="/artists">กลับ</a>
-  <a class="btn-inline" href="/artists/<%= artist.id %>/edit">แก้ไข</a>
-  <form method="POST" action="/artists/<%= artist.id %>" onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')">
+<div class="action-row">
+  <a class="btn-primary" href="/bookings/new?concertId=<%= concert.id %>">จองบัตร</a>
+  <a class="btn-ghost" href="/concerts">กลับ</a>
+  <a class="btn-inline" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
+  <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
     <input type="hidden" name="_method" value="DELETE" />
     <button class="btn-danger" type="submit">ลบ</button>
   </form>

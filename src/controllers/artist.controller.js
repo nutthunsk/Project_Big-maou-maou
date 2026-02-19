@@ -1,4 +1,4 @@
-const { Artist, Concert } = require("../models");
+const { Artist, Concert, Booking } = require("../models");
 
 // GET /artists
 const cleanText = (value) => String(value || "").trim();
@@ -109,13 +109,23 @@ exports.delete = async (req, res) => {
     });
     if (!artist) return res.status(404).send("Artist not found");
 
-    const primaryConcertCount = await Concert.count({
+    const primaryConcerts = await Concert.findAll({
       where: { ArtistId: artist.id },
+      include: [{ association: "Artists", through: { attributes: [] } }],
     });
-    if (primaryConcertCount > 0) {
-      return res.redirect(
-        "/artists?error=ไม่สามารถลบศิลปินที่เป็นศิลปินหลักของคอนเสิร์ตได้",
+
+    for (const concert of primaryConcerts) {
+      const fallbackArtist = (concert.Artists || []).find(
+        (a) => Number(a.id) !== Number(artist.id),
       );
+    
+        if (!fallbackArtist) {
+        await Booking.destroy({ where: { ConcertId: concert.id } });
+        await concert.destroy();
+        continue;
+      }
+
+      await concert.update({ ArtistId: fallbackArtist.id });
     }
 
     await artist.setConcerts([]);
