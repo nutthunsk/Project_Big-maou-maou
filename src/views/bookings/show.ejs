@@ -8,8 +8,8 @@
 <p><strong>Status:</strong> <%= booking.status %></p>
 
 <div class="action-row">
-  <a class="btn-ghost" href="/bookings">กลับ</a>
   <a class="btn-inline" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
+  <a class="btn-ghost" href="/bookings">กลับ</a>
   <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('ยืนยันการลบรายการจองนี้?')">
     <input type="hidden" name="_method" value="DELETE" />
     <button class="btn-danger" type="submit">ลบ</button>

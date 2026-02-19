@@ -4,10 +4,8 @@ const cleanText = (value) => String(value || "").trim();
 const normalizeNumber = (value) => Number(value || 0);
 
 const getRefs = async () => {
-  const [concerts, customers] = await Promise.all([
-    Concert.findAll({ order: [["ConcertDate", "ASC"]] }),
-    Customer.findAll({ order: [["fullname", "ASC"]] }),
-  ]);
+  const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
+  const customers = await Customer.findAll({ order: [["fullname", "ASC"]] });
   return { concerts, customers };
 };
 
@@ -42,12 +40,12 @@ exports.show = async (req, res) => {
 exports.newForm = async (req, res) => {
   try {
     const { concerts, customers } = await getRefs();
-     const selectedConcertId = normalizeNumber(req.query.concertId);
+    const selectedConcertId = normalizeNumber(req.query.concertId);
 
     return res.render("bookings/create", {
       concerts,
       customers,
-      selectedConcer
+      selectedConcertId,
     });
   } catch (err) {
     console.error("Booking new form error:", err);
@@ -58,11 +56,13 @@ exports.newForm = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const ConcertId = normalizeNumber(req.body.ConcertId);
-    const CustomerId = normalizeNumber(req.body.CustomerId);
+    const fullname = cleanText(req.body.fullname);
+    const email = cleanText(req.body.email).toLowerCase();
+    const phoneNumber = cleanText(req.body.phoneNumber);
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
 
-    if (!ConcertId || !CustomerId || quantity <= 0) {
+    if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
       return res.redirect("/bookings/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
     }
 
@@ -71,11 +71,22 @@ exports.create = async (req, res) => {
       return res.redirect("/bookings/new?error=ไม่พบข้อมูลคอนเสิร์ต");
     }
 
+    // 🔥 สร้างหรือค้นหา Customer (เหลือแค่รอบเดียว)
+    const [customer] = await Customer.findOrCreate({
+      where: { email },
+      defaults: { fullname, email, phoneNumber },
+    });
+
+    // ถ้าข้อมูลเปลี่ยนให้อัปเดต
+    if (customer.fullname !== fullname || customer.phoneNumber !== phoneNumber) {
+      await customer.update({ fullname, phoneNumber });
+    }
+
     const totalPrice = Number(concert.price) * quantity;
 
     await Booking.create({
       ConcertId,
-      CustomerId,
+      CustomerId: customer.id,
       quantity,
       status,
       totalPrice,
@@ -94,7 +105,12 @@ exports.editForm = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     const { concerts, customers } = await getRefs();
-    return res.render("bookings/edit", { booking, concerts, customers });
+
+    return res.render("bookings/edit", {
+      booking,
+      concerts,
+      customers,
+    });
   } catch (err) {
     console.error("Booking edit form error:", err);
     return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มแก้ไขการจองได้");
@@ -113,14 +129,14 @@ exports.update = async (req, res) => {
 
     if (!ConcertId || !CustomerId || quantity <= 0) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
+        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`
       );
     }
 
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`,
+        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`
       );
     }
 
@@ -134,11 +150,13 @@ exports.update = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect(`/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`);
+    return res.redirect(
+      `/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`
+    );
   } catch (err) {
     console.error("Booking update error:", err);
     return res.redirect(
-      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`,
+      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`
     );
   }
 };

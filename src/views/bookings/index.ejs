@@ -2,7 +2,6 @@
 
   <div class="page-head">
   <h1>Bookings</h1>
-  <a class="btn-primary btn-small" href="/bookings/new">+ เพิ่มใหม่</a>
 </div>
 
 <table class="booking-table">
@@ -31,7 +30,6 @@
         <td><%= Number(booking.totalPrice).toLocaleString() %></td>
         <td><%= booking.status %></td>
         <td class="action-row">
-          <a class="btn-inline btn-small" href="/bookings/<%= booking.id %>">ดู</a>
           <a class="btn-ghost btn-small" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
           <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('ยืนยันการลบรายการจองนี้?')">
             <input type="hidden" name="_method" value="DELETE" />

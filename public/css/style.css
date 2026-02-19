@@ -845,3 +845,42 @@ a:focus {
 .concert-actions form {
   margin: 0;
 }
+
+.booking-form-layout {
+  display: flex;
+  justify-content: center;
+}
+
+.booking-form-card-main {
+  width: min(820px, 100%);
+  background: linear-gradient(150deg, rgba(18, 20, 38, 0.95), rgba(14, 16, 30, 0.92));
+  border: 1px solid #343a60;
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.booking-form-card-main h1 {
+  margin: 0;
+}
+
+.booking-form-subtitle {
+  color: var(--muted);
+  margin: 8px 0 18px;
+  line-height: 1.6;
+}
+
+.booking-create-form {
+  background: rgba(8, 10, 20, 0.78);
+}
+
+.booking-create-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .booking-create-grid {
+    grid-template-columns: 1fr;
+  }
+}

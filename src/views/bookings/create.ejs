@@ -1,40 +1,57 @@
-<%- include('../partials/header', { title: 'Create booking' }) %>
+<%- include('../partials/header', { title: 'จองบัตรคอนเสิร์ต' }) %>
 
-<h1>เพิ่ม Booking</h1>
+<section class="booking-form-layout">
+  <div class="booking-form-card booking-form-card-main">
+    <h1>จองบัตรคอนเสิร์ต</h1>
+    <p class="booking-form-subtitle">กรอกข้อมูลผู้จองและจำนวนบัตรที่ต้องการ ระบบจะบันทึกลงรายการ booking ให้ทันที</p>
 
-<form class="stack-form" method="POST" action="/bookings">
-  <label for="ConcertId">Concert (Foreign Key)</label>
-  <select id="ConcertId" name="ConcertId" required>
-    <option value="">เลือก Concert</option>
-    <% concerts.forEach((concert) => { %>
-      <option value="<%= concert.id %>" <%= Number(selectedConcertId) === Number(concert.id) ? "selected" : "" %>>
-        <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> บาท
-      </option>
-    <% }) %>
-  </select>
+    <form class="stack-form booking-create-form" method="POST" action="/bookings">
+      <label for="ConcertId">เลือกคอนเสิร์ต</label>
+      <select id="ConcertId" name="ConcertId" required>
+        <option value="">เลือกคอนเสิร์ตที่ต้องการจอง</option>
+        <% concerts.forEach((concert) => { %>
+          <option value="<%= concert.id %>" <%= Number(selectedConcertId) === Number(concert.id) ? "selected" : "" %>>
+            <%= concert.ConcertName %> · <%= concert.venue %> · <%= Number(concert.price).toLocaleString() %> บาท
+          </option>
+        <% }) %>
+      </select>
 
-  <label for="CustomerId">Customer (Foreign Key)</label>
-  <select id="CustomerId" name="CustomerId" required>
-    <option value="">เลือก Customer</option>
-    <% customers.forEach((customer) => { %>
-      <option value="<%= customer.id %>"><%= customer.fullname %></option>
-    <% }) %>
-  </select>
+      <div class="booking-create-grid">
+        <div>
+          <label for="fullname">ชื่อ-นามสกุลผู้จอง</label>
+          <input id="fullname" name="fullname" type="text" placeholder="เช่น สมชาย ใจดี" required />
+        </div>
 
-  <label for="quantity">จำนวนบัตร</label>
-  <input id="quantity" name="quantity" type="number" min="1" required />
+        <div>
+          <label for="phoneNumber">เบอร์โทรศัพท์</label>
+          <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="08xxxxxxxx" required />
+        </div>
+      </div>
 
-  <label for="status">สถานะ</label>
-  <select id="status" name="status" required>
-    <option value="pending">pending</option>
-    <option value="paid">paid</option>
-    <option value="cancelled">cancelled</option>
-  </select>
+      <label for="email">อีเมลสำหรับรับการยืนยัน</label>
+      <input id="email" name="email" type="email" placeholder="example@email.com" required />
 
-  <div class="action-row">
-    <button class="btn-primary" type="submit">บันทึก</button>
-    <a class="btn-ghost" href="/bookings">ยกเลิก</a>
+      <div class="booking-create-grid">
+        <div>
+          <label for="quantity">จำนวนบัตร</label>
+          <input id="quantity" name="quantity" type="number" min="1" max="6" value="1" required />
+        </div>
+
+        <div>
+          <label for="status">สถานะการจอง</label>
+          <select id="status" name="status" required>
+            <option value="pending">รอชำระเงิน (pending)</option>
+            <option value="paid">ชำระแล้ว (paid)</option>
+            <option value="cancelled">ยกเลิก (cancelled)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-primary" type="submit">ยืนยันการจอง</button>
+        <a class="btn-ghost" href="/concerts">กลับหน้าคอนเสิร์ต</a>
+      </div>
+    </form>
   </div>
-</form>
-
-<%- include('../partials/footer') %>
+  </section>
+  <%- include('../partials/footer') %>
