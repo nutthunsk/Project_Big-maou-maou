@@ -120,6 +120,7 @@ exports.delete = async (req, res) => {
       );
     
         if (!fallbackArtist) {
+        await concert.setArtists([]);
         await Booking.destroy({ where: { ConcertId: concert.id } });
         await concert.destroy();
         continue;
