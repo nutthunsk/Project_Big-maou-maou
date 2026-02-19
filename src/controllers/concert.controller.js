@@ -202,9 +202,16 @@ exports.update = async (req, res) => {
       );
     }
 
-    const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
-    if (duplicatedConcert) {
-      return res.redirect("/concerts/new?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว");
+    const normalizedCurrentName = cleanText(concert.ConcertName).toLowerCase();
+    const normalizedIncomingName = cleanText(ConcertName).toLowerCase();
+
+    if (normalizedIncomingName !== normalizedCurrentName) {
+      const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
+      if (duplicatedConcert) {
+        return res.redirect(
+          `/concerts/${concert.id}/edit?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว`,
+        );
+      }
     }
 
     await concert.update({
