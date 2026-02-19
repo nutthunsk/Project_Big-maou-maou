@@ -50,11 +50,12 @@
         <li><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</li>
       </ul>
 
+      <div class="concert-actions compact-actions card-actions" onclick="event.stopPropagation()"></div>
         <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
           แก้ไข
         </a>
 
-        <form method="POST"
+        <form class="card-action-form" method="POST"
               action="/concerts/<%= concert.id %>"
               onsubmit="event.stopPropagation(); return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
           <input type="hidden" name="_method" value="DELETE">

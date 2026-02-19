@@ -34,12 +34,13 @@
             <% } %>
           </ul>
         <% } %>
-        <div class="action-row compact-actions"></div>
+        <div class="action-row compact-actions card-actions">
           <a class="btn-inline btn-small" href="/artists/<%= artist.id %>/edit">
             แก้ไข
           </a>
 
           <form
+          class="card-action-form"
             method="POST"
             action="/artists/<%= artist.id %>/delete"
             onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')"

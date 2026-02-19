@@ -736,3 +736,34 @@ a:focus {
   outline: 2px solid var(--primary-soft);
   outline-offset: 2px;
 }
+
+
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.card-actions .btn-inline,
+.card-actions .btn-danger,
+.card-actions .card-action-form {
+  width: 100%;
+}
+
+.card-actions .btn-small {
+  min-height: 44px;
+  font-weight: 700;
+}
+
+.card-actions .btn-danger {
+  background: rgba(255, 91, 115, 0.14);
+}
+
+.card-actions .btn-inline:hover {
+  filter: brightness(1.06);
+}
+
+.card-actions .btn-danger:hover {
+  background: rgba(255, 91, 115, 0.2);
+}
