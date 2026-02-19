@@ -2,7 +2,7 @@
 
 <body class="site-body">
   <header class="app-header">
-    <h1>รายงาน</h1>
+    <h1>Report</h1>
   </header>
 
   <main class="page-shell">
@@ -10,7 +10,7 @@
     <!-- ===== filter form ===== -->
     <form method="GET" action="/reports" class="stack-form" style="margin-bottom:20px">
       <div>
-        <label>เลือกประเภทรายงาน</label>
+        <label>Select report type</label>
         <select name="type" onchange="this.form.submit()">
           <option value="concert" <%= type === 'concert' ? 'selected' : '' %>>
             Concert Sales
@@ -27,7 +27,7 @@
 
       <% if (type === 'concert') { %>
         <div>
-          <label>สถานะการจอง</label>
+          <label>Booking status</label>
           <select name="status" onchange="this.form.submit()">
             <option value="all" <%= status === 'all' ? 'selected' : '' %>>all</option>
             <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>pending</option>
