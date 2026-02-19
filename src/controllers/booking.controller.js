@@ -39,10 +39,16 @@ exports.show = async (req, res) => {
   }
 };
 
-exports.newForm = async (_req, res) => {
+exports.newForm = async (req, res) => {
   try {
     const { concerts, customers } = await getRefs();
-    return res.render("bookings/create", { concerts, customers });
+     const selectedConcertId = normalizeNumber(req.query.concertId);
+
+    return res.render("bookings/create", {
+      concerts,
+      customers,
+      selectedConcer
+    });
   } catch (err) {
     console.error("Booking new form error:", err);
     return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มเพิ่มการจองได้");

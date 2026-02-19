@@ -7,7 +7,7 @@
   <select id="ConcertId" name="ConcertId" required>
     <option value="">เลือก Concert</option>
     <% concerts.forEach((concert) => { %>
-      <option value="<%= concert.id %>">
+      <option value="<%= concert.id %>" <%= Number(selectedConcertId) === Number(concert.id) ? "selected" : "" %>>
         <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> บาท
       </option>
     <% }) %>

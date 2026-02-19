@@ -118,6 +118,7 @@ exports.create = async (req, res) => {
       ConcertDate,
       totalSeats,
       price,
+      ArtistId,
     });
 
     await concert.setArtists([ArtistId]);
@@ -180,6 +181,7 @@ exports.update = async (req, res) => {
       ConcertDate,
       totalSeats,
       price,
+      ArtistId,
     });
 
     await concert.setArtists([ArtistId]);

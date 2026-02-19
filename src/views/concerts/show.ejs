@@ -21,6 +21,7 @@
 <h2>จำนวนการจองทั้งหมด: <%= (concert.Bookings || []).length %></h2>
 
 <div class="action-row">
+  <a class="btn-primary" href="/bookings/new?concertId=<%= concert.id %>">จองบัตร</a>
   <a class="btn-ghost" href="/concerts">กลับ</a>
   <a class="btn-inline" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
   <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">

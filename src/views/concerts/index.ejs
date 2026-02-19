@@ -36,8 +36,8 @@
       <p><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</p>
 
       <div class="concert-actions">
-        <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/book">
-          ดู
+        <a class="btn-inline btn-small" href="/bookings/new?concertId=<%= concert.id %>">
+          จองบัตร
         </a>
         <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
           แก้ไข
