@@ -34,20 +34,19 @@
             <% } %>
           </ul>
         <% } %>
-          <a class="btn-inline btn-small" href="/artists/<%= artist.id %>">ดู</a>
           <a class="btn-inline btn-small" href="/artists/<%= artist.id %>/edit">
             แก้ไข
           </a>
+          <input type="hidden" name="_method" value="DELETE" />
+          <button class="btn-danger btn-small" type="submit">
+            ลบ
+          </button>
 
           <form
             method="POST"
             action="/artists/<%= artist.id %>"
             onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')"
           >
-            <input type="hidden" name="_method" value="DELETE" />
-            <button class="btn-danger btn-small" type="submit">
-              ลบ
-            </button>
           </form>
         </div>
       </article>

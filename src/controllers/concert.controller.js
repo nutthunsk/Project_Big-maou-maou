@@ -195,7 +195,8 @@ exports.update = async (req, res) => {
       );
     }
 
-    if (ConcertDate < todayDateText()) {
+    const previousConcertDate = String(concert.ConcertDate || "");
+    if (ConcertDate < todayDateText() && ConcertDate !== previousConcertDate) {
       return res.redirect(
         "/concerts/new?error=วันที่จัดเลยมาแล้ว!!!",
       );

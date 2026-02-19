@@ -26,10 +26,7 @@ exports.index = async (req, res) => {
 
       const rows = concerts.map((concert) => {
         const bookings = concert.Bookings || [];
-        const totalQty = bookings.reduce(
-          (s, b) => s + Number(b.quantity || 0),
-          0,
-        );
+        const totalQty = bookings.reduce((s, b) => s + Number(b.quantity || 0), 0);
         const totalRevenue = bookings.reduce(
           (s, b) => s + Number(b.totalPrice || 0),
           0,
@@ -109,8 +106,8 @@ exports.index = async (req, res) => {
         where: artistWhere,
         include: [
           {
-            model: Concert,
-            as: "PrimaryConcerts",
+            association: "Concerts",
+            through: { attributes: [] },
             include: [{ model: Booking, required: false }],
             required: false,
           },
@@ -119,11 +116,13 @@ exports.index = async (req, res) => {
       });
 
       const rows = artists.map((artist) => {
-        const concerts = artist.PrimaryConcerts || [];
+        const concerts = artist.Concerts || [];
         const bookings = concerts.flatMap((concert) => concert.Bookings || []);
 
         const bookingCount = bookings.length;
-        const paidCount = bookings.filter((booking) => booking.status === "paid").length;
+        const paidCount = bookings.filter(
+          (booking) => booking.status === "paid",
+        ).length;
         const revenue = bookings.reduce((sum, booking) => {
           if (booking.status === "cancelled") return sum;
           return sum + Number(booking.totalPrice || 0);

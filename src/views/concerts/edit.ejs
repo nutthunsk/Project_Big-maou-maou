@@ -12,7 +12,7 @@
   <input id="venue" name="venue" type="text" value="<%= concert.venue %>" required maxlength="120" />
 
   <label for="ConcertDate">วันที่</label>
-    <input id="ConcertDate" name="ConcertDate" type="date" min="<%= new Date().toISOString().slice(0, 10) %>" value="<%= concert.ConcertDate %>" required />
+  <input id="ConcertDate" name="ConcertDate" type="date" value="<%= concert.ConcertDate %>" required />
 
   <label for="totalSeats">จำนวนที่นั่ง</label>
   <input id="totalSeats" name="totalSeats" type="number" min="1" value="<%= concert.totalSeats %>" required />
