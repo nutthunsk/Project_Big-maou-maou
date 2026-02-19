@@ -767,3 +767,87 @@ a:focus {
 .card-actions .btn-danger:hover {
   background: rgba(255, 91, 115, 0.2);
 }
+
+.booking-table td {
+  vertical-align: middle;
+}
+
+.table-actions {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-actions form {
+  margin: 0;
+}
+
+.table-actions .btn-small {
+  min-height: 40px;
+  min-width: 96px;
+  font-weight: 700;
+}
+
+.selected-concert-box {
+  border: 1px solid var(--border);
+  background: rgba(13, 16, 30, 0.8);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.selected-concert-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.selected-concert-box h3 {
+  margin: 6px 0;
+}
+
+.payment-sim-box {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.mock-qr {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  color: #111;
+  background: repeating-linear-gradient(
+    45deg,
+    #fff,
+    #fff 6px,
+    #dcdcdc 6px,
+    #dcdcdc 12px
+  );
+}
+
+.payment-status {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.payment-pending {
+  color: #ffd166;
+}
+
+.payment-paid {
+  color: #73ffa0;
+}
+
+.payment-sim-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

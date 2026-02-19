@@ -1,9 +1,12 @@
-const {Op} = require("sequelize");
+const { Op } = require("sequelize");
 const { Booking, Concert, Customer } = require("../models");
 
 const cleanText = (value) => String(value || "").trim();
 const normalizeNumber = (value) => Number(value || 0);
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[0-9]{8,15}$/;
+const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
+const MAX_BOOKING_QTY = 6;
 
 const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   const where = { ConcertId };
@@ -18,7 +21,7 @@ const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
     if (booking.status === "cancelled") return sum;
     return sum + Number(booking.quantity || 0);
   }, 0);
-}
+};
 
 const getRefs = async () => {
   const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
@@ -56,13 +59,16 @@ exports.show = async (req, res) => {
 
 exports.newForm = async (req, res) => {
   try {
-    const { concerts, customers } = await getRefs();
+    const { concerts } = await getRefs()
     const selectedConcertId = normalizeNumber(req.query.concertId);
+    const selectedConcert = concerts.find((concert) => Number(concert.id) === 
+    Number(selectedConcertId)) || null;
 
     return res.render("bookings/create", {
       concerts,
-      customers,
       selectedConcertId,
+      selectedConcert,
+      maxBookingQty: MAX_BOOKING_QTY,
     });
   } catch (err) {
     console.error("Booking new form error:", err);
@@ -78,18 +84,33 @@ exports.create = async (req, res) => {
     const phoneNumber = cleanText(req.body.phoneNumber);
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
+    const backUrl = ConcertId ? `/bookings/new?concertId=${ConcertId}` : "/bookings/new";
+    const errorUrl = (message) => `${backUrl}${backUrl.includes("?") ? "&" : "?"}
+    error=${encodeURIComponent(message)}`;
 
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
-      return res.redirect("/bookings/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
+      return res.redirect(errorUrl("กรุณากรอกข้อมูลให้ถูกต้อง"));
     }
 
     if (!EMAIL_REGEX.test(email)) {
-      return res.redirect("/bookings/new?error=รูปแบบอีเมลไม่ถูกต้อง");
+      return res.redirect(errorUrl("รูปแบบอีเมลไม่ถูกต้อง"));
+    }
+
+    if (!PHONE_REGEX.test(phoneNumber)) {
+      return res.redirect(errorUrl("เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก"));
+    }
+
+    if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
+      return res.redirect(errorUrl(`จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`));
+    }
+
+    if (!ALLOWED_STATUS.has(status)) {
+      return res.redirect(errorUrl("สถานะการจองไม่ถูกต้อง"));
     }
     
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
-      return res.redirect("/bookings/new?error=ไม่พบข้อมูลคอนเสิร์ต");
+      return res.redirect(errorUrl("ไม่พบข้อมูลคอนเสิร์ต"));
     }
 
     // 🔥 สร้างหรือค้นหา Customer (เหลือแค่รอบเดียว)
@@ -111,7 +132,7 @@ exports.create = async (req, res) => {
 
     if (quantity > remainingSeats) {
       return res.redirect(
-        `/bookings/new?error=จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
+        errorUrl(`จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`),
       );
     }
 
@@ -166,6 +187,18 @@ exports.update = async (req, res) => {
       );
     }
 
+        if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
+      return res.redirect(
+        `/bookings/${booking.id}/edit?error=จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`,
+      );
+    }
+
+    if (!ALLOWED_STATUS.has(status)) {
+      return res.redirect(
+        `/bookings/${booking.id}/edit?error=สถานะการจองไม่ถูกต้อง`,
+      );
+    }
+
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(
@@ -213,6 +246,19 @@ exports.markAsPaid = async (req, res) => {
     return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
   }
 };
+
+exports.markAsPending = async (req, res) => {
+  try {
+    const booking = await Booking.findByPk(req.params.id);
+    if (!booking) return res.status(404).send("Booking not found");
+
+    await booking.update({ status: "pending" });
+    return res.redirect("/bookings?success=อัปเดตสถานะเป็น pending เรียบร้อย");
+  } catch (err) {
+    console.error("Booking mark as pending error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
+  }
+}
 
 exports.delete = async (req, res) => {
   try {

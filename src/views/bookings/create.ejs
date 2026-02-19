@@ -6,20 +6,29 @@
     <p class="booking-form-subtitle">กรอกข้อมูลผู้จองและจำนวนบัตรที่ต้องการ ระบบจะบันทึกลงรายการ booking ให้ทันที</p>
 
     <form class="stack-form booking-create-form" method="POST" action="/bookings">
-      <label for="ConcertId">เลือกคอนเสิร์ต</label>
-      <select id="ConcertId" name="ConcertId" required>
-        <option value="">เลือกคอนเสิร์ตที่ต้องการจอง</option>
-        <% concerts.forEach((concert) => { %>
-          <option value="<%= concert.id %>" <%= Number(selectedConcertId) === Number(concert.id) ? "selected" : "" %>>
-            <%= concert.ConcertName %> · <%= concert.venue %> · <%= Number(concert.price).toLocaleString() %> บาท
-          </option>
-        <% }) %>
-      </select>
+      <% if (selectedConcert) { %>
+        <input type="hidden" name="ConcertId" value="<%= selectedConcert.id %>" />
+        <div class="selected-concert-box">
+          <p class="selected-concert-label">คอนเสิร์ตที่เลือกจอง</p>
+          <h3><%= selectedConcert.ConcertName %></h3>
+          <p class="muted-inline"><%= selectedConcert.venue %> · <%= Number(selectedConcert.price).toLocaleString() %> บาท</p>
+        </div>
+      <% } else { %>
+        <label for="ConcertId">เลือกคอนเสิร์ต</label>
+        <select id="ConcertId" name="ConcertId" required>
+          <option value="">เลือกคอนเสิร์ตที่ต้องการจอง</option>
+          <% concerts.forEach((concert) => { %>
+            <option value="<%= concert.id %>" <%= Number(selectedConcertId) === Number(concert.id) ? 'selected' : '' %>>
+              <%= concert.ConcertName %> · <%= concert.venue %> · <%= Number(concert.price).toLocaleString() %> บาท
+            </option>
+          <% }) %>
+        </select>
+      <% } %>
 
       <div class="booking-create-grid">
         <div>
           <label for="fullname">ชื่อ-นามสกุลผู้จอง</label>
-          <input id="fullname" name="fullname" type="text" placeholder="เช่น สมชาย ใจดี" required />
+          <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" placeholder="เช่น สมชาย ใจดี" required />
         </div>
 
         <div>
@@ -34,16 +43,23 @@
       <div class="booking-create-grid">
         <div>
           <label for="quantity">จำนวนบัตร</label>
-          <input id="quantity" name="quantity" type="number" min="1" max="6" value="1" required />
+          <input id="quantity" name="quantity" type="number" min="1" max="<%= maxBookingQty %>" value="1" required />
+          <small class="help-text">จองได้ไม่เกิน <%= maxBookingQty %> ใบต่อรายการ</small>
         </div>
 
         <div>
-          <label for="status">สถานะการจอง</label>
-          <select id="status" name="status" required>
-            <option value="pending">รอชำระเงิน (pending)</option>
-            <option value="paid">ชำระแล้ว (paid)</option>
-            <option value="cancelled">ยกเลิก (cancelled)</option>
-          </select>
+          <label>สถานะการชำระ (จำลอง)</label>
+          <input id="status" name="status" type="hidden" value="pending" />
+          <div class="payment-sim-box">
+            <div class="mock-qr">QR</div>
+            <div>
+              <div id="paymentStatusText" class="payment-status payment-pending">ยังไม่ชำระ (pending)</div>
+              <div class="payment-sim-actions">
+                <button type="button" class="btn-primary btn-small" id="btnMockPaid">สแกนจ่ายสำเร็จ</button>
+                <button type="button" class="btn-ghost btn-small" id="btnMockPending">จำลองยังไม่ชำระ</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -54,4 +70,31 @@
     </form>
   </div>
   </section>
-  <%- include('../partials/footer') %>
+
+<script>
+  (() => {
+    const statusInput = document.getElementById('status');
+    const statusText = document.getElementById('paymentStatusText');
+    const paidBtn = document.getElementById('btnMockPaid');
+    const pendingBtn = document.getElementById('btnMockPending');
+
+    if (!statusInput || !statusText || !paidBtn || !pendingBtn) return;
+
+    const setStatus = (value) => {
+      statusInput.value = value;
+      if (value === 'paid') {
+        statusText.textContent = 'ชำระแล้ว (paid)';
+        statusText.className = 'payment-status payment-paid';
+        return;
+      }
+
+      statusText.textContent = 'ยังไม่ชำระ (pending)';
+      statusText.className = 'payment-status payment-pending';
+    };
+
+    paidBtn.addEventListener('click', () => setStatus('paid'));
+    pendingBtn.addEventListener('click', () => setStatus('pending'));
+  })();
+</script>
+
+<%- include('../partials/footer') %>
