@@ -1,35 +1,35 @@
 <%- include('../partials/header', { title: 'Create concert' }) %>
 
-<h1>เพิ่ม Concert</h1>
+<h1>Add Concert</h1>
 
 <form class="stack-form" method="POST" action="/concerts">
-  <label for="ConcertName">ชื่อคอนเสิร์ต</label>
+  <label for="ConcertName">Concert Name</label>
   <input id="ConcertName" name="ConcertName" type="text" required maxlength="150" />
 
-  <label for="venue">สถานที่</label>
+  <label for="venue">Location</label>
   <input id="venue" name="venue" type="text" required maxlength="120" />
 
-  <label for="ConcertDate">วันที่</label>
+  <label for="ConcertDate">Date</label>
   <input id="ConcertDate" name="ConcertDate" type="date" required />
 
-  <label for="totalSeats">จำนวนที่นั่ง</label>
+  <label for="totalSeats">Total Seats</label>
   <input id="totalSeats" name="totalSeats" type="number" min="1" required />
 
-  <label for="price">ราคา</label>
+  <label for="price">Price</label>
   <input id="price" name="price" type="number" min="1" step="0.01" required />
 
-  <label for="ArtistIds">ศิลปิน (เลือกได้หลายคน)</label>
+  <label for="ArtistIds">Artists (Select multiple people)</label>
   <select id="ArtistIds" name="ArtistIds" multiple required size="6">
     <% (artists || []).forEach(function (artist) { %>
       <option value="<%= artist.id %>"><%= artist.ArtistName %></option>
     <% }); %>
   </select>
-  <small class="help-text">เลือกหลายคน: กด Ctrl/Cmd + คลิก</small>
+  <small class="help-text">Select multiple people: Push Ctrl/Cmd + Click</small>
   <div id="selected-artist-tags" class="selected-tags"></div>
 
   <div class="action-row">
-    <button class="btn-primary" type="submit">บันทึก</button>
-    <a class="btn-ghost" href="/concerts">ยกเลิก</a>
+    <button class="btn-primary" type="submit">Save</button>
+    <a class="btn-ghost" href="/concerts">Cancle</a>
   </div>
 </form>
 

@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>จองบัตร - <%= concert.ConcertName %></title>
+  <title>ฺBooking - <%= concert.ConcertName %></title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="site-body booking-page">
   <main class="booking-shell booking-shell-reference">
     <div class="booking-topbar">
-      <a href="/" class="booking-back">← ย้อนกลับ</a>
+      <a href="/" class="booking-back">← Back</a>
       <span class="booking-share">⤴</span>
     </div>
 
@@ -35,39 +35,39 @@
         <span><h1><%= concert.ConcertName %></h1></span>
 
         <ul class="event-meta">
-          <li> วันที่จัดงาน: <strong><%= concert.ConcertDate %></strong></li>
-          <li> เวลา: <strong>15:00 - 23:59 น.</strong></li>
-          <li> สถาที่: <strong><%= concert.venue %></strong></li>
-          <li> ศิลปิน: <strong>
+          <li> Event date: <strong><%= concert.ConcertDate %></strong></li>
+          <li> Time: <strong>15:00 - 23:59 น.</strong></li>
+          <li> Location: <strong><%= concert.venue %></strong></li>
+          <li> Artist: <strong>
             <%= concert.Artists && concert.Artists.length
               ? concert.Artists.map(a => a.ArtistName).join(', ')
               : '-' %>
             </strong></li>
-          <li> <strong>ที่นั่งทั้งหมด:</strong> <%= concert.seatStats.totalSeats %> | <strong>คงเหลือ:</strong>
+          <li> <strong>Total Seat:</strong> <%= concert.seatStats.totalSeats %> | <strong>remaining:</strong>
             <% if (concert.seatStats.isSoldOut) { %>
-              <span class="sold-out-text">บัตรหมด</span>
+              <span class="sold-out-text">Sold out</span>
             <% } else { %>
-              <%= concert.seatStats.remainingSeats %> ที่นั่ง
+              <%= concert.seatStats.remainingSeats %> Seat
             <% } %>
           </li>
         </ul>
         <section class="ticket-bar ticket-bar-compact">
           <div>
-            <p class="ticket-label">ราคาเริ่มต้น :</p>
+            <p class="ticket-label">Starting Price :</p>
             <p class="ticket-price">฿<%= Number(concert.price).toLocaleString() %></p>
           </div>
 
           <% if (concert.seatStats.isSoldOut) { %>
-            <button class="ticket-buy-btn" type="button" disabled>บัตรหมด</button>
+            <button class="ticket-buy-btn" type="button" disabled>Sold out</button>
           <% } else { %>
-            <center><a href="/bookings/new?concertId=<%= concert.id %>" class="ticket-buy-btn">จองบัตร</a></center>
+            <center><a href="/bookings/new?concertId=<%= concert.id %>" class="ticket-buy-btn">Tickets</a></center>
           <% } %>
         </section>
       </div>
     </section>
 
     <section class="booking-detail-card">
-      <h2>รายละเอียดการซื้อบัตร</h2>
+      <h2>Ticket Details</h2>
       <ul>
         <li>เปิดจำหน่ายบัตรผ่านระบบ Big Maou Maou เท่านั้น</li>
         <li>ราคาเริ่มต้น <strong>฿<%= Number(concert.price).toLocaleString() %></strong> ต่อ 1 ที่นั่ง</li>

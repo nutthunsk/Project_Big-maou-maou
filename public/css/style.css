@@ -450,45 +450,51 @@ a {
 }
 
 .booking-hero-reference {
-  grid-template-columns: 360px 1fr;
-  gap: 20px;
-  align-items: stretch;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  gap: 26px;
+  align-items: start;
 }
 
 .poster-card-reference {
-  min-height: 510px;
+  min-height: 560px;
   padding: 0;
   overflow: hidden;
 }
 
 .booking-info-reference {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 16px;
 }
 
 .booking-info-reference h1 {
-  font-size: 42px;
-  margin-top: 2px;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  gap: 26px;
+  align-items: start;
 }
 
 .booking-info-reference .event-meta {
-  gap: 8px;
-  font-size: 15px;
+  gap: 10px;
+  font-size: 16px;
+  background: rgba(16, 19, 34, 0.55);
+  border: 1px solid #2f3452;
+  border-radius: 14px;
+  padding: 14px 16px;
 }
 
 .ticket-bar-compact {
-  margin-top: auto;
+  margin-top: 6px;
   max-width: 100%;
-  padding: 8px 12px 8px 22px;
+  padding: 10px 14px 8px 22px;
 }
 
 .ticket-bar-compact .ticket-price {
-  font-size: 40px;
+  font-size: clamp(42px, 5vw, 56px);
 }
 
 .ticket-bar-compact .ticket-buy-btn {
-  min-width: 140px;
-  padding: 10px 24px;
+  min-width: 170px;
+  padding: 12px 28px;
+  font-size: 24px;
 }
 
 @media (max-width: 900px) {
@@ -501,7 +507,12 @@ a {
   }
 
   .ticket-bar-compact .ticket-price {
-    font-size: 30px;
+    font-size: 34px;
+  }
+
+  .ticket-bar-compact .ticket-buy-btn {
+  min-width: 100%;
+  font-size: 20px;
   }
 }
 

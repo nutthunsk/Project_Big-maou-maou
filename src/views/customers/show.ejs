@@ -16,7 +16,7 @@
   </thead>
   <tbody>
     <% if (!customer.Bookings || !customer.Bookings.length) { %>
-      <tr><td colspan="4" class="empty-state">ยังไม่มีรายการจอง</td></tr>
+      <tr><td colspan="4" class="empty-state">no reservations yet</td></tr>
     <% } %>
 
     <% (customer.Bookings || []).forEach((booking) => { %>
@@ -31,11 +31,11 @@
 </table>
 
 <div class="action-row">
-  <a class="btn-inline" href="/customers/<%= customer.id %>/edit">แก้ไข</a>
-  <a class="btn-ghost" href="/customers">กลับ</a>
-  <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('ยืนยันการลบลูกค้านี้?')">
+  <a class="btn-inline" href="/customers/<%= customer.id %>/edit">Edit</a>
+  <a class="btn-ghost" href="/customers">Back</a>
+  <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('Confirm the deletion of this customer?')">
     <input type="hidden" name="_method" value="DELETE" />
-    <button class="btn-danger" type="submit">ลบ</button>
+    <button class="btn-danger" type="submit">Delete</button>
   </form>
 </div>
 

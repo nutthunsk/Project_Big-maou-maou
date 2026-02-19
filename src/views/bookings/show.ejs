@@ -4,15 +4,15 @@
 <p><strong>Concert:</strong> <%= booking.Concert ? booking.Concert.ConcertName : '-' %></p>
 <p><strong>Customer:</strong> <%= booking.Customer ? booking.Customer.fullname : '-' %></p>
 <p><strong>Quantity:</strong> <%= booking.quantity %></p>
-<p><strong>Total:</strong> <%= Number(booking.totalPrice).toLocaleString() %> บาท</p>
+<p><strong>Total:</strong> <%= Number(booking.totalPrice).toLocaleString() %> Bath</p>
 <p><strong>Status:</strong> <%= booking.status %></p>
 
 <div class="action-row">
-  <a class="btn-inline" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
-  <a class="btn-ghost" href="/bookings">กลับ</a>
-  <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('ยืนยันการลบรายการจองนี้?')">
+  <a class="btn-inline" href="/bookings/<%= booking.id %>/edit">Edit</a>
+  <a class="btn-ghost" href="/bookings">Back</a>
+  <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('Confirm the deletion of this booking?')">
     <input type="hidden" name="_method" value="DELETE" />
-    <button class="btn-danger" type="submit">ลบ</button>
+    <button class="btn-danger" type="submit">Deleat</button>
   </form>
 </div>
 

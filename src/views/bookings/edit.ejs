@@ -1,6 +1,6 @@
 <%- include('../partials/header', { title: 'Edit booking' }) %>
 
-<h1>แก้ไข Booking</h1>
+<h1>Edit Booking</h1>
 
 <form class="stack-form" method="POST" action="/bookings/<%= booking.id %>">
   <input type="hidden" name="_method" value="PUT" />
@@ -9,7 +9,7 @@
   <select id="ConcertId" name="ConcertId" required>
     <% concerts.forEach((concert) => { %>
       <option value="<%= concert.id %>" <%= Number(booking.ConcertId) === concert.id ? 'selected' : '' %>>
-        <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> บาท
+        <%= concert.ConcertName %> - <%= Number(concert.price).toLocaleString() %> Bath
       </option>
     <% }) %>
   </select>
@@ -23,10 +23,10 @@
     <% }) %>
   </select>
 
-  <label for="quantity">จำนวนบัตร</label>
+  <label for="quantity">Total Tickets</label>
   <input id="quantity" name="quantity" type="number" min="1" value="<%= booking.quantity %>" required />
 
-  <label for="status">สถานะ</label>
+  <label for="status">Status</label>
   <select id="status" name="status" required>
     <option value="pending" <%= booking.status === 'pending' ? 'selected' : '' %>>pending</option>
     <option value="paid" <%= booking.status === 'paid' ? 'selected' : '' %>>paid</option>
@@ -34,8 +34,8 @@
   </select>
 
   <div class="action-row">
-    <button class="btn-primary" type="submit">อัปเดต</button>
-    <a class="btn-ghost" href="/bookings/<%= booking.id %>">ยกเลิก</a>
+    <button class="btn-primary" type="submit">Update</button>
+    <a class="btn-ghost" href="/bookings/<%= booking.id %>">Cancle</a>
   </div>
 </form>
 

@@ -16,17 +16,17 @@
   <%= artistNames %>
 </p>
 <p><strong>Total Seats:</strong> <%= concert.totalSeats %></p>
-<p><strong>Price:</strong> <%= Number(concert.price).toLocaleString() %> บาท</p>
+<p><strong>Price:</strong> <%= Number(concert.price).toLocaleString() %> Bath</p>
 
-<h2>จำนวนการจองทั้งหมด: <%= (concert.Bookings || []).length %></h2>
+<h2>Total number of reservations: <%= (concert.Bookings || []).length %></h2>
 
 <div class="action-row">
-  <a class="btn-primary" href="/bookings/new?concertId=<%= concert.id %>">จองบัตร</a>
-  <a class="btn-inline" href="/concerts/<%= concert.id %>/edit">แก้ไข</a>
-  <a class="btn-ghost" href="/concerts">กลับ</a>
-  <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+  <a class="btn-primary" href="/bookings/new?concertId=<%= concert.id %>">Reserve tickets</a>
+  <a class="btn-inline" href="/concerts/<%= concert.id %>/edit">Edit</a>
+  <a class="btn-ghost" href="/concerts">Back</a>
+  <form method="POST" action="/concerts/<%= concert.id %>" onsubmit="return confirm('Confirm the deletion of this concert?')">
     <input type="hidden" name="_method" value="DELETE" />
-    <button class="btn-danger" type="submit">ลบ</button>
+    <button class="btn-danger" type="submit">Delete</button>
   </form>
 </div>
 

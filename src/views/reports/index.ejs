@@ -29,7 +29,7 @@
         <div>
           <label>สถานะการจอง</label>
           <select name="status" onchange="this.form.submit()">
-            <option value="all" <%= status === 'all' ? 'selected' : '' %>>ทั้งหมด</option>
+            <option value="all" <%= status === 'all' ? 'selected' : '' %>>all</option>
             <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>pending</option>
             <option value="paid" <%= status === 'paid' ? 'selected' : '' %>>paid</option>
             <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
@@ -38,11 +38,11 @@
       <% } %>
       <% if (type === 'artist') { %>
         <div>
-          <label for="q">ค้นหาศิลปิน</label>
-          <input id="q" name="q" type="text" placeholder="พิมพ์ชื่อศิลปิน..." value="<%= artistQuery || '' %>" />
+          <label for="q">Find an artist</label>
+          <input id="q" name="q" type="text" placeholder="Type the artist's name..." value="<%= artistQuery || '' %>" />
         </div>
         <div>
-          <button class="btn-primary" type="submit">ค้นหา</button>
+          <button class="btn-primary" type="submit">Find</button>
         </div>
       <% } %>
       
@@ -50,20 +50,20 @@
 
     <!-- ================= CONCERT REPORT ================= -->
     <% if (type === 'concert') { %>
-      <h2>รายงานยอดขายคอนเสิร์ต</h2>
+      <h2>Concert sales report</h2>
 
       <section class="report-grid">
         <div class="report-card">
-          <h3>คอนเสิร์ตทั้งหมด</h3>
+          <h3>All concerts</h3>
           <p><%= summary.totalConcerts %></p>
         </div>
         <div class="report-card">
-          <h3>บัตรทั้งหมด</h3>
+          <h3>All Ticket</h3>
           <p><%= summary.totalTickets %></p>
         </div>
         <div class="report-card">
-          <h3>รายได้รวม</h3>
-          <p><%= Number(summary.totalRevenue).toLocaleString() %> บาท</p>
+          <h3>Total income</h3>
+          <p><%= Number(summary.totalRevenue).toLocaleString() %> Bath</p>
         </div>
       </section>
 
@@ -91,20 +91,20 @@
 
     <!-- ================= CUSTOMER REPORT ================= -->
     <% if (type === 'customer') { %>
-      <h2>รายงานการใช้จ่ายลูกค้า</h2>
+      <h2>Customer spending report</h2>
 
       <section class="report-grid">
         <div class="report-card">
-          <h3>ลูกค้า</h3>
+          <h3>Customers</h3>
           <p><%= summary.customerCount %></p>
         </div>
         <div class="report-card">
-          <h3>การจอง</h3>
+          <h3>Reservation</h3>
           <p><%= summary.bookingCount %></p>
         </div>
         <div class="report-card">
-          <h3>รายได้รวม</h3>
-          <p><%= Number(summary.revenue).toLocaleString() %> บาท</p>
+          <h3>Total income</h3>
+          <p><%= Number(summary.revenue).toLocaleString() %> Bath</p>
         </div>
       </section>
 
@@ -131,24 +131,24 @@
     <% } %>
     <!-- ================= ARTIST REPORT ================= -->
     <% if (type === 'artist') { %>
-      <h2>รายงานศิลปินและการจอง</h2>
+      <h2>Artist and booking reports</h2>
 
       <section class="report-grid">
         <div class="report-card">
-          <h3>ศิลปิน</h3>
+          <h3>Artists</h3>
           <p><%= summary.artistCount %></p>
         </div>
         <div class="report-card">
-          <h3>คอนเสิร์ต</h3>
+          <h3>Concert</h3>
           <p><%= summary.concertCount %></p>
         </div>
         <div class="report-card">
-          <h3>การจองรวม</h3>
+          <h3>Combined booking</h3>
           <p><%= summary.bookingCount %></p>
         </div>
         <div class="report-card">
-          <h3>รายได้รวม</h3>
-          <p><%= Number(summary.revenue).toLocaleString() %> บาท</p>
+          <h3>Total income</h3>
+          <p><%= Number(summary.revenue).toLocaleString() %> Bath</p>
         </div>
       </section>
 

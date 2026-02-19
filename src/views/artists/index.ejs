@@ -2,21 +2,21 @@
 
 <div class="page-head">
   <h1>Artists</h1>
-  <a class="btn-primary btn-small" href="/artists/new">+ เพิ่มใหม่</a>
+  <a class="btn-primary btn-small" href="/artists/new">+ Add New</a>
 </div>
 
 <section class="entity-grid">
   <% if (!artists || artists.length === 0) { %>
-    <p class="empty-state">ยังไม่มีข้อมูลศิลปิน</p>
+    <p class="empty-state">no artist information yet</p>
   <% } else { %>
     <% artists.forEach((artist) => { %>
       <article class="entity-card artist-card compact-card">
         <h3><%= artist.ArtistName %></h3>
-        <p>แนวเพลง/ประเภท: <%= artist.genre %></p>
+        <p>Music genre/type: <%= artist.genre %></p>
 
-         <p><strong>คอนเสิร์ตที่แสดง:</strong></p>
+         <p><strong>Concerts shown:</strong></p>
         <% if (!artist.Concerts || !artist.Concerts.length) { %>
-          <p class="empty-state">- ยังไม่มีรายการ -</p>
+          <p class="empty-state">- no items yet -</p>
         <% } else { %>
           <ul class="concert-meta-list artist-concert-list">
             <% artist.Concerts.slice(0, 4).forEach((concert) => {
@@ -36,17 +36,17 @@
         <% } %>
         <div class="action-row compact-actions card-actions">
           <a class="btn-inline btn-small" href="/artists/<%= artist.id %>/edit">
-            แก้ไข
+            Edit
           </a>
 
           <form
           class="card-action-form"
             method="POST"
             action="/artists/<%= artist.id %>/delete"
-            onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')"
+            onsubmit="return confirm('Confirm the removal of this artis?')"
           >
             <button class="btn-danger btn-small" type="submit">
-              ลบ
+              Delete
             </button>
           </form>
         </div>

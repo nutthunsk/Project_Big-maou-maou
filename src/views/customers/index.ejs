@@ -2,22 +2,22 @@
 
     <div class="page-head">
   <h1>Customers</h1>
-  <a class="btn-primary btn-small" href="/customers/new">+ เพิ่มใหม่</a>
+  <a class="btn-primary btn-small" href="/customers/new">+ Add New</a>
 </div>
 
 <table class="booking-table">
   <thead>
     <tr>
       <th>ID</th>
-      <th>ชื่อ</th>
+      <th>Name</th>
       <th>Email</th>
-      <th>เบอร์โทร</th>
+      <th>Phone Number</th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     <% if (!customers.length) { %>
-      <tr><td colspan="5" class="empty-state">ยังไม่มีข้อมูล</td></tr>
+      <tr><td colspan="5" class="empty-state">no information yet</td></tr>
     <% } %>
     <% customers.forEach((customer) => { %>
       <tr>
@@ -26,11 +26,11 @@
         <td><%= customer.email %></td>
         <td><%= customer.phoneNumber %></td>
         <td class="action-row table-actions">
-          <a class="btn-inline btn-small" href="/customers/<%= customer.id %>">ดู</a>
-          <a class="btn-ghost btn-small" href="/customers/<%= customer.id %>/edit">แก้ไข</a>
-          <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('ยืนยันการลบลูกค้านี้?')">
+          <a class="btn-inline btn-small" href="/customers/<%= customer.id %>">View</a>
+          <a class="btn-ghost btn-small" href="/customers/<%= customer.id %>/edit">Edit</a>
+          <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('Confirm the deletion of this customer?')">
             <input type="hidden" name="_method" value="DELETE" />
-            <button class="btn-danger btn-small" type="submit">ลบ</button>
+            <button class="btn-danger btn-small" type="submit">Delete</button>
           </form>
         </td>
       </tr>

@@ -3,10 +3,10 @@
 <h1><%= artist.ArtistName %></h1>
 <p><strong>Genre:</strong> <%= artist.genre %></p>
 
-<h2>Concerts ที่เกี่ยวข้อง</h2>
+<h2>Related Concerts</h2>
 <ul class="concert-meta-list artist-concert-list">
   <% if (!artist.Concerts || !artist.Concerts.length) { %>
-    <li>- ไม่มีรายการ -</li>
+    <li>- no items -</li>
   <% } else { %>
     <% artist.Concerts.forEach((concert) => { %>
       <li>
@@ -23,10 +23,10 @@
   </ul>
 
 <div class="action-row compact-actions">
-  <a class="btn-ghost" href="/artists">กลับ</a>
-  <a class="btn-inline" href="/artists/<%= artist.id %>/edit">แก้ไข</a>
+  <a class="btn-ghost" href="/artists">Back</a>
+  <a class="btn-inline" href="/artists/<%= artist.id %>/edit">Edit</a>
   <form method="POST" action="/artists/<%= artist.id %>/delete" onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')">
-    <button class="btn-danger" type="submit">ลบ</button>
+    <button class="btn-danger" type="submit">Deleat</button>
   </form>
 </div>
 

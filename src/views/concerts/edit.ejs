@@ -1,26 +1,26 @@
 <%- include('../partials/header', { title: 'Edit concert' }) %>
 
-<h1>แก้ไข Concert</h1>
+<h1>Edit Concert</h1>
 
 <form class="stack-form" method="POST" action="/concerts/<%= concert.id %>">
   <input type="hidden" name="_method" value="PUT" />
 
-  <label for="ConcertName">ชื่อคอนเสิร์ต</label>
+  <label for="ConcertName">Concert Name</label>
   <input id="ConcertName" name="ConcertName" type="text" value="<%= concert.ConcertName %>" required maxlength="150" />
 
-  <label for="venue">สถานที่</label>
+  <label for="venue">Location</label>
   <input id="venue" name="venue" type="text" value="<%= concert.venue %>" required maxlength="120" />
 
-  <label for="ConcertDate">วันที่</label>
+  <label for="ConcertDate">Date</label>
   <input id="ConcertDate" name="ConcertDate" type="date" value="<%= concert.ConcertDate %>" required />
 
-  <label for="totalSeats">จำนวนที่นั่ง</label>
+  <label for="totalSeats">Total Seats</label>
   <input id="totalSeats" name="totalSeats" type="number" min="1" value="<%= concert.totalSeats %>" required />
 
-  <label for="price">ราคา</label>
+  <label for="price">Price</label>
   <input id="price" name="price" type="number" min="1" step="0.01" value="<%= concert.price %>" required />
 
-  <label for="ArtistIds">ศิลปิน (เลือกได้หลายคน)</label>
+  <label for="ArtistIds">Artists (Select multiple people)</label>
   <%
     const selectedArtistIds = (concert.Artists || []).map((artist) => Number(artist.id));
     if (!selectedArtistIds.length && concert.ArtistId) selectedArtistIds.push(Number(concert.ArtistId));
@@ -33,12 +33,12 @@
     <% }); %>
   </select>
 
-  <small class="help-text">เลือกหลายคน: กด Ctrl/Cmd + คลิก</small>
+  <small class="help-text">Select multiple people: Push Ctrl/Cmd + Click</small>
   <div id="selected-artist-tags" class="selected-tags"></div>
 
   <div class="action-row">
-    <button class="btn-primary" type="submit">อัปเดต</button>
-    <a class="btn-ghost" href="/concerts/<%= concert.id %>">ยกเลิก</a>
+    <button class="btn-primary" type="submit">Update</button>
+    <a class="btn-ghost" href="/concerts/<%= concert.id %>">Cancle</a>
   </div>
 </form>
 

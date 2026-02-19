@@ -1,16 +1,16 @@
 <%- include('../partials/header', { title: 'คอนเสิร์ต' }) %>
 
 <div class="page-head">
-  <h1>คอนเสิร์ต</h1>
+  <h1>Concert</h1>
   <div class="page-actions">
-    <a class="btn-primary btn-small" href="/concerts/new">+ เพิ่มคอนเสิร์ต</a>
-    <a class="btn-ghost btn-small" href="/">กลับหน้าหลัก</a>
+    <a class="btn-primary btn-small" href="/concerts/new">+ Add Concert</a>
+    <a class="btn-ghost btn-small" href="/">Return to home page</a>
   </div>
 </div>
 
 <section class="concert-grid compact-grid">
   <% if (!concerts || concerts.length === 0) { %>
-    <p class="empty-state">ยังไม่มีคอนเสิร์ตในระบบ</p>
+    <p class="empty-state">no concerts in the system yet</p>
   <% } %>
 
   <% concerts.forEach((concert) => {
@@ -35,24 +35,24 @@
       <h3 class="concert-title"><%= concert.ConcertName %></h3>
 
       <ul class="concert-meta-list">
-        <li><strong>วันแสดง:</strong> <%= displayDate %></li>
-        <li><strong>เวลา:</strong> <%= displayTime %> น.</li>
+        <li><strong>Date:</strong> <%= displayDate %></li>
+        <li><strong>Time:</strong> <%= displayTime %> น.</li>
         <li>
-          <strong>ศิลปิน/ผู้จัด:</strong>
+          <strong>Artist/Organizer:</strong>
           <%= concert.Artists && concert.Artists.length
             ? concert.Artists.map(a => a.ArtistName).join(', ')
             : '-' %>
         </li>
-        <li><strong>สถานที่:</strong> <%= concert.venue %></li>
-        <li><strong>ราคาเริ่มต้น:</strong> <%= Number(concert.price).toLocaleString() %> บาท</li>
-        <li><strong>ที่นั่งทั้งหมด:</strong> <%= total %> ที่นั่ง</li>
-        <li><strong>จองแล้ว:</strong> <%= booked %> ที่นั่ง</li>
-        <li><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</li>
+        <li><strong>Location:</strong> <%= concert.venue %></li>
+        <li><strong>Starting Price:</strong> <%= Number(concert.price).toLocaleString() %> Bath</li>
+        <li><strong>Total Seats:</strong> <%= total %> Seats</li>
+        <li><strong>Already reserved:</strong> <%= booked %> Seats</li>
+        <li><strong>remaining:</strong> <%= remaining %> Seats</li>
       </ul>
 
       <div class="concert-actions compact-actions card-actions" onclick="event.stopPropagation()"></div>
         <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
-          แก้ไข
+          Edit
         </a>
 
         <form class="card-action-form" method="POST"
@@ -60,7 +60,7 @@
               onsubmit="event.stopPropagation(); return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
           <input type="hidden" name="_method" value="DELETE">
           <button class="btn-danger btn-small" type="submit">
-            ลบคอนเสิร์ต
+            Delete Concert
           </button>
         </form>
       </div>
