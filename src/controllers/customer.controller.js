@@ -30,7 +30,7 @@ exports.index = async (_req, res) => {
   }
 };
 
-// GET /customers/report
+// GET /customers/:id
 exports.show = async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id, {
