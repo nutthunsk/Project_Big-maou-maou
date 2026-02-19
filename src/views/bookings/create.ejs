@@ -24,12 +24,12 @@
 
         <div>
           <label for="phoneNumber">เบอร์โทรศัพท์</label>
-          <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="08xxxxxxxx" required />
+          <input id="phoneNumber" name="phoneNumber" type="tel" placeholder="08xxxxxxxx" pattern="[0-9]{8,15}" maxlength="15" required />
         </div>
       </div>
 
       <label for="email">อีเมลสำหรับรับการยืนยัน</label>
-      <input id="email" name="email" type="email" placeholder="example@email.com" required />
+      <input id="email" name="email" type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="กรอกอีเมลให้ถูกต้อง เช่น name@example.com" placeholder="example@email.com" required />
 
       <div class="booking-create-grid">
         <div>

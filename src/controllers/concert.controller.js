@@ -3,6 +3,7 @@ const { Concert, Artist, Booking } = require("../models");
 // ===== helpers =====
 const normalizeNumber = (value) => Number(value || 0);
 const cleanText = (value) => String(value || "").trim();
+const todayDateText = () => new Date().toISOString().slice(0, 10);
 
 const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 
@@ -112,6 +113,17 @@ exports.create = async (req, res) => {
       return res.redirect("/concerts/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
     }
 
+    if (ConcertDate < todayDateText()) {
+      return res.redirect(
+        "/concerts/new?error=วันที่จัดเลยมาแล้ว!!!",
+      );
+    }
+
+    const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
+    if (duplicatedConcert) {
+      return res.redirect("/concerts/new?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว");
+    }
+
     const concert = await Concert.create({
       ConcertName,
       venue,
@@ -173,6 +185,17 @@ exports.update = async (req, res) => {
       return res.redirect(
         `/concerts/${concert.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
       );
+    }
+
+    if (ConcertDate < todayDateText()) {
+      return res.redirect(
+        "/concerts/new?error=วันที่จัดเลยมาแล้ว!!!",
+      );
+    }
+
+    const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
+    if (duplicatedConcert) {
+      return res.redirect("/concerts/new?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว");
     }
 
     await concert.update({

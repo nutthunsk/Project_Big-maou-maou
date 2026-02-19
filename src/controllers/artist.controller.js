@@ -2,6 +2,7 @@ const { Artist, Concert } = require("../models");
 
 // GET /artists
 const cleanText = (value) => String(value || "").trim();
+const normalizeArtistName = (value) => cleanText(value).toUpperCase();
 
 exports.index = async (_req, res) => {
   try {
@@ -30,11 +31,16 @@ exports.show = async (req, res) => {
 // POST /artists/create
 exports.create = async (req, res) => {
   try {
-    const ArtistName = cleanText(req.body.ArtistName);
+    const ArtistName = normalizeArtistName(req.body.ArtistName);
     const genre = cleanText(req.body.genre);
 
     if (!ArtistName || !genre) {
       return res.redirect("/artists/new?error=กรุณากรอกข้อมูลให้ครบถ้วน");
+    }
+
+    const duplicatedArtist = await Artist.findOne({ where: { ArtistName } });
+    if (duplicatedArtist) {
+      return res.redirect("/artists/new?error=ชื่อศิลปินนี้มีอยู่แล้ว");
     }
 
     await Artist.create({ ArtistName, genre });
@@ -64,7 +70,7 @@ exports.update = async (req, res) => {
     const artist = await Artist.findByPk(req.params.id);
     if (!artist) return res.status(404).send("Artist not found");
 
-    const ArtistName = cleanText(req.body.ArtistName);
+    const ArtistName = normalizeArtistName(req.body.ArtistName);
     const genre = cleanText(req.body.genre);
 
     if (!ArtistName || !genre) {
@@ -73,6 +79,13 @@ exports.update = async (req, res) => {
       );
     }
 
+    const duplicatedArtist = await Artist.findOne({ where: { ArtistName } });
+    if (duplicatedArtist && Number(duplicatedArtist.id) !== Number(artist.id)) {
+      return res.redirect(
+        `/artists/${artist.id}/edit?error=ชื่อศิลปินนี้มีอยู่แล้ว`,
+      );
+    }
+    
     await artist.update({ ArtistName, genre });
     return res.redirect(
       `/artists/${artist.id}?success=แก้ไขข้อมูลศิลปินเรียบร้อย`,

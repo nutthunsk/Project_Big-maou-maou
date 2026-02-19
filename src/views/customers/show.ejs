@@ -31,8 +31,8 @@
 </table>
 
 <div class="action-row">
-  <a class="btn-ghost" href="/customers">กลับ</a>
   <a class="btn-inline" href="/customers/<%= customer.id %>/edit">แก้ไข</a>
+  <a class="btn-ghost" href="/customers">กลับ</a>
   <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('ยืนยันการลบลูกค้านี้?')">
     <input type="hidden" name="_method" value="DELETE" />
     <button class="btn-danger" type="submit">ลบ</button>

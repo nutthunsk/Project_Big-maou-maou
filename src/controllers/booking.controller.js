@@ -1,7 +1,24 @@
+const {Op} = require("sequelize");
 const { Booking, Concert, Customer } = require("../models");
 
 const cleanText = (value) => String(value || "").trim();
 const normalizeNumber = (value) => Number(value || 0);
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
+  const where = { ConcertId };
+  if (excludeBookingId) where.id = { [Op.ne]: excludeBookingId };
+
+  const bookings = await Booking.findAll({
+    where,
+    attributes: ["quantity", "status"],
+  });
+
+  return bookings.reduce((sum, booking) => {
+    if (booking.status === "cancelled") return sum;
+    return sum + Number(booking.quantity || 0);
+  }, 0);
+}
 
 const getRefs = async () => {
   const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
@@ -66,6 +83,10 @@ exports.create = async (req, res) => {
       return res.redirect("/bookings/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
     }
 
+    if (!EMAIL_REGEX.test(email)) {
+      return res.redirect("/bookings/new?error=รูปแบบอีเมลไม่ถูกต้อง");
+    }
+    
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect("/bookings/new?error=ไม่พบข้อมูลคอนเสิร์ต");
@@ -78,8 +99,20 @@ exports.create = async (req, res) => {
     });
 
     // ถ้าข้อมูลเปลี่ยนให้อัปเดต
-    if (customer.fullname !== fullname || customer.phoneNumber !== phoneNumber) {
+    if (
+      customer.fullname !== fullname ||
+      customer.phoneNumber !== phoneNumber
+    ) {
       await customer.update({ fullname, phoneNumber });
+    }
+
+    const bookedSeats = await getBookedSeats(ConcertId);
+    const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
+
+    if (quantity > remainingSeats) {
+      return res.redirect(
+        `/bookings/new?error=จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
+      );
     }
 
     const totalPrice = Number(concert.price) * quantity;
@@ -129,14 +162,23 @@ exports.update = async (req, res) => {
 
     if (!ConcertId || !CustomerId || quantity <= 0) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`
+        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
       );
     }
 
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`
+        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`,
+      );
+    }
+
+    const bookedSeats = await getBookedSeats(ConcertId, booking.id);
+    const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
+
+    if (quantity > remainingSeats) {
+      return res.redirect(
+        `/bookings/${booking.id}/edit?error=จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
       );
     }
 
@@ -150,13 +192,11 @@ exports.update = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect(
-      `/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`
-    );
+    return res.redirect(`/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`);
   } catch (err) {
     console.error("Booking update error:", err);
     return res.redirect(
-      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`
+      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`,
     );
   }
 };

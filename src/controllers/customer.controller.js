@@ -1,10 +1,15 @@
 const { Customer, Booking, Concert } = require("../models");
 const PHONE_REGEX = /^[0-9]{8,15}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const cleanText = (value) => String(value || "").trim();
 
 const validatePayload = ({ fullname, email, phoneNumber }) => {
   if (!cleanText(fullname) || !cleanText(email) || !cleanText(phoneNumber)) {
     return "กรุณากรอกข้อมูลให้ครบถ้วน";
+  }
+
+  if (!EMAIL_REGEX.test(cleanText(email))) {
+    return "อีเมลต้องมีรูปแบบที่ถูกต้อง (ต้องมี @)";
   }
 
   if (!PHONE_REGEX.test(cleanText(phoneNumber))) {
