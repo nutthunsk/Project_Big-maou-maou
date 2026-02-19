@@ -28,6 +28,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+app.use(express.static('public'))
+
 // static files
 app.use(express.static(path.join(__dirname, "../public")));
 

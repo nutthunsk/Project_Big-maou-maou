@@ -17,6 +17,10 @@
       <div class="poster-wrap">
         <div class="poster-glow"></div>
         <div class="poster-card poster-card-reference">
+          <img
+            class="poster-image"
+            src="/images/Poster.png "
+          />
           <div class="poster-card-fallback">
             <div class="poster-meta">BIG MAOU MAOU PRESENTS</div>
             <div class="poster-title"><%= concert.ConcertName %></div>
@@ -31,10 +35,10 @@
         <span><h1><%= concert.ConcertName %></h1></span>
 
         <ul class="event-meta">
-          <li> <strong><%= concert.ConcertDate %></strong></li>
-          <li> <strong>15:00 - 23:59 น.</strong></li>
-          <li> <strong><%= concert.venue %></strong></li>
-          <li> <strong>
+          <li> วันที่จัดงาน: <strong><%= concert.ConcertDate %></strong></li>
+          <li> เวลา: <strong>15:00 - 23:59 น.</strong></li>
+          <li> สถาที่: <strong><%= concert.venue %></strong></li>
+          <li> ศิลปิน: <strong>
             <%= concert.Artists && concert.Artists.length
               ? concert.Artists.map(a => a.ArtistName).join(', ')
               : '-' %>
