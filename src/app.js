@@ -69,6 +69,8 @@ app.get("/", async (_req, res) => {
       customerCount,
       bookingCount,
       latestBookings,
+      latestConcerts,
+      latestArtists,
     ] = await Promise.all([
       Artist.count(),
       Concert.count(),
@@ -79,6 +81,16 @@ app.get("/", async (_req, res) => {
         order: [["id", "DESC"]],
         limit: 5,
       }),
+      Concert.findAll({
+        include: [{ association: "Artists", through: { attributes: [] } }],
+        order: [["ConcertDate", "DESC"], ["id", "DESC"]],
+        limit: 5,
+      }),
+      Artist.findAll({
+        include: [{ association: "Concerts", through: { attributes: [] } }],
+        order: [["id", "DESC"]],
+        limit: 5,
+      })
     ]);
 
     return res.render("home", {
@@ -89,6 +101,8 @@ app.get("/", async (_req, res) => {
         bookingCount,
       },
       latestBookings,
+      latestConcerts,
+      latestArtists,
     });
   } catch (err) {
     console.error("Home page error:", err);
@@ -100,6 +114,8 @@ app.get("/", async (_req, res) => {
         bookingCount: 0,
       },
       latestBookings: [],
+      latestConcerts: [],
+      latestArtists: [],
     });
   }
 });

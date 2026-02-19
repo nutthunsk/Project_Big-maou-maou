@@ -1,10 +1,11 @@
 <%- include('partials/header', { title: 'Dashboard' }) %>
 
-    <section class="page-head">
+<section class="page-head">
   <h1>BIG MAOU MAOU CONCERTS</h1>
 </section>
+  <h3>ระบบจัดการคอนเสิร์ตของ Big Maou Maou ช่วยให้ทราบข้อมูลและรายละเอียดรายได้,ศิลปิน,คอนเสิร์ต,การชำระเงิน</h3>
+<section class="report-grid">
 
-    <section class="report-grid">
   <article class="report-card">
     <h3>Artists</h3>
     <p><%= stats.artistCount %></p>
@@ -19,13 +20,61 @@
   </article>
 </section>
 
-  <section>
+<section>
+  <div class="page-head">
+    <h2>คอนเสิร์ตล่าสุด</h2>
+    <a href="/concerts" class="btn-inline btn-small">ดูทั้งหมด</a>
+  </div>
+  <ul class="concert-meta-list artist-concert-list">
+    <% if (!latestConcerts || !latestConcerts.length) { %>
+      <li class="empty-state">ยังไม่มีคอนเสิร์ต</li>
+    <% } else { %>
+      <% latestConcerts.forEach((concert) => {
+        const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
+      %>
+        <li>
+          <strong><a href="/concerts/<%= concert.id %>"><%= concert.ConcertName %></a></strong>
+          <% if (d) { %>
+            <span class="muted-inline">(
+              <%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+            )</span>
+          <% } %>
+          <% if (concert.Artists && concert.Artists.length) { %>
+            <div class="muted-inline">ศิลปิน: <%= concert.Artists.map((artist) => artist.ArtistName).join(', ') %></div>
+          <% } %>
+        </li>
+      <% }) %>
+    <% } %>
+  </ul>
+</section>
+
+<section>
+  <div class="page-head">
+    <h2>ศิลปินล่าสุด</h2>
+    <a href="/artists" class="btn-inline btn-small">ดูทั้งหมด</a>
+  </div>
+  <ul class="concert-meta-list artist-concert-list">
+    <% if (!latestArtists || !latestArtists.length) { %>
+      <li class="empty-state">ยังไม่มีศิลปิน</li>
+    <% } else { %>
+      <% latestArtists.forEach((artist) => { %>
+        <li>
+          <strong><a href="/artists/<%= artist.id %>"><%= artist.ArtistName %></a></strong>
+          <span class="muted-inline">(<%= artist.genre %>)</span>
+          <div class="muted-inline">จำนวนคอนเสิร์ต: <%= artist.Concerts ? artist.Concerts.length : 0 %></div>
+        </li>
+      <% }) %>
+    <% } %>
+  </ul>
+</section>
+
+<section>
   <div class="page-head">
     <h2>รายการจองล่าสุด</h2>
     <a href="/bookings" class="btn-inline btn-small">ดูทั้งหมด</a>
   </div>
 
-      <table class="booking-table">
+  <table class="booking-table">
     <thead>
       <tr>
         <th>Concert</th>
@@ -40,7 +89,7 @@
           <td colspan="5" class="empty-state">ยังไม่มีรายการจอง</td>
         </tr>
       <% } %>
-    <% latestBookings.forEach((booking) => { %>
+      <% latestBookings.forEach((booking) => { %>
         <tr>
           <td><%= booking.Concert ? booking.Concert.ConcertName : '-' %></td>
           <td><%= booking.Customer ? booking.Customer.fullname : '-' %></td>
