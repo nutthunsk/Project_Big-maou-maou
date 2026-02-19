@@ -5,6 +5,7 @@ const controller = require("../controllers/concert.controller");
 router.get("/", controller.index);
 router.get("/new", controller.newForm);
 router.post("/", controller.create);
+router.get("/:id/book", controller.bookForm);
 router.get("/:id", controller.show);
 router.get("/:id/edit", controller.editForm);
 router.put("/:id", controller.update);

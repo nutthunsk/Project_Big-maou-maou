@@ -67,6 +67,23 @@ exports.index = async (_req, res) => {
   }
 };
 
+// GET /concerts/:id/book
+exports.bookForm = async (req, res) => {
+  try {
+    const concert = await Concert.findByPk(req.params.id, {
+      include: [{ association: "Artists", through: { attributes: [] } }],
+    });
+
+    if (!concert) return res.status(404).send("Concert not found");
+
+    const [concertWithSeatStats] = await attachSeatStats([concert]);
+    return res.render("concerts/book", { concert: concertWithSeatStats });
+  } catch (err) {
+    console.error("Concert booking page error:", err);
+    return res.redirect("/concerts?error=ไม่สามารถโหลดหน้าจองบัตรได้");
+  }
+};
+
 // GET /concerts/:id
 exports.show = async (req, res) => {
   try {

@@ -29,7 +29,9 @@
       minute: '2-digit'
     })
   %>
-    <article class="concert-card compact-card">
+    <article class="concert-card compact-card concert-card-clickable" onclick="window.location.href='/concerts/<%= concert.id %>/book'" 
+      role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')
+      {event.preventDefault();window.location.href='/concerts/<%= concert.id %>/book';}">
       <h3 class="concert-title"><%= concert.ConcertName %></h3>
 
       <ul class="concert-meta-list">
@@ -48,17 +50,13 @@
         <li><strong>คงเหลือ:</strong> <%= remaining %> ที่นั่ง</li>
       </ul>
 
-      <div class="concert-actions compact-actions">
-        <a class="btn-inline btn-small" href="/bookings/new?concertId=<%= concert.id %>">
-          จองบัตร
-        </a>
         <a class="btn-inline btn-small" href="/concerts/<%= concert.id %>/edit">
           แก้ไข
         </a>
 
         <form method="POST"
               action="/concerts/<%= concert.id %>"
-              onsubmit="return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+              onsubmit="event.stopPropagation(); return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
           <input type="hidden" name="_method" value="DELETE">
           <button class="btn-danger btn-small" type="submit">
             ลบคอนเสิร์ต
