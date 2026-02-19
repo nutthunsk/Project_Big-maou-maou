@@ -56,7 +56,7 @@
           <% if (concert.seatStats.isSoldOut) { %>
             <button class="ticket-buy-btn" type="button" disabled>บัตรหมด</button>
           <% } else { %>
-            <center><a href="#booking-form" class="ticket-buy-btn">ซื้อบัตร</a></center>
+            <center><a href="/bookings/new?concertId=<%= concert.id %>" class="ticket-buy-btn">จองบัตร</a></center>
           <% } %>
         </section>
       </div>

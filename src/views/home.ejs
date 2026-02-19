@@ -33,7 +33,7 @@
         const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
       %>
         <li>
-          <strong><a href="/concerts/<%= concert.id %>"><%= concert.ConcertName %></a></strong>
+          <strong><a href="/concerts/<%= concert.id %>/book"><%= concert.ConcertName %></a></strong>
           <% if (d) { %>
             <span class="muted-inline">(
               <%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %>
