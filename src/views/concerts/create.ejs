@@ -18,18 +18,45 @@
   <label for="price">ราคา</label>
   <input id="price" name="price" type="number" min="1" step="0.01" required />
 
-  <label for="ArtistId">ศิลปินหลัก (Foreign Key)</label>
-  <select id="ArtistId" name="ArtistId" required>
-    <option value="">เลือกศิลปิน</option>
+  <label for="ArtistIds">ศิลปิน (เลือกได้หลายคน)</label>
+  <select id="ArtistIds" name="ArtistIds" multiple required size="6">
     <% (artists || []).forEach(function (artist) { %>
       <option value="<%= artist.id %>"><%= artist.ArtistName %></option>
     <% }); %>
   </select>
+  <small class="help-text">เลือกหลายคน: กด Ctrl/Cmd + คลิก</small>
+  <div id="selected-artist-tags" class="selected-tags"></div>
 
   <div class="action-row">
     <button class="btn-primary" type="submit">บันทึก</button>
     <a class="btn-ghost" href="/concerts">ยกเลิก</a>
   </div>
 </form>
+
+<script>
+  (function () {
+    const select = document.getElementById('ArtistIds');
+    const tagsWrap = document.getElementById('selected-artist-tags');
+
+    function renderTags() {
+      tagsWrap.innerHTML = '';
+      Array.from(select.selectedOptions).forEach((option) => {
+        const tag = document.createElement('span');
+        tag.className = 'selected-tag';
+        tag.innerHTML = `${option.text} <button type="button" aria-label="remove">×</button>`;
+
+        tag.querySelector('button').addEventListener('click', () => {
+          option.selected = false;
+          renderTags();
+        });
+
+        tagsWrap.appendChild(tag);
+      });
+    }
+
+    select.addEventListener('change', renderTags);
+    renderTags();
+  })();
+</script>
 
 <%- include('../partials/footer') %>

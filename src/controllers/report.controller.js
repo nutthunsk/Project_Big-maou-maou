@@ -103,7 +103,7 @@ exports.index = async (req, res) => {
       const artistQuery = String(req.query.q || "").trim();
 
       const artistWhere = artistQuery
-        ? { ArtistName: { [Op.like]: `%${artistQuery}%` } }
+        ? { ArtistName: { [Op.like]: `${artistQuery}%` } }
         : undefined;
       const artists = await Artist.findAll({
         where: artistWhere,

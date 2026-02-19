@@ -7,6 +7,12 @@ const todayDateText = () => new Date().toISOString().slice(0, 10);
 
 const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 
+const parseArtistIds = (value) => {
+  const raw = Array.isArray(value) ? value : [value];
+
+  return [...new Set(raw.map((v) => Number(v)).filter((v) => Number.isInteger(v) && v > 0))];
+};
+
 const attachSeatStats = async (concerts) => {
   const concertRows = Array.isArray(concerts) ? concerts : [];
   if (concertRows.length === 0) return [];
@@ -100,7 +106,8 @@ exports.create = async (req, res) => {
     const ConcertDate = cleanText(req.body.ConcertDate);
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
-    const ArtistId = normalizeNumber(req.body.ArtistId);
+    const artistIds = parseArtistIds(req.body.ArtistIds);
+    const ArtistId = artistIds[0];
 
     if (
       !ConcertName ||
@@ -133,7 +140,7 @@ exports.create = async (req, res) => {
       ArtistId,
     });
 
-    await concert.setArtists([ArtistId]);
+    await concert.setArtists(artistIds);
 
     res.redirect("/concerts?success=เพิ่มคอนเสิร์ตเรียบร้อย");
   } catch (err) {
@@ -172,7 +179,8 @@ exports.update = async (req, res) => {
     const ConcertDate = cleanText(req.body.ConcertDate);
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
-    const ArtistId = normalizeNumber(req.body.ArtistId);
+    const artistIds = parseArtistIds(req.body.ArtistIds);
+    const ArtistId = artistIds[0];
 
     if (
       !ConcertName ||
@@ -207,7 +215,7 @@ exports.update = async (req, res) => {
       ArtistId,
     });
 
-    await concert.setArtists([ArtistId]);
+    await concert.setArtists(artistIds);
 
     res.redirect(`/concerts/${concert.id}?success=แก้ไขคอนเสิร์ตเรียบร้อย`);
   } catch (err) {
