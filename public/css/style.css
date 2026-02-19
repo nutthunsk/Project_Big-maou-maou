@@ -344,16 +344,6 @@ a {
   font-size: clamp(28px, 3vw, 40px);
 }
 
-.booking-tag {
-  display: inline-block;
-  border: 1px solid #4d527a;
-  color: #d9dcf7;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 12px;
-  margin-bottom: 16px;
-}
-
 .event-meta {
   margin: 0;
   padding: 0;
@@ -389,10 +379,6 @@ a {
   line-height: 1;
 }
 
-.ticket-inline-form {
-  margin: 0;
-}
-
 .ticket-buy-btn {
   border: none;
   background: #e61d2b;
@@ -402,26 +388,6 @@ a {
   font-weight: 700;
   cursor: pointer;
   font-size: 16px;
-}
-
-.booking-tabs {
-  margin-top: 26px;
-  display: flex;
-  gap: 10px;
-}
-
-.tab {
-  background: transparent;
-  color: #fff;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: 8px 0;
-  font-weight: 600;
-}
-
-.tab-active {
-  color: #ff3a4f;
-  border-bottom-color: #ff3a4f;
 }
 
 .booking-detail-card,
@@ -444,19 +410,6 @@ a {
   line-height: 1.8;
 }
 
-.booking-form-grid {
-  display: grid;
-  gap: 10px;
-}
-
-.booking-form-grid input {
-  background: #070912;
-  border: 1px solid #2f3452;
-  border-radius: 10px;
-  color: #fff;
-  padding: 10px;
-}
-
 @media (max-width: 900px) {
   .booking-hero {
     grid-template-columns: 1fr;
@@ -474,175 +427,6 @@ a {
 
   .ticket-buy-btn {
     width: 100%;
-  }
-}
-
-/* home recommended concerts -> clickable to booking detail */
-.featured-booking-grid {
-  margin-top: 4px;
-}
-
-.featured-book-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.featured-book-card:hover {
-  transform: translateY(-4px);
-  border-color: #4b57a3;
-  box-shadow: 0 14px 34px rgba(20, 30, 90, 0.35);
-}
-
-.book-hint {
-  display: inline-block;
-  margin-top: 10px;
-  color: #9eb0ff;
-  font-size: 13px;
-}
-
-/* ticket selection page after click buy */
-.ticket-select-page {
-  background: #020205;
-}
-
-.ticket-select-shell {
-  padding: 26px clamp(20px, 3vw, 34px) 40px;
-}
-
-.ticket-select-header {
-  margin-bottom: 20px;
-}
-
-.ticket-select-header h1 {
-  margin: 10px 0 0;
-  font-size: 34px;
-}
-
-.ticket-layout {
-  display: grid;
-  grid-template-columns: 1.2fr 0.48fr;
-  gap: 30px;
-  align-items: start;
-}
-
-.ticket-left {
-  display: grid;
-  gap: 14px;
-}
-
-.ticket-type-card {
-  background: linear-gradient(135deg, #1c1a20 0%, #181621 100%);
-  border: 1px solid #24293d;
-  border-radius: 14px;
-  padding: 20px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 102px;
-}
-
-.ticket-type-card h2 {
-  margin: 0 0 8px;
-  font-size: 28px;
-}
-
-.ticket-type-price {
-  margin: 0 0 8px;
-  font-size: 22px;
-  font-weight: 700;
-}
-
-.ticket-type-date {
-  margin: 0;
-  color: #3cff5f;
-  font-weight: 600;
-}
-
-.ticket-status.sold {
-  color: #ff3347;
-  font-weight: 700;
-}
-
-.qty-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.qty-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid #5f637a;
-  background: transparent;
-  color: #fff;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.qty-value {
-  min-width: 40px;
-  text-align: center;
-  background: #fff;
-  color: #111;
-  border-radius: 999px;
-  padding: 3px 10px;
-  font-weight: 700;
-}
-
-.ticket-summary {
-  background: #e8e8e8;
-  border-radius: 14px;
-  padding: 22px 16px;
-  color: #111;
-  min-height: 420px;
-  display: flex;
-  flex-direction: column;
-}
-
-.ticket-summary h3 {
-  text-align: center;
-  margin: 4px 0 14px;
-}
-
-.summary-divider {
-  border-top: 1px solid #c5c5c5;
-  margin-bottom: 18px;
-}
-
-.summary-item {
-  margin-bottom: 16px;
-}
-
-.summary-item p {
-  margin: 0 0 4px;
-}
-
-.pay-btn {
-  margin-top: auto;
-  width: 100%;
-  border: none;
-  border-radius: 999px;
-  padding: 13px;
-  font-weight: 700;
-  background: #bdbdbd;
-  color: #fff;
-  cursor: pointer;
-}
-
-.pay-btn:not(:disabled) {
-  background: #7c4dff;
-}
-
-@media (max-width: 1050px) {
-  .ticket-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .ticket-summary {
-    min-height: 220px;
   }
 }
 
@@ -677,13 +461,6 @@ a {
   overflow: hidden;
 }
 
-.poster-image {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
 .booking-info-reference {
   display: flex;
   flex-direction: column;
@@ -697,12 +474,6 @@ a {
 .booking-info-reference .event-meta {
   gap: 8px;
   font-size: 15px;
-}
-
-.map-link {
-  margin-left: 10px;
-  color: #18bfff;
-  font-size: 14px;
 }
 
 .ticket-bar-compact {
