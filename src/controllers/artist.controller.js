@@ -104,18 +104,21 @@ exports.update = async (req, res) => {
 // POST /artists/delete/:id
 exports.delete = async (req, res) => {
   try {
-    const artist = await Artist.findByPk(req.params.id);
+    const artist = await Artist.findByPk(req.params.id, {
+      include: [{ association: "Concerts", through: { attributes: [] } }],
+    });
     if (!artist) return res.status(404).send("Artist not found");
 
-    const concertCount = await Concert.count({
+    const primaryConcertCount = await Concert.count({
       where: { ArtistId: artist.id },
     });
-    if (concertCount > 0) {
+    if (primaryConcertCount > 0) {
       return res.redirect(
-        "/artists?error=ไม่สามารถลบศิลปินที่มีคอนเสิร์ตผูกอยู่ได้",
+        "/artists?error=ไม่สามารถลบศิลปินที่เป็นศิลปินหลักของคอนเสิร์ตได้",
       );
     }
 
+    await artist.setConcerts([]);
     await artist.destroy();
     return res.redirect("/artists?success=ลบศิลปินเรียบร้อย");
   } catch (err) {

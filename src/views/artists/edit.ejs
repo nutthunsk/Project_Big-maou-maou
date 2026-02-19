@@ -12,7 +12,7 @@
 
   <div class="action-row">
     <button class="btn-primary" type="submit">อัปเดต</button>
-    <a class="btn-ghost" href="/artists/<%= artist.id %>">ยกเลิก</a>
+    <button class="btn-ghost" type="button" onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='/artists'; }">ยกเลิก</button>
   </div>
 </form>
 

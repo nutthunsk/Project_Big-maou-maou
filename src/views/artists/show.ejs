@@ -1,0 +1,34 @@
+<%- include('../partials/header', { title: 'Artist detail' }) %>
+
+<h1><%= artist.ArtistName %></h1>
+<p><strong>Genre:</strong> <%= artist.genre %></p>
+
+<h2>Concerts ที่เกี่ยวข้อง</h2>
+<ul class="concert-meta-list artist-concert-list">
+  <% if (!artist.Concerts || !artist.Concerts.length) { %>
+    <li>- ไม่มีรายการ -</li>
+  <% } else { %>
+    <% artist.Concerts.forEach((concert) => { %>
+      <li>
+        <strong><%= concert.ConcertName %></strong>
+        <span class="muted-inline">
+          <% if (concert.ConcertDate) { %>
+            (<%= new Date(`${concert.ConcertDate}T00:00:00`).toLocaleDateString('th-TH', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) %>)
+          <% } %>
+        </span>
+      </li>
+    <% }) %>
+  <% } %>
+
+  </ul>
+
+<div class="action-row compact-actions">
+  <a class="btn-ghost" href="/artists">กลับ</a>
+  <a class="btn-inline" href="/artists/<%= artist.id %>/edit">แก้ไข</a>
+  <form method="POST" action="/artists/<%= artist.id %>" onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')">
+    <input type="hidden" name="_method" value="DELETE" />
+    <button class="btn-danger" type="submit">ลบ</button>
+  </form>
+</div>
+
+<%- include('../partials/footer') %>
