@@ -201,6 +201,19 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.markAsPaid = async (req, res) => {
+  try {
+    const booking = await Booking.findByPk(req.params.id);
+    if (!booking) return res.status(404).send("Booking not found");
+
+    await booking.update({ status: "paid" });
+    return res.redirect("/bookings?success=อัปเดตสถานะเป็น paid เรียบร้อย");
+  } catch (err) {
+    console.error("Booking mark as paid error:", err);
+    return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });

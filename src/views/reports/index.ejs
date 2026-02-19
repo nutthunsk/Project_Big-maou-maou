@@ -18,6 +18,10 @@
           <option value="customer" <%= type === 'customer' ? 'selected' : '' %>>
             Customer Spending
           </option>
+
+          <option value="artist" <%= type === 'artist' ? 'selected' : '' %>>
+            Artist + Booking
+          </option>
         </select>
       </div>
 
@@ -110,6 +114,52 @@
               <td><%= r.customer.email %></td>
               <td><%= r.bookings %></td>
               <td><%= Number(r.totalSpent).toLocaleString() %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+    <!-- ================= ARTIST REPORT ================= -->
+    <% if (type === 'artist') { %>
+      <h2>รายงานศิลปินและการจอง</h2>
+
+      <section class="report-grid">
+        <div class="report-card">
+          <h3>ศิลปิน</h3>
+          <p><%= summary.artistCount %></p>
+        </div>
+        <div class="report-card">
+          <h3>คอนเสิร์ต</h3>
+          <p><%= summary.concertCount %></p>
+        </div>
+        <div class="report-card">
+          <h3>การจองรวม</h3>
+          <p><%= summary.bookingCount %></p>
+        </div>
+        <div class="report-card">
+          <h3>รายได้รวม</h3>
+          <p><%= Number(summary.revenue).toLocaleString() %> บาท</p>
+        </div>
+      </section>
+
+      <table class="booking-table">
+        <thead>
+          <tr>
+            <th>Artist</th>
+            <th>Concerts</th>
+            <th>Bookings</th>
+            <th>Paid</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% rows.forEach(r => { %>
+            <tr>
+              <td><%= r.artist.ArtistName %></td>
+              <td><%= r.concertCount %></td>
+              <td><%= r.bookingCount %></td>
+              <td><%= r.paidCount %></td>
+              <td><%= Number(r.revenue).toLocaleString() %></td>
             </tr>
           <% }) %>
         </tbody>

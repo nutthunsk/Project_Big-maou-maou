@@ -8,6 +8,7 @@ router.post("/", controller.create);
 router.get("/:id", controller.show);
 router.get("/:id/edit", controller.editForm);
 router.put("/:id", controller.update);
+router.post("/:id/mark-paid", controller.markAsPaid)
 router.delete("/:id", controller.delete);
 
 module.exports = router;

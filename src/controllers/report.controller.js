@@ -1,7 +1,7 @@
-const { Concert, Booking, Customer } = require("../models");
+const { Artist, Concert, Booking, Customer } = require("../models");
 
 exports.index = async (req, res) => {
-  const type = req.query.type || "concert"; // concert | customer
+    const type = req.query.type || "concert"; // concert | customer | artist
 
   try {
     // =========================
@@ -94,6 +94,61 @@ exports.index = async (req, res) => {
         summary,
       });
     }
+
+        // =========================
+    // REPORT: ARTIST + BOOKING
+    // =========================
+    if (type === "artist") {
+      const artists = await Artist.findAll({
+        include: [
+          {
+            model: Concert,
+            as: "PrimaryConcerts",
+            include: [{ model: Booking, required: false }],
+            required: false,
+          },
+        ],
+        order: [["ArtistName", "ASC"]],
+      });
+
+      const rows = artists.map((artist) => {
+        const concerts = artist.PrimaryConcerts || [];
+        const bookings = concerts.flatMap((concert) => concert.Bookings || []);
+
+        const bookingCount = bookings.length;
+        const paidCount = bookings.filter((booking) => booking.status === "paid").length;
+        const revenue = bookings.reduce((sum, booking) => {
+          if (booking.status === "cancelled") return sum;
+          return sum + Number(booking.totalPrice || 0);
+        }, 0);
+
+        return {
+          artist,
+          concertCount: concerts.length,
+          bookingCount,
+          paidCount,
+          revenue,
+        };
+      });
+
+      const summary = rows.reduce(
+        (acc, row) => {
+          acc.artistCount += 1;
+          acc.concertCount += row.concertCount;
+          acc.bookingCount += row.bookingCount;
+          acc.revenue += row.revenue;
+          return acc;
+        },
+        { artistCount: 0, concertCount: 0, bookingCount: 0, revenue: 0 },
+      );
+
+      return res.render("reports/index", {
+        type,
+        rows,
+        summary,
+      });
+    }
+    
   } catch (err) {
     console.error("Report error:", err);
     return res.redirect("/?error=โหลดรายงานไม่สำเร็จ");
