@@ -36,6 +36,16 @@
           </select>
         </div>
       <% } %>
+      <% if (type === 'artist') { %>
+        <div>
+          <label for="q">ค้นหาศิลปิน</label>
+          <input id="q" name="q" type="text" placeholder="พิมพ์ชื่อศิลปิน..." value="<%= artistQuery || '' %>" />
+        </div>
+        <div>
+          <button class="btn-primary" type="submit">ค้นหา</button>
+        </div>
+      <% } %>
+      
     </form>
 
     <!-- ================= CONCERT REPORT ================= -->

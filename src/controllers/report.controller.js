@@ -1,3 +1,4 @@
+const { Op } = require("sequelize")
 const { Artist, Concert, Booking, Customer } = require("../models");
 
 exports.index = async (req, res) => {
@@ -99,7 +100,13 @@ exports.index = async (req, res) => {
     // REPORT: ARTIST + BOOKING
     // =========================
     if (type === "artist") {
+      const artistQuery = String(req.query.q || "").trim();
+
+      const artistWhere = artistQuery
+        ? { ArtistName: { [Op.like]: `%${artistQuery}%` } }
+        : undefined;
       const artists = await Artist.findAll({
+        where: artistWhere,
         include: [
           {
             model: Concert,
@@ -144,6 +151,7 @@ exports.index = async (req, res) => {
 
       return res.render("reports/index", {
         type,
+        artistQuery,
         rows,
         summary,
       });
