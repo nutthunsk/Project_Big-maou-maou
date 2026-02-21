@@ -5,6 +5,9 @@ const {
   clearAuthCookie,
 } = require("../utils/user-auth");
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[0-9]{8,15}$/;
+
 const attachSeatStats = async (concerts) => {
   const concertRows = Array.isArray(concerts) ? concerts : [];
   if (!concertRows.length) return [];
@@ -141,5 +144,50 @@ exports.concerts = async (_req, res) => {
   } catch (err) {
     console.error("User concerts error:", err);
     res.redirect("/user?error=ไม่สามารถโหลดข้อมูลคอนเสิร์ตได้");
+  }
+};
+
+exports.profile = (req, res) => {
+  return res.render("user/profile", {
+    customer: req.authCustomer,
+  });
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const authCustomer = req.authCustomer;
+    const fullname = String(req.body.fullname || "").trim();
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+    const phoneNumber = String(req.body.phoneNumber || "").trim();
+
+    if (!fullname || !email || !phoneNumber) {
+      return res.redirect("/user/profile?error=กรุณากรอกข้อมูลให้ครบ");
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      return res.redirect("/user/profile?error=รูปแบบอีเมลไม่ถูกต้อง");
+    }
+
+    if (!PHONE_REGEX.test(phoneNumber)) {
+      return res.redirect(
+        "/user/profile?error=เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก",
+      );
+    }
+
+    const duplicateEmail = await Customer.findOne({ where: { email } });
+    if (
+      duplicateEmail &&
+      Number(duplicateEmail.id) !== Number(authCustomer.id)
+    ) {
+      return res.redirect("/user/profile?error=อีเมลนี้ถูกใช้งานแล้ว");
+    }
+
+    await authCustomer.update({ fullname, email, phoneNumber });
+    return res.redirect("/user/profile?success=อัปเดตข้อมูลสำเร็จ");
+  } catch (error) {
+    console.error("User update profile error:", error);
+    return res.redirect("/user/profile?error=ไม่สามารถอัปเดตข้อมูลได้");
   }
 };

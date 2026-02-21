@@ -14,6 +14,7 @@
         <a href="/user">Home</a>
         <a href="/user/artists">Artists</a>
         <a href="/user/concerts">Concerts</a>
+        <% if (authCustomer) { %><a href="/user/profile">My Profile</a><% } %>
         <% if (authCustomer) { %>
           <span class="muted-inline">Hi, <%= authCustomer.fullname %></span>
           <form method="POST" action="/user/logout" class="inline-form">

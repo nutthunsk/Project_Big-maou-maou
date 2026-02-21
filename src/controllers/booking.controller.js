@@ -8,6 +8,37 @@ const PHONE_REGEX = /^[0-9]{8,15}$/;
 const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
 const MAX_BOOKING_QTY = 6;
 
+const getBookedSeatsByIdentityInConcert = async ({
+  ConcertId,
+  email,
+  fullname,
+}) => {
+  const bookings = await Booking.findAll({
+    where: { ConcertId },
+    include: [
+      {
+        model: Customer,
+        attributes: ["email", "fullname"],
+      },
+    ],
+    attributes: ["quantity", "status"],
+  });
+
+  return bookings.reduce((sum, booking) => {
+    if (booking.status === "cancelled") return sum;
+
+    const bookingEmail = cleanText(booking.Customer?.email).toLowerCase();
+    const bookingFullname = cleanText(booking.Customer?.fullname).toLowerCase();
+    const matchedByEmail =
+      bookingEmail && bookingEmail === cleanText(email).toLowerCase();
+    const matchedByName =
+      bookingFullname && bookingFullname === cleanText(fullname).toLowerCase();
+
+    if (!matchedByEmail && !matchedByName) return sum;
+    return sum + Number(booking.quantity || 0);
+  }, 0);
+};
+
 const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   const where = { ConcertId };
   if (excludeBookingId) where.id = { [Op.ne]: excludeBookingId };
@@ -97,10 +128,8 @@ exports.create = async (req, res) => {
     const backUrl = ConcertId
       ? `/bookings/new?concertId=${ConcertId}`
       : "/bookings/new";
-    const errorUrl = (
-      message,
-    ) => `${backUrl}${backUrl.includes("?") ? "&" : "?"}
-    error=${encodeURIComponent(message)}`;
+    const errorUrl = (message) =>
+      `${backUrl}${backUrl.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`;
 
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
       return res.redirect(errorUrl("กรุณากรอกข้อมูลให้ถูกต้อง"));
@@ -139,6 +168,20 @@ exports.create = async (req, res) => {
       customer.phoneNumber !== phoneNumber
     ) {
       await customer.update({ fullname, phoneNumber });
+    }
+
+    const alreadyReservedByIdentity = await getBookedSeatsByIdentityInConcert({
+      ConcertId,
+      email,
+      fullname,
+    });
+
+    if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
+      return res.redirect(
+        errorUrl(
+          `1 อีเมลหรือ 1 ชื่อ จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ ต่อ 1 คอนเสิร์ต`,
+        ),
+      );
     }
 
     const bookedSeats = await getBookedSeats(ConcertId);
