@@ -73,6 +73,18 @@ app.get("/", (_req, res) => {
 async function initDb() {
   await sequelize.authenticate();
   await sequelize.sync();
+    const [concertColumns] = await sequelize.query(
+    "PRAGMA table_info('Concert')",
+  );
+
+  const hasImageUrl = concertColumns.some(
+    (column) => column.name === "imageUrl",
+  );
+  if (!hasImageUrl) {
+    await sequelize.query(
+      "ALTER TABLE Concert ADD COLUMN imageUrl VARCHAR(255)",
+    );
+  }
 }
 
 // start server
@@ -80,10 +92,10 @@ async function startServer() {
   try {
     await initDb();
     app.listen(PORT, () => {
-      console.log(`✅ Server running at http://localhost:${PORT}`);
+      console.log(`Server running at http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("❌ DB error:", err);
+    console.error("DB error:", err);
     process.exit(1);
   }
 }

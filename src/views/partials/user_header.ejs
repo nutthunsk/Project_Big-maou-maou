@@ -6,15 +6,17 @@
   <title><%= title || 'Big Maou Maou User Site' %></title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
-<body class="site-body">
-  <header class="app-header">
-    <nav class="top-nav">
-      <a class="brand">BIG MAOU MAOU</a>
-      <div class="top-links">
-        <a href="/user">Home</a>
-        <a href="/user/artists">Artists</a>
-        <a href="/user/concerts">Concerts</a>
+<body class="site-body user-site">
+  <header class="app-header user-app-header">
+    <nav class="top-nav user-top-nav">
+      <a class="brand user-brand" href="/user">BIG MAOU MAOU</a>
+
+      <div class="top-links user-top-links">
+        <a href="/user">หน้าแรก</a>
+        <a href="/user/artists">ศิลปิน</a>
+        <a href="/user/concerts">คอนเสิร์ต</a>
         <% if (authCustomer) { %><a href="/user/profile">My Profile</a><% } %>
+        <button type="button" id="themeToggleBtn" class="btn-ghost btn-small user-theme-toggle">Dark</button>
         <% if (authCustomer) { %>
           <span class="muted-inline">Hi, <%= authCustomer.fullname %></span>
           <form method="POST" action="/user/logout" class="inline-form">
@@ -27,7 +29,7 @@
     </nav>
   </header>
 
-  <main class="page-shell">
+  <main class="page-shell user-page-shell">
     <% if (flash && flash.success) { %>
       <div class="flash flash-success"><%= flash.success %></div>
     <% } %>
@@ -35,3 +37,29 @@
     <% if (flash && flash.error) { %>
       <div class="flash flash-error"><%= flash.error %></div>
     <% } %>
+
+<script>
+  (() => {
+    const storageKey = 'user-theme';
+    const root = document.documentElement;
+    const btn = document.getElementById('themeToggleBtn');
+
+    const applyTheme = (theme) => {
+      root.setAttribute('data-user-theme', theme);
+      if (!btn) return;
+      btn.textContent = theme === 'light' ? 'Light' : 'Dark';
+    };
+
+    const savedTheme = localStorage.getItem(storageKey);
+    const theme = savedTheme === 'light' ? 'light' : 'dark';
+    applyTheme(theme);
+
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const current = root.getAttribute('data-user-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(storageKey, next);
+      applyTheme(next);
+    });
+  })();
+</script>

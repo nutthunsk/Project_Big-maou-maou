@@ -10,7 +10,11 @@ const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 const parseArtistIds = (value) => {
   const raw = Array.isArray(value) ? value : [value];
 
-  return [...new Set(raw.map((v) => Number(v)).filter((v) => Number.isInteger(v) && v > 0))];
+  return [
+    ...new Set(
+      raw.map((v) => Number(v)).filter((v) => Number.isInteger(v) && v > 0),
+    ),
+  ]
 };
 
 const attachSeatStats = async (concerts) => {
@@ -124,6 +128,7 @@ exports.create = async (req, res) => {
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
+    const imageUrl = cleanText(req.body.imageUrl);
     const ArtistId = artistIds[0];
 
     if (
@@ -138,9 +143,7 @@ exports.create = async (req, res) => {
     }
 
     if (ConcertDate < todayDateText()) {
-      return res.redirect(
-        "/concerts/new?error=วันที่จัดเลยมาแล้ว!!!",
-      );
+      return res.redirect("/concerts/new?error=วันที่จัดเลยมาแล้ว!!!");
     }
 
     const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
@@ -155,6 +158,7 @@ exports.create = async (req, res) => {
       totalSeats,
       price,
       ArtistId,
+      imageUrl: imageUrl || null,
     });
 
     await concert.setArtists(artistIds);
@@ -198,6 +202,7 @@ exports.update = async (req, res) => {
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
     const ArtistId = artistIds[0];
+    const imageUrl = cleanText(req.body.imageUrl);
 
     if (
       !ConcertName ||
@@ -214,16 +219,16 @@ exports.update = async (req, res) => {
 
     const previousConcertDate = String(concert.ConcertDate || "");
     if (ConcertDate < todayDateText() && ConcertDate !== previousConcertDate) {
-      return res.redirect(
-        "/concerts/new?error=วันที่จัดเลยมาแล้ว!!!",
-      );
+      return res.redirect("/concerts/new?error=วันที่จัดเลยมาแล้ว!!!");
     }
 
     const normalizedCurrentName = cleanText(concert.ConcertName).toLowerCase();
     const normalizedIncomingName = cleanText(ConcertName).toLowerCase();
 
     if (normalizedIncomingName !== normalizedCurrentName) {
-      const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
+      const duplicatedConcert = await Concert.findOne({
+        where: { ConcertName },
+      });
       if (duplicatedConcert) {
         return res.redirect(
           `/concerts/${concert.id}/edit?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว`,
@@ -238,6 +243,7 @@ exports.update = async (req, res) => {
       totalSeats,
       price,
       ArtistId,
+      imageUrl: imageUrl || null,
     });
 
     await concert.setArtists(artistIds);

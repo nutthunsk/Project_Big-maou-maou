@@ -511,8 +511,8 @@ a {
   }
 
   .ticket-bar-compact .ticket-buy-btn {
-  min-width: 100%;
-  font-size: 20px;
+    min-width: 100%;
+    font-size: 20px;
   }
 }
 
@@ -635,7 +635,11 @@ a:focus {
 
 .booking-form-card-main {
   width: min(820px, 100%);
-  background: linear-gradient(150deg, rgba(18, 20, 38, 0.95), rgba(14, 16, 30, 0.92));
+  background: linear-gradient(
+    150deg,
+    rgba(18, 20, 38, 0.95),
+    rgba(14, 16, 30, 0.92)
+  );
   border: 1px solid #343a60;
   border-radius: 18px;
   padding: 24px;
@@ -897,4 +901,141 @@ a:focus {
 
 .status-cancelled {
   color: #ff8da0;
+}
+
+.user-site {
+  --u-bg: #050608;
+  --u-surface: #12141a;
+  --u-surface-soft: #1a1d26;
+  --u-border: #2a2e3d;
+  --u-text: #f7f9ff;
+  --u-muted: #a7afc9;
+  --u-accent: #ff2e3d;
+  --u-accent-hover: #ff4c59;
+  background: radial-gradient(circle at top, #151824, #050608 45%);
+  color: var(--u-text);
+}
+
+html[data-user-theme="light"] .user-site {
+  --u-bg: #f4f6fb;
+  --u-surface: #ffffff;
+  --u-surface-soft: #f3f5fa;
+  --u-border: #d7dcea;
+  --u-text: #101422;
+  --u-muted: #5b647f;
+  --u-accent: #e0202d;
+  --u-accent-hover: #ff2e3d;
+  background: linear-gradient(180deg, #f8f9ff 0%, #eef2fb 100%);
+}
+
+.user-app-header {
+  border-bottom: 1px solid var(--u-border);
+  background: color-mix(in srgb, var(--u-bg) 88%, black 12%);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  backdrop-filter: blur(8px);
+}
+
+.user-top-nav {
+  padding: 14px clamp(20px, 4vw, 56px);
+}
+
+.user-brand {
+  color: var(--u-accent);
+  text-decoration: none;
+  font-size: 26px;
+  letter-spacing: 0.03em;
+}
+
+.user-top-links {
+  align-items: center;
+  gap: 12px;
+}
+
+.user-top-links a {
+  color: var(--u-text);
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--u-surface) 92%, transparent 8%);
+  border: 1px solid var(--u-border);
+  font-weight: 600;
+}
+
+.user-top-links a:hover {
+  background: var(--u-accent);
+  border-color: var(--u-accent);
+  color: #fff;
+}
+
+.user-theme-toggle {
+  background: var(--u-surface-soft);
+  color: var(--u-text);
+  border-color: var(--u-border);
+  min-width: 96px;
+}
+
+.user-page-shell {
+  color: var(--u-text);
+}
+
+.user-site .booking-form-card-main,
+.user-site .stack-form,
+.user-site .concert-card,
+.user-site .selected-concert-box,
+.user-site .payment-sim-box,
+.user-site .stat-card,
+.user-site .report-card {
+  background: var(--u-surface);
+  border-color: var(--u-border);
+  color: var(--u-text);
+}
+
+.user-site .concert-meta-list li,
+.user-site .muted-inline,
+.user-site .booking-form-subtitle,
+.user-site .empty-state {
+  color: var(--u-muted);
+}
+
+.user-site .btn-primary,
+.user-site .btn-inline {
+  background: var(--u-accent);
+}
+
+.user-site .btn-primary:hover,
+.user-site .btn-inline:hover {
+  background: var(--u-accent-hover);
+}
+
+.user-site .card-actions .btn-primary {
+  width: 100%;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.user-site .profile-booking-card {
+  background: linear-gradient(
+    135deg,
+    var(--u-surface),
+    color-mix(in srgb, var(--u-surface-soft) 85%, var(--u-bg) 15%)
+  );
+}
+
+html[data-user-theme="light"] .user-app-header {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.user-concert-card {
+  display: grid;
+  gap: 10px;
+}
+
+.user-concert-poster {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--u-border);
+  background: var(--u-surface-soft);
 }
