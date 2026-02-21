@@ -75,7 +75,9 @@ exports.newForm = async (req, res) => {
     });
   } catch (err) {
     console.error("Booking new form error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มเพิ่มการจองได้");
+    return res.redirect(
+      "/user/concerts?error=ไม่สามารถโหลดฟอร์มเพิ่มการจองได้",
+    );
   }
 };
 
@@ -160,10 +162,10 @@ exports.create = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect("/bookings?success=เพิ่มการจองเรียบร้อย");
+    return res.redirect("/user?success=จองบัตรเรียบร้อย");
   } catch (err) {
     console.error("Booking create error:", err);
-    return res.redirect("/bookings/new?error=ไม่สามารถเพิ่มการจองได้");
+    return res.redirect("/user/concerts?error=ไม่สามารถเพิ่มการจองได้");
   }
 };
 

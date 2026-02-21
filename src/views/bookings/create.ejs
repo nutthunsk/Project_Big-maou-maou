@@ -1,4 +1,8 @@
-<%- include('../partials/header', { title: 'Reserve concert tickets' }) %>
+<% if (authCustomer) { %>
+  <%- include('../partials/user_header', { title: 'Reserve concert tickets' }) %>
+<% } else { %>
+  <%- include('../partials/header', { title: 'Reserve concert tickets' }) %>
+<% } %>
 
 <section class="booking-form-layout">
   <div class="booking-form-card booking-form-card-main">
@@ -65,7 +69,7 @@
 
       <div class="action-row">
         <button class="btn-primary" type="submit">Confirm booking</button>
-        <a class="btn-ghost" href="/concerts">Return to the concert page</a>
+        <a class="btn-ghost" href="/user">Return to home page</a>
       </div>
     </form>
   </div>
