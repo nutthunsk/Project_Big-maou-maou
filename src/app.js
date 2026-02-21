@@ -9,6 +9,7 @@ const bookingRoutes = require("./routes/booking.routes");
 const customerRoutes = require("./routes/customer.routes");
 const reportRoutes = require("./routes/report.routes");
 const userRoutes = require("./routes/user.routes");
+const userController = require("./controllers/user.controller");
 const { getAuthCustomer } = require("./utils/user-auth");
 
 const app = express();
@@ -126,9 +127,7 @@ app.use("/customers", customerRoutes);
 app.use("/reports", reportRoutes);
 app.use("/user", userRoutes);
 
-app.get("/", (_req, res) => {
-  return res.redirect("/user");
-});
+app.get("/", userController.home);
 
 app.get("/admin", async (_req, res) => {
   return renderAdminDashboard(res);
