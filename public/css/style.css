@@ -1087,3 +1087,35 @@ html[data-user-theme="light"] .user-app-header {
 .artist-card .card-actions {
   margin-top: auto;
 }
+
+.entity-card h3,
+.entity-card strong {
+  color: var(--text);
+}
+
+.artist-card .concert-meta-list li {
+  color: var(--muted);
+}
+
+.user-site .stack-form input,
+.user-site .stack-form select {
+  background: var(--u-surface-soft);
+  border-color: var(--u-border);
+  color: var(--u-text);
+}
+
+.user-site .stack-form input::placeholder {
+  color: var(--u-muted);
+}
+
+.user-concert-poster {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+  border: 1px solid var(--u-border);
+  background: var(--u-surface-soft);
+}
