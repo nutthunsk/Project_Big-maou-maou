@@ -1,0 +1,45 @@
+<%- include('../partials/user_header', { title: 'User Concerts' }) %>
+
+<div class="page-head">
+  <h1>Concerts</h1>
+</div>
+
+<section class="concert-grid compact-grid">
+  <% if (!concerts || concerts.length === 0) { %>
+    <p class="empty-state">no concerts in the system yet</p>
+  <% } %>
+
+  <% concerts.forEach((concert) => {
+    const total = concert.seatStats?.totalSeats || 0;
+    const booked = concert.seatStats?.bookedSeats || 0;
+    const remaining = concert.seatStats?.remainingSeats || 0;
+    const dateObj = new Date(`${concert.ConcertDate}T00:00:00`);
+    const displayDate = dateObj.toLocaleDateString('th-TH', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  %>
+    <article class="concert-card compact-card">
+      <h3 class="concert-title"><%= concert.ConcertName %></h3>
+
+      <ul class="concert-meta-list">
+        <li><strong>Date:</strong> <%= displayDate %></li>
+        <li>
+          <strong>Artist/Organizer:</strong>
+          <%= concert.Artists && concert.Artists.length
+            ? concert.Artists.map(a => a.ArtistName).join(', ')
+            : '-' %>
+        </li>
+        <li><strong>Location:</strong> <%= concert.venue %></li>
+        <li><strong>Starting Price:</strong> <%= Number(concert.price).toLocaleString() %> Bath</li>
+        <li><strong>Total Seats:</strong> <%= total %> Seats</li>
+        <li><strong>Already reserved:</strong> <%= booked %> Seats</li>
+        <li><strong>remaining:</strong> <%= remaining %> Seats</li>
+      </ul>
+    </article>
+  <% }) %>
+</section>
+
+<%- include('../partials/footer') %>

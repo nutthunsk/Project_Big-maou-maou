@@ -1,7 +1,3 @@
-// ===============================
-// app.js (FINAL VERSION)
-// ===============================
-
 const express = require("express"); // framework สำหรับเว็บเซิร์ฟเวอร์
 const path = require("path"); // จัดการ path ให้ข้าม OS ได้
 const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
@@ -12,19 +8,16 @@ const concertRoutes = require("./routes/concert.routes");
 const bookingRoutes = require("./routes/booking.routes");
 const customerRoutes = require("./routes/customer.routes");
 const reportRoutes = require("./routes/report.routes");
+const userRoutes = require("./routes/user.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ===============================
 // view engine
-// ===============================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// ===============================
 // middleware
-// ===============================
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -51,18 +44,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// ===============================
 // routes
-// ===============================
 app.use("/artists", artistRoutes);
 app.use("/concerts", concertRoutes);
 app.use("/bookings", bookingRoutes);
 app.use("/customers", customerRoutes);
 app.use("/reports", reportRoutes);
+app.use("/user", userRoutes);
 
-// ===============================
 // home page
-// ===============================
 app.get("/", async (_req, res) => {
   try {
     const [
@@ -122,17 +112,13 @@ app.get("/", async (_req, res) => {
   }
 });
 
-// ===============================
 // database init
-// ===============================
 async function initDb() {
   await sequelize.authenticate();
   await sequelize.sync();
 }
 
-// ===============================
 // start server
-// ===============================
 async function startServer() {
   try {
     await initDb();
@@ -150,8 +136,6 @@ if (require.main === module) {
   startServer();
 }
 
-// ===============================
 // exports
-// ===============================
 module.exports = app;
 module.exports.initDb = initDb;

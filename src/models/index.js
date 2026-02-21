@@ -7,14 +7,14 @@ const sequelize = new Sequelize({
   logging: false,
 });
 
-// init models (ประกาศให้ครบก่อน)
+// init models
 const Artist = require("./Artist")(sequelize, DataTypes);
 const Concert = require("./Concert")(sequelize, DataTypes);
 const Customer = require("./Customer")(sequelize, DataTypes);
 const Booking = require("./Booking")(sequelize, DataTypes);
 const ConcertArtist = require("./ConcertArtist")(sequelize, DataTypes);
 
-// relations (ค่อยผูกทีหลัง)
+// relations 
 Artist.hasMany(Concert, { foreignKey: "ArtistId", as: "PrimaryConcerts" });
 Concert.belongsTo(Artist, { foreignKey: "ArtistId", as: "PrimaryArtist" });
 
