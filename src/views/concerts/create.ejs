@@ -18,8 +18,11 @@
   <label for="price">Price</label>
   <input id="price" name="price" type="number" min="1" step="0.01" required />
 
-  <label for="imageUrl">Poster Image URL</label>
-  <input id="imageUrl" name="imageUrl" type="url" placeholder="https://example.com/poster.jpg" />
+  <label for="imageFile">Poster Image (upload from your computer)</label>
+  <input id="imageFile" type="file" accept="image/*" />
+  <input id="imageUrl" name="imageUrl" type="hidden" />
+  <small class="help-text">เลือกไฟล์รูปจากเครื่องของคุณ ระบบจะบันทึกเป็นภาพของคอนเสิร์ตนี้</small>
+  <img id="imagePreview" class="user-concert-poster" style="max-width:260px;height:160px;display:none;" alt="preview" />
   
   <label for="ArtistIds">Artists (Select multiple people)</label>
   <select id="ArtistIds" name="ArtistIds" multiple required size="6">
@@ -40,6 +43,9 @@
   (function () {
     const select = document.getElementById('ArtistIds');
     const tagsWrap = document.getElementById('selected-artist-tags');
+    const imageFileInput = document.getElementById('imageFile');
+    const imageUrlInput = document.getElementById('imageUrl');
+    const imagePreview = document.getElementById('imagePreview');
 
     function renderTags() {
       tagsWrap.innerHTML = '';
@@ -57,6 +63,25 @@
       });
     }
 
+        const updateImagePreview = () => {
+      const file = imageFileInput.files && imageFileInput.files[0];
+      if (!file) {
+        imageUrlInput.value = "";
+        imagePreview.style.display = "none";
+        imagePreview.removeAttribute("src");
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        imageUrlInput.value = String(fileReader.result || "");
+        imagePreview.src = imageUrlInput.value;
+        imagePreview.style.display = "block";
+      };
+      fileReader.readAsDataURL(file);
+    };
+
+    imageFileInput.addEventListener('change', updateImagePreview);
     select.addEventListener('change', renderTags);
     renderTags();
   })();

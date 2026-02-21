@@ -202,6 +202,12 @@ a {
   font-size: 14px;
 }
 
+.btn-tiny {
+  padding: 6px 10px;
+  font-size: 12px;
+  min-height: 30px;
+}
+
 .form-shell {
   max-width: 680px;
 }
@@ -800,7 +806,7 @@ a:focus {
 
 .table-actions .btn-small {
   min-height: 40px;
-  min-width: 96px;
+  min-width: 78px;
   font-weight: 700;
 }
 
@@ -904,23 +910,28 @@ a:focus {
 }
 
 .user-site {
-  --u-bg: #050608;
-  --u-surface: #12141a;
-  --u-surface-soft: #1a1d26;
-  --u-border: #2a2e3d;
+  --u-bg: #060816;
+  --u-surface: #121736;
+  --u-surface-soft: #1c2142;
+  --u-border: #2f3b74;
   --u-text: #f7f9ff;
   --u-muted: #a7afc9;
   --u-accent: #7c4dff;
   --u-accent-hover: #6340cb;
-  background: radial-gradient(circle at top, #151824, #050608 45%);
+  background: radial-gradient(
+    circle at top right,
+    #2a2350,
+    #131328 35%,
+    #060816 70%
+  );;
   color: var(--u-text);
 }
 
 html[data-user-theme="light"] .user-site {
-  --u-bg: #f4f6fb;
+  --u-bg: #f3f5ff;
   --u-surface: #ffffff;
-  --u-surface-soft: #f3f5fa;
-  --u-border: #d7dcea;
+  --u-surface-soft: #eceffd;
+  --u-border: #cfd6f4;
   --u-text: #101422;
   --u-muted: #5b647f;
   --u-accent: #7c4dff;
@@ -939,6 +950,13 @@ html[data-user-theme="light"] .user-site {
 
 .user-top-nav {
   padding: 14px clamp(20px, 4vw, 56px);
+  align-items: flex-start;
+}
+
+.user-nav-right {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
 }
 
 .user-brand {
@@ -950,7 +968,13 @@ html[data-user-theme="light"] .user-site {
 
 .user-top-links {
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+}
+
+.user-account-box {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
 }
 
 .user-top-links a {
@@ -972,11 +996,13 @@ html[data-user-theme="light"] .user-site {
   background: var(--u-surface-soft);
   color: var(--u-text);
   border-color: var(--u-border);
-  min-width: 96px;
+  min-width: 78px;
 }
 
 .user-page-shell {
   color: var(--u-text);
+  max-width: 1540px;
+  margin: 0 auto;
 }
 
 .user-site .booking-form-card-main,
@@ -1038,4 +1064,16 @@ html[data-user-theme="light"] .user-app-header {
   border-radius: 12px;
   border: 1px solid var(--u-border);
   background: var(--u-surface-soft);
+}
+
+@media (max-width: 860px) {
+  .user-top-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-nav-right,
+  .user-account-box {
+    justify-items: start;
+  }
 }
