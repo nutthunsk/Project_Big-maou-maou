@@ -748,7 +748,6 @@ a:focus {
   outline-offset: 2px;
 }
 
-
 .card-actions {
   display: grid;
   grid-template-columns: 1fr;
@@ -868,4 +867,34 @@ a:focus {
   height: 100%;
   display: block;
   object-fit: cover;
+}
+
+.profile-booking-section {
+  margin-top: 22px;
+}
+
+.profile-booking-card {
+  border-color: #3b3f62;
+  box-shadow: 0 8px 20px rgba(7, 8, 18, 0.35);
+}
+
+.profile-booking-status {
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+
+.profile-booking-status strong {
+  text-transform: capitalize;
+}
+
+.status-paid {
+  color: #73ffa0;
+}
+
+.status-pending {
+  color: #ffd166;
+}
+
+.status-cancelled {
+  color: #ff8da0;
 }

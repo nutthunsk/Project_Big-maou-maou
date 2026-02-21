@@ -43,11 +43,10 @@
               ? concert.Artists.map(a => a.ArtistName).join(', ')
               : '-' %>
             </strong></li>
-          <li> <strong>Total Seat:</strong> <%= concert.seatStats.totalSeats %> | <strong>remaining:</strong>
             <% if (concert.seatStats.isSoldOut) { %>
               <span class="sold-out-text">Sold out</span>
             <% } else { %>
-              <%= concert.seatStats.remainingSeats %> Seat
+              <%= concert.remainingSeats %>
             <% } %>
           </li>
         </ul>

@@ -147,10 +147,30 @@ exports.concerts = async (_req, res) => {
   }
 };
 
-exports.profile = (req, res) => {
-  return res.render("user/profile", {
-    customer: req.authCustomer,
-  });
+exports.profile = async (req, res) => {
+  try {
+    const bookings = await Booking.findAll({
+      where: { CustomerId: req.authCustomer.id },
+      include: [
+        {
+          model: Concert,
+          include: [{ association: "Artists", through: { attributes: [] } }],
+        },
+      ],
+      order: [["id", "DESC"]],
+    });
+
+    return res.render("user/profile", {
+      customer: req.authCustomer,
+      bookings,
+    });
+  } catch (error) {
+    console.error("User profile error:", error);
+    return res.render("user/profile", {
+      customer: req.authCustomer,
+      bookings: [],
+    });
+  }
 };
 
 exports.updateProfile = async (req, res) => {

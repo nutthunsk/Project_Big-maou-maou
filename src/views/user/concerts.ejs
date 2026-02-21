@@ -27,16 +27,13 @@
       <ul class="concert-meta-list">
         <li><strong>Date:</strong> <%= displayDate %></li>
         <li>
-          <strong>Artist/Organizer:</strong>
+          <strong>Artist:</strong>
           <%= concert.Artists && concert.Artists.length
             ? concert.Artists.map(a => a.ArtistName).join(', ')
             : '-' %>
         </li>
         <li><strong>Location:</strong> <%= concert.venue %></li>
         <li><strong>Starting Price:</strong> <%= Number(concert.price).toLocaleString() %> Bath</li>
-        <li><strong>Total Seats:</strong> <%= total %> Seats</li>
-        <li><strong>Already reserved:</strong> <%= booked %> Seats</li>
-        <li><strong>remaining:</strong> <%= remaining %> Seats</li>
       </ul>
 
       <div class="card-actions">
