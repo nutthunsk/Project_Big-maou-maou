@@ -4,7 +4,6 @@
   <h1>Concert</h1>
   <div class="page-actions">
     <a class="btn-primary btn-small" href="/concerts/new">+ Add Concert</a>
-    <a class="btn-ghost btn-small" href="/">Return to home page</a>
   </div>
 </div>
 
@@ -29,9 +28,7 @@
       minute: '2-digit'
     })
   %>
-    <article class="concert-card compact-card concert-card-clickable" onclick="window.location.href='/concerts/<%= concert.id %>/book'" 
-      role="link" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ')
-      {event.preventDefault();window.location.href='/concerts/<%= concert.id %>/book';}">
+    <article class="concert-card compact-card )
       <h3 class="concert-title"><%= concert.ConcertName %></h3>
 
       <ul class="concert-meta-list">

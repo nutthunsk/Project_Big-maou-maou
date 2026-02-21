@@ -910,8 +910,8 @@ a:focus {
   --u-border: #2a2e3d;
   --u-text: #f7f9ff;
   --u-muted: #a7afc9;
-  --u-accent: #ff2e3d;
-  --u-accent-hover: #ff4c59;
+  --u-accent: #7c4dff;
+  --u-accent-hover: #6340cb;
   background: radial-gradient(circle at top, #151824, #050608 45%);
   color: var(--u-text);
 }
@@ -923,8 +923,8 @@ html[data-user-theme="light"] .user-site {
   --u-border: #d7dcea;
   --u-text: #101422;
   --u-muted: #5b647f;
-  --u-accent: #e0202d;
-  --u-accent-hover: #ff2e3d;
+  --u-accent: #7c4dff;
+  --u-accent-hover: #6340cb;
   background: linear-gradient(180deg, #f8f9ff 0%, #eef2fb 100%);
 }
 
