@@ -65,65 +65,8 @@ app.use("/reports", reportRoutes);
 app.use("/user", userRoutes);
 
 // home page
-app.get("/", async (_req, res) => {
-  try {
-    const [
-      artistCount,
-      concertCount,
-      customerCount,
-      bookingCount,
-      latestBookings,
-      latestConcerts,
-      latestArtists,
-    ] = await Promise.all([
-      Artist.count(),
-      Concert.count(),
-      Customer.count(),
-      Booking.count(),
-      Booking.findAll({
-        include: [Concert, Customer],
-        order: [["id", "DESC"]],
-        limit: 5,
-      }),
-      Concert.findAll({
-        include: [{ association: "Artists", through: { attributes: [] } }],
-        order: [
-          ["ConcertDate", "DESC"], 
-        ["id", "DESC"]],
-        limit: 5,
-      }),
-      Artist.findAll({
-        include: [{ association: "Concerts", through: { attributes: [] } }],
-        order: [["id", "DESC"]],
-        limit: 5,
-      }),
-    ]);
-
-    return res.render("home", {
-      stats: {
-        artistCount,
-        concertCount,
-        customerCount,
-        bookingCount,
-      },
-      latestBookings,
-      latestConcerts,
-      latestArtists,
-    });
-  } catch (err) {
-    console.error("Home page error:", err);
-    return res.render("home", {
-      stats: {
-        artistCount: 0,
-        concertCount: 0,
-        customerCount: 0,
-        bookingCount: 0,
-      },
-      latestBookings: [],
-      latestConcerts: [],
-      latestArtists: [],
-    });
-  }
+app.get("/", (_req, res) => {
+  return res.redirect("/user");
 });
 
 // database init

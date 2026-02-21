@@ -50,13 +50,17 @@
             <% } %>
           </li>
         </ul>
+        <% const todayText = new Date().toISOString().slice(0, 10); %>
+        <% const isPastConcert = String(concert.ConcertDate) < todayText; %>
         <section class="ticket-bar ticket-bar-compact">
           <div>
             <p class="ticket-label">Starting Price :</p>
             <p class="ticket-price">฿<%= Number(concert.price).toLocaleString() %></p>
           </div>
 
-          <% if (concert.seatStats.isSoldOut) { %>
+          <% if (isPastConcert) { %>
+            <button class="ticket-buy-btn" type="button" disabled>Concert ended</button>
+          <% } else if (concert.seatStats.isSoldOut) { %>
             <button class="ticket-buy-btn" type="button" disabled>Sold out</button>
           <% } else { %>
             <center><a href="/bookings/new?concertId=<%= concert.id %>" class="ticket-buy-btn">Tickets</a></center>

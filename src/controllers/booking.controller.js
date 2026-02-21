@@ -7,6 +7,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9]{8,15}$/;
 const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
 const MAX_BOOKING_QTY = 6;
+const todayDateText = () => new Date().toISOString().slice(0, 10);
 
 const getBookedSeatsByIdentityInConcert = async ({
   ConcertId,
@@ -97,6 +98,15 @@ exports.newForm = async (req, res) => {
         (concert) => Number(concert.id) === Number(selectedConcertId),
       ) || null;
 
+    if (
+      selectedConcert &&
+      String(selectedConcert.ConcertDate) < todayDateText()
+    ) {
+      return res.redirect(
+        "/user/concerts?error=คอนเสิร์ตรายการนี้จัดแสดงไปแล้ว ไม่สามารถจองได้",
+      );
+    }
+
     return res.render("bookings/create", {
       concerts,
       selectedConcertId,
@@ -156,6 +166,12 @@ exports.create = async (req, res) => {
       return res.redirect(errorUrl("ไม่พบข้อมูลคอนเสิร์ต"));
     }
 
+    if (String(concert.ConcertDate) < todayDateText()) {
+      return res.redirect(
+        errorUrl("คอนเสิร์ตรายการนี้จัดแสดงไปแล้ว ไม่สามารถจองได้"),
+      );
+    }
+
     // 🔥 สร้างหรือค้นหา Customer (เหลือแค่รอบเดียว)
     const [customer] = await Customer.findOrCreate({
       where: { email },
@@ -179,7 +195,7 @@ exports.create = async (req, res) => {
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
         errorUrl(
-          `1 อีเมลหรือ 1 ชื่อ จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ ต่อ 1 คอนเสิร์ต`,
+          `1 อีเมล จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ`,
         ),
       );
     }

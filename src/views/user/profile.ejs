@@ -28,12 +28,12 @@
     <h2>คอนเสิร์ตที่คุณจอง</h2>
   </div>
 
-  <% if (!bookings || bookings.length === 0) { %>
+  <% if (!concertBookings || concertBookings.length === 0) { %>
     <p class="empty-state">ยังไม่มีรายการจองคอนเสิร์ต</p>
   <% } else { %>
     <div class="concert-grid compact-grid">
-      <% bookings.forEach((booking) => {
-        const concert = booking.Concert;
+      <% concertBookings.forEach((item) => {
+        const concert = item.concert;
         const dateObj = concert?.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
         const displayDate = dateObj
           ? dateObj.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -49,10 +49,12 @@
                 ? concert.Artists.map((a) => a.ArtistName).join(', ')
                 : '-' %>
             </li>
-            <li><strong>ราคารวม:</strong> ฿<%= Number(booking.totalPrice || 0).toLocaleString() %></li>
+            <li><strong>จำนวนบัตรที่ซื้อแล้ว:</strong> <%= item.totalTicketsPurchased %> ใบ</li>
+
+            <li><strong>ยอดรวม:</strong> ฿<%= Number(item.totalAmount || 0).toLocaleString() %></li>
           </ul>
-          <p class="profile-booking-status status-<%= booking.status %>">
-            สถานะ: <strong><%= booking.status %></strong>
+          <p class="profile-booking-status status-<%= item.latestStatus %>">
+            สถานะล่าสุด: <strong><%= item.latestStatus %></strong>
           </p>
         </article>
       <% }) %>

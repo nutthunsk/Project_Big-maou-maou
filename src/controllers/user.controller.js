@@ -160,15 +160,41 @@ exports.profile = async (req, res) => {
       order: [["id", "DESC"]],
     });
 
+    const groupedConcertBookings = bookings.reduce((acc, booking) => {
+      const concert = booking.Concert;
+      if (!concert) return acc;
+
+      const concertId = Number(concert.id);
+      if (!acc[concertId]) {
+        acc[concertId] = {
+          concert,
+          bookingCount: 0,
+          totalTicketsPurchased: 0,
+          totalAmount: 0,
+          latestStatus: booking.status,
+        };
+      }
+
+      acc[concertId].bookingCount += 1;
+
+      if (booking.status !== "cancelled") {
+        acc[concertId].totalTicketsPurchased += Number(booking.quantity || 0);
+        acc[concertId].totalAmount += Number(booking.totalPrice || 0);
+      }
+
+      return acc;
+    }, {});
+
+
     return res.render("user/profile", {
       customer: req.authCustomer,
-      bookings,
+      concertBookings: Object.values(groupedConcertBookings),
     });
   } catch (error) {
     console.error("User profile error:", error);
     return res.render("user/profile", {
       customer: req.authCustomer,
-      bookings: [],
+      concertBookings: [],
     });
   }
 };
