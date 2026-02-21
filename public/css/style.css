@@ -1077,3 +1077,13 @@ html[data-user-theme="light"] .user-app-header {
     justify-items: start;
   }
 }
+
+.artist-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.artist-card .card-actions {
+  margin-top: auto;
+}
