@@ -128,7 +128,6 @@ exports.create = async (req, res) => {
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
-    const imageUrl = cleanText(req.body.imageUrl);
     const ArtistId = artistIds[0];
 
     if (
@@ -158,7 +157,6 @@ exports.create = async (req, res) => {
       totalSeats,
       price,
       ArtistId,
-      imageUrl: imageUrl || null,
     });
 
     await concert.setArtists(artistIds);
@@ -202,7 +200,6 @@ exports.update = async (req, res) => {
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
     const ArtistId = artistIds[0];
-    const imageUrl = cleanText(req.body.imageUrl);
 
     if (
       !ConcertName ||
@@ -243,7 +240,6 @@ exports.update = async (req, res) => {
       totalSeats,
       price,
       ArtistId,
-      imageUrl: imageUrl || null,
     });
 
     await concert.setArtists(artistIds);

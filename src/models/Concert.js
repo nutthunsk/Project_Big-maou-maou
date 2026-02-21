@@ -39,11 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
-      imageUrl: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-
       //FK ไป Artist (สำคัญมาก)
       ArtistId: {
         type: DataTypes.INTEGER,

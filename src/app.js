@@ -137,18 +137,6 @@ app.get("/admin", async (_req, res) => {
 async function initDb() {
   await sequelize.authenticate();
   await sequelize.sync();
-    const [concertColumns] = await sequelize.query(
-    "PRAGMA table_info('Concert')",
-  );
-
-  const hasImageUrl = concertColumns.some(
-    (column) => column.name === "imageUrl",
-  );
-  if (!hasImageUrl) {
-    await sequelize.query(
-      "ALTER TABLE Concert ADD COLUMN imageUrl VARCHAR(255)",
-    );
-  }
 }
 
 // start server
