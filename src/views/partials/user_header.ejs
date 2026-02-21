@@ -17,16 +17,21 @@
           <a href="/user/artists">ศิลปิน</a>
           <a href="/user/concerts">คอนเสิร์ต</a>
           <% if (authCustomer) { %><a href="/user/profile">My Profile</a><% } %>
-        <button type="button" id="themeToggleBtn" class="btn-ghost btn-small user-theme-toggle">Dark</button>
-        <% if (authCustomer) { %>
-          <span class="muted-inline">Hi, <%= authCustomer.fullname %></span>
-          <form method="POST" action="/user/logout" class="inline-form">
-            <button type="submit" class="btn-inline btn-small">Logout</button>
-          </form>
-        <% } else { %>
-          <a href="/user/login" class="btn-inline btn-small">Login</a>
-        <% } %>
+
+              <div class="user-account-box">
+          <% if (authCustomer) { %>
+            <span class="muted-inline">Hi, <%= authCustomer.fullname %></span>
+            <form method="POST" action="/user/logout" class="inline-form">
+              <button type="submit" class="btn-inline btn-small">Logout</button>
+            </form>
+          <% } else { %>
+            <a href="/user/login" class="btn-inline btn-small">Login</a>
+          <% } %>
       </div>
+ </div>
+
+<button type="button" id="themeToggleBtn" class="btn-ghost btn-small user-theme-toggle">Dark</button>
+
     </nav>
   </header>
 

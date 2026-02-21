@@ -1110,3 +1110,94 @@ html[data-user-theme="light"] .user-app-header {
   border: 1px solid var(--u-border);
   background: var(--u-surface-soft);
 }
+
+.user-site .user-top-links a,
+.user-site .btn-inline,
+.user-site .btn-ghost {
+  border-radius: 999px;
+}
+
+.user-account-box .btn-inline,
+.user-account-box .user-theme-toggle {
+  min-width: 96px;
+}
+
+.discover-hero {
+  text-align: center;
+  padding: 20px 0 26px;
+  border-bottom: 1px solid var(--u-border);
+  margin-bottom: 18px;
+}
+
+.discover-kicker {
+  margin: 0;
+  color: #ff2f4d;
+  font-size: clamp(30px, 3.2vw, 48px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.discover-hero h1 {
+  margin: 6px 0 16px;
+  letter-spacing: 0.2em;
+}
+
+.discover-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.discover-tabs a {
+  text-decoration: none;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--u-border);
+  background: color-mix(in srgb, var(--u-surface) 88%, transparent 12%);
+  font-weight: 700;
+}
+
+.discover-section {
+  margin-bottom: 28px;
+}
+
+.discover-head h2 {
+  margin: 0;
+}
+
+.discover-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.discover-card {
+  border: 1px solid var(--u-border);
+  background: var(--u-surface);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.discover-poster {
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(160deg, #323875, #161a38 60%, #111425);
+}
+
+.discover-poster-artist {
+  background: linear-gradient(140deg, #1f6bb2, #2c326d 50%, #101425);
+}
+
+.discover-card-body {
+  padding: 14px;
+}
+
+.discover-card-body h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.discover-card-body p,
+.discover-card-body small {
+  color: var(--u-muted);
+}

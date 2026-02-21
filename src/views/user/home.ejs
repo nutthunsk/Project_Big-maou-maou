@@ -1,52 +1,37 @@
 <%- include('../partials/user_header', { title: 'User Home' }) %>
 
-<section class="page-head">
-  <h1>BIG MAOU MAOU CONCERTS</h1>
+<section class="discover-hero">
+  <p class="discover-kicker">THE CONCERT</p>
+  <h1>DISCOVER</h1>
 </section>
 
-<section>
-  <div class="page-head">
-    <h2>Latest artists</h2>
-    <a href="/user/artists" class="btn-inline btn-small">View all</a>
-  </div>
-  <ul class="concert-meta-list artist-concert-list">
-    <% if (!latestArtists || !latestArtists.length) { %>
-      <li class="empty-state">no artists yet</li>
-    <% } else { %>
-      <% latestArtists.forEach((artist) => { %>
-        <li>
-          <strong><%= artist.ArtistName %></strong>
-          <span class="muted-inline">(<%= artist.genre %>)</span>
-          <div class="muted-inline">Number of concerts: <%= artist.Concerts ? artist.Concerts.length : 0 %></div>
-        </li>
-      <% }) %>
-    <% } %>
-  </ul>
-</section>
-
-<section>
-  <div class="page-head">
+<section class="discover-section">
+  <div class="page-head discover-head">
     <h2>Latest concerts</h2>
-    <a href="/user/concerts" class="btn-inline btn-small">View all</a>
+    <a href="/user/concerts" class="btn-inline btn-small">ดูเพิ่มเติม</a>
   </div>
-  <ul class="concert-meta-list artist-concert-list">
+  
+  <div class="discover-card-grid">
     <% if (!latestConcerts || !latestConcerts.length) { %>
-      <li class="empty-state">no concerts yet</li>
+      <p class="empty-state">no concerts yet</p>
     <% } else { %>
       <% latestConcerts.forEach((concert) => {
         const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
       %>
-        <li>
-          <strong><%= concert.ConcertName %></strong>
-          <% if (d) { %>
-            <span class="muted-inline">(
-              <%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %>
-            )</span>
-          <% } %>
-        </li>
+        <article class="discover-card">
+          <div class="discover-poster"></div>
+          <div class="discover-card-body">
+            <h3><%= concert.ConcertName %></h3>
+            <% if (d) { %>
+              <p><%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %></p>
+            <% } else { %>
+              <p>-</p>
+            <% } %>
+          </div>
+        </article>
       <% }) %>
     <% } %>
-  </ul>
+  </div>
 </section>
 
 <%- include('../partials/footer') %>
