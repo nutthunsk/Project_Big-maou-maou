@@ -9,6 +9,7 @@ const bookingRoutes = require("./routes/booking.routes");
 const customerRoutes = require("./routes/customer.routes");
 const reportRoutes = require("./routes/report.routes");
 const userRoutes = require("./routes/user.routes");
+const { getAuthCustomer } = require("./utils/user-auth");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,7 +22,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.use(express.static('public'))
+app.use(express.static("public"));
 
 // static files
 app.use(express.static(path.join(__dirname, "../public")));
@@ -41,6 +42,17 @@ app.use((req, res, next) => {
     success: req.query.success || "",
     error: req.query.error || "",
   };
+  next();
+});
+
+
+app.use(async (req, res, next) => {
+  try {
+    res.locals.authCustomer = await getAuthCustomer(req);
+  } catch (error) {
+    console.error("Attach auth customer error:", error);
+    res.locals.authCustomer = null;
+  }
   next();
 });
 
@@ -75,14 +87,16 @@ app.get("/", async (_req, res) => {
       }),
       Concert.findAll({
         include: [{ association: "Artists", through: { attributes: [] } }],
-        order: [["ConcertDate", "DESC"], ["id", "DESC"]],
+        order: [
+          ["ConcertDate", "DESC"], 
+        ["id", "DESC"]],
         limit: 5,
       }),
       Artist.findAll({
         include: [{ association: "Concerts", through: { attributes: [] } }],
         order: [["id", "DESC"]],
         limit: 5,
-      })
+      }),
     ]);
 
     return res.render("home", {

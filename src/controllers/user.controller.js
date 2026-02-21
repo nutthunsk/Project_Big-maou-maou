@@ -1,4 +1,9 @@
-const { Artist, Concert, Booking } = require("../models");
+const { Artist, Concert, Booking, Customer } = require("../models");
+const {
+  getAuthCustomer,
+  setAuthCookie,
+  clearAuthCookie,
+} = require("../utils/user-auth");
 
 const attachSeatStats = async (concerts) => {
   const concertRows = Array.isArray(concerts) ? concerts : [];
@@ -43,7 +48,10 @@ exports.home = async (_req, res) => {
       }),
       Concert.findAll({
         include: [{ association: "Artists", through: { attributes: [] } }],
-        order: [["ConcertDate", "ASC"], ["id", "ASC"]],
+        order: [
+          ["ConcertDate", "ASC"],
+          ["id", "ASC"],
+        ],
         limit: 6,
       }),
     ]);
@@ -53,6 +61,58 @@ exports.home = async (_req, res) => {
     console.error("User home error:", err);
     res.render("user/home", { latestArtists: [], latestConcerts: [] });
   }
+};
+
+exports.loginForm = async (req, res) => {
+  const authCustomer = await getAuthCustomer(req);
+  if (authCustomer) {
+    const redirectTo = String(req.query.redirect || "/user/concerts");
+    return res.redirect(redirectTo);
+  }
+
+  return res.render("user/login", {
+    redirectTo: String(req.query.redirect || "/user/concerts"),
+  });
+};
+
+exports.login = async (req, res) => {
+  try {
+    const fullname = String(req.body.fullname || "").trim();
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+    const phoneNumber = String(req.body.phoneNumber || "").trim();
+    const redirectTo = String(req.body.redirectTo || "/user/concerts");
+
+    if (!fullname || !email || !phoneNumber) {
+      return res.redirect(
+        `/user/login?error=${encodeURIComponent("กรุณากรอกข้อมูลให้ครบ")}&redirect=${encodeURIComponent(redirectTo)}`,
+      );
+    }
+
+    const [customer] = await Customer.findOrCreate({
+      where: { email },
+      defaults: { fullname, email, phoneNumber },
+    });
+
+    if (
+      customer.fullname !== fullname ||
+      customer.phoneNumber !== phoneNumber
+    ) {
+      await customer.update({ fullname, phoneNumber });
+    }
+
+    setAuthCookie(res, customer.id);
+    return res.redirect(redirectTo || "/user/concerts");
+  } catch (err) {
+    console.error("User login error:", err);
+    return res.redirect("/user/login?error=ไม่สามารถเข้าสู่ระบบได้");
+  }
+};
+
+exports.logout = (_req, res) => {
+  clearAuthCookie(res);
+  return res.redirect("/user?success=ออกจากระบบเรียบร้อย");
 };
 
 exports.artists = async (_req, res) => {

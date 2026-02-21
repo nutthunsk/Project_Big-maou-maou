@@ -59,16 +59,19 @@ exports.show = async (req, res) => {
 
 exports.newForm = async (req, res) => {
   try {
-    const { concerts } = await getRefs()
+    const { concerts } = await getRefs();
     const selectedConcertId = normalizeNumber(req.query.concertId);
-    const selectedConcert = concerts.find((concert) => Number(concert.id) === 
-    Number(selectedConcertId)) || null;
+    const selectedConcert =
+      concerts.find(
+        (concert) => Number(concert.id) === Number(selectedConcertId),
+      ) || null;
 
     return res.render("bookings/create", {
       concerts,
       selectedConcertId,
       selectedConcert,
       maxBookingQty: MAX_BOOKING_QTY,
+      authCustomer: req.authCustomer || null,
     });
   } catch (err) {
     console.error("Booking new form error:", err);
@@ -79,13 +82,22 @@ exports.newForm = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const ConcertId = normalizeNumber(req.body.ConcertId);
-    const fullname = cleanText(req.body.fullname);
-    const email = cleanText(req.body.email).toLowerCase();
-    const phoneNumber = cleanText(req.body.phoneNumber);
+    const authCustomer = req.authCustomer || null;
+    const fullname = cleanText(req.body.fullname || authCustomer?.fullname);
+    const email = cleanText(
+      authCustomer?.email || req.body.email,
+    ).toLowerCase();
+    const phoneNumber = cleanText(
+      req.body.phoneNumber || authCustomer?.phoneNumber,
+    );
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
-    const backUrl = ConcertId ? `/bookings/new?concertId=${ConcertId}` : "/bookings/new";
-    const errorUrl = (message) => `${backUrl}${backUrl.includes("?") ? "&" : "?"}
+    const backUrl = ConcertId
+      ? `/bookings/new?concertId=${ConcertId}`
+      : "/bookings/new";
+    const errorUrl = (
+      message,
+    ) => `${backUrl}${backUrl.includes("?") ? "&" : "?"}
     error=${encodeURIComponent(message)}`;
 
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
@@ -132,7 +144,9 @@ exports.create = async (req, res) => {
 
     if (quantity > remainingSeats) {
       return res.redirect(
-        errorUrl(`จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`),
+        errorUrl(
+          `จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
+        ),
       );
     }
 
@@ -187,7 +201,7 @@ exports.update = async (req, res) => {
       );
     }
 
-        if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
+    if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
       return res.redirect(
         `/bookings/${booking.id}/edit?error=จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`,
       );
@@ -258,7 +272,7 @@ exports.markAsPending = async (req, res) => {
     console.error("Booking mark as pending error:", err);
     return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
   }
-}
+};
 
 exports.delete = async (req, res) => {
   try {

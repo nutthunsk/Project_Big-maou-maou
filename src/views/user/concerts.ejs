@@ -38,6 +38,10 @@
         <li><strong>Already reserved:</strong> <%= booked %> Seats</li>
         <li><strong>remaining:</strong> <%= remaining %> Seats</li>
       </ul>
+
+      <div class="card-actions">
+        <a class="btn-primary btn-small" href="/concerts/<%= concert.id %>/book">จองคอนเสิร์ตนี้</a>
+      </div>
     </article>
   <% }) %>
 </section>
