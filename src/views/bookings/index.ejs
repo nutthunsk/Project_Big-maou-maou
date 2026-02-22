@@ -32,15 +32,15 @@
         <td class="action-row table-actions">
                   <% if (booking.status !== 'paid') { %>
             <form method="POST" action="/bookings/<%= booking.id %>/mark-paid" onsubmit="return confirm('Confirmed status update to paid?')">
-              <button class="btn-primary btn-small" type="submit">สแกนจ่ายสำเร็จ</button>
+              <button class="btn-primary btn-small" type="submit">Successfully scanned and paid</button>
             </form>
           <% } else { %>
             <form method="POST" action="/bookings/<%= booking.id %>/mark-pending" onsubmit="return confirm('Confirm simulated status as pending?')">
-              <button class="btn-ghost btn-small" type="submit">จำลองยังไม่ชำระ</button>
+              <button class="btn-ghost btn-small" type="submit">The simulation is not yet paid.</button>
               
             </form>
           <% } %>
-          <a class="btn-ghost btn-small" href="/bookings/<%= booking.id %>/edit">แก้ไข</a>
+          <a class="btn-ghost btn-small" href="/bookings/<%= booking.id %>/edit">Edit</a>
           <form method="POST" action="/bookings/<%= booking.id %>" onsubmit="return confirm('Confirm the deletion of this booking?')">
             <input type="hidden" name="_method" value="DELETE" />
             <button class="btn-danger btn-small" type="submit">Deleat</button>

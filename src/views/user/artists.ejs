@@ -1,4 +1,4 @@
-<%- include('../partials/user_header', { title: 'User Artists' }) %>
+<%- include('../partials/user_header', { title: 'Artists' }) %>
 
 <div class="page-head">
   <h1>Artists</h1>
@@ -29,7 +29,7 @@
               </li>
             <% }) %>
             <% if (artist.Concerts.length > 4) { %>
-              <li class="muted-inline">และอีก <%= artist.Concerts.length - 4 %> รายการ</li>
+              <li class="muted-inline">and another <%= artist.Concerts.length - 4 %> list</li>
             <% } %>
           </ul>
         <% } %>

@@ -1,25 +1,25 @@
-<%- include('../partials/user_header', { title: 'User Login' }) %>
+<%- include('../partials/user_header', { title: 'Login' }) %>
 
 <section class="booking-form-layout">
   <div class="booking-form-card booking-form-card-main">
-    <h1>Login ก่อนจองบัตร</h1>
-    <p class="booking-form-subtitle">เข้าสู่ระบบด้วยข้อมูลผู้ใช้งาน เพื่อให้สามารถจองคอนเสิร์ตได้</p>
+    <h1>Login before booking tickets</h1>
+    <p class="booking-form-subtitle">Log in with your username to be able to book the concert</p>
 
     <form class="stack-form booking-create-form" method="POST" action="/user/login">
       <input type="hidden" name="redirectTo" value="<%= redirectTo || '/user/concerts' %>" />
 
-      <label for="fullname">ชื่อ - นามสกุล</label>
+      <label for="fullname">Name - Surname</label>
       <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" required />
 
-      <label for="email">อีเมล</label>
+      <label for="email">Email</label>
       <input id="email" name="email" type="email" required />
 
-      <label for="phoneNumber">เบอร์โทรศัพท์</label>
+      <label for="phoneNumber">Phone number</label>
       <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{8,15}" maxlength="15" required />
 
       <div class="action-row">
         <button class="btn-primary" type="submit">Login</button>
-        <a class="btn-ghost" href="/user/concerts">กลับไปดูคอนเสิร์ต</a>
+        <a class="btn-ghost" href="/user/concerts">Go back to see the concert</a>
       </div>
     </form>
   </div>

@@ -46,7 +46,7 @@ const requireUserLogin = async (req, res, next) => {
     if (!authCustomer) {
       const target = encodeURIComponent(req.originalUrl || "/user/concerts");
       return res.redirect(
-        `/user/login?redirect=${target}&error=${encodeURIComponent("กรุณาเข้าสู่ระบบก่อนจองบัตร")}`,
+        `/user/login?redirect=${target}&error=${encodeURIComponent("Please log in before booking tickets")}`,
       );
     }
 
@@ -55,7 +55,7 @@ const requireUserLogin = async (req, res, next) => {
   } catch (error) {
     console.error("User auth middleware error:", error);
     return res.redirect(
-      `/user/login?error=${encodeURIComponent("เกิดข้อผิดพลาดในการยืนยันตัวตน")}`,
+      `/user/login?error=${encodeURIComponent("An error occurred during identity verification")}`,
     );
   }
 };

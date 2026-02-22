@@ -112,7 +112,7 @@ exports.index = async (_req, res) => {
     res.render("concerts/index", { concerts: concertsWithSeatStats });
   } catch (err) {
     console.error("Concert index error:", err);
-    res.redirect("/?error=ไม่สามารถโหลดข้อมูลคอนเสิร์ตได้");
+    res.redirect("/?error=The concert information could not be loaded");
   }
 };
 
@@ -129,7 +129,7 @@ exports.bookForm = async (req, res) => {
     return res.render("concerts/book", { concert: concertWithSeatStats });
   } catch (err) {
     console.error("Concert booking page error:", err);
-    return res.redirect("/concerts?error=ไม่สามารถโหลดหน้าจองบัตรได้");
+    return res.redirect("/concerts?error=The ticket booking page could not be loaded");
   }
 };
 
@@ -149,7 +149,7 @@ exports.show = async (req, res) => {
     res.render("concerts/show", { concert: concertWithSeatStats });
   } catch (err) {
     console.error("Concert show error:", err);
-    res.redirect("/concerts?error=ไม่สามารถโหลดรายละเอียดคอนเสิร์ตได้");
+    res.redirect("/concerts?error=Unable to load concert details");
   }
 };
 
@@ -164,7 +164,7 @@ exports.newForm = async (_req, res) => {
     res.render("concerts/create", { artists, imageOptions });
   } catch (err) {
     console.error("Concert new form error:", err);
-    res.redirect("/concerts?error=ไม่สามารถโหลดฟอร์มเพิ่มคอนเสิร์ตได้");
+    res.redirect("/concerts?error=The form for adding a concert could not be loaded");
   }
 };
 
@@ -194,16 +194,16 @@ exports.create = async (req, res) => {
       totalSeats <= 0 ||
       price <= 0
     ) {
-      return res.redirect("/concerts/new?error=กรุณากรอกข้อมูลให้ถูกต้อง");
+      return res.redirect("/concerts/new?error=Please fill in the information correctly");
     }
 
     if (ConcertDate < todayDateText()) {
-      return res.redirect("/concerts/new?error=วันที่จัดเลยมาแล้ว!!!");
+      return res.redirect("/concerts/new?error=The date has passed!!!");
     }
 
     const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
     if (duplicatedConcert) {
-      return res.redirect("/concerts/new?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว");
+      return res.redirect("/concerts/new?error=The name of this concert already exists");
     }
 
     const concert = await Concert.create({
@@ -219,10 +219,10 @@ exports.create = async (req, res) => {
 
     await concert.setArtists(artistIds);
 
-    res.redirect("/concerts?success=เพิ่มคอนเสิร์ตเรียบร้อย");
+    res.redirect("/concerts?success=The concert has been added");
   } catch (err) {
     console.error("Concert create error:", err);
-    res.redirect("/concerts/new?error=ไม่สามารถเพิ่มคอนเสิร์ตได้");
+    res.redirect("/concerts/new?error=Unable to add a concert");
   }
 };
 
@@ -242,7 +242,7 @@ exports.editForm = async (req, res) => {
     res.render("concerts/edit", { concert, artists, imageOptions });
   } catch (err) {
     console.error("Concert edit form error:", err);
-    res.redirect("/concerts?error=ไม่สามารถโหลดฟอร์มแก้ไขคอนเสิร์ตได้");
+    res.redirect("/concerts?error=The concert editing form could not be loaded");
   }
 };
 
@@ -276,13 +276,13 @@ exports.update = async (req, res) => {
       price <= 0
     ) {
       return res.redirect(
-        `/concerts/${concert.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
+        `/concerts/${concert.id}/edit?error=Please fill in the information correctly`,
       );
     }
 
     const previousConcertDate = String(concert.ConcertDate || "");
     if (ConcertDate < todayDateText() && ConcertDate !== previousConcertDate) {
-      return res.redirect("/concerts/new?error=วันที่จัดเลยมาแล้ว!!!");
+      return res.redirect("/concerts/new?error=The date has passed!!");
     }
 
     const normalizedCurrentName = cleanText(concert.ConcertName).toLowerCase();
@@ -294,7 +294,7 @@ exports.update = async (req, res) => {
       });
       if (duplicatedConcert) {
         return res.redirect(
-          `/concerts/${concert.id}/edit?error=ชื่อคอนเสิร์ตนี้มีอยู่แล้ว`,
+          `/concerts/${concert.id}/edit?error=The name of this concert already exists`,
         );
       }
     }
@@ -312,11 +312,11 @@ exports.update = async (req, res) => {
 
     await concert.setArtists(artistIds);
 
-    res.redirect(`/concerts/${concert.id}?success=แก้ไขคอนเสิร์ตเรียบร้อย`);
+    res.redirect(`/concerts/${concert.id}?success=The concert arrangements have already been finalized`);
   } catch (err) {
     console.error("Concert update error:", err);
     res.redirect(
-      `/concerts/${req.params.id}/edit?error=ไม่สามารถแก้ไขคอนเสิร์ตได้`,
+      `/concerts/${req.params.id}/edit?error=Unable to edit concert`,
     );
   }
 };
@@ -330,9 +330,9 @@ exports.delete = async (req, res) => {
     await Booking.destroy({ where: { ConcertId: concert.id } });
     await concert.destroy();
 
-    res.redirect("/concerts?success=ลบคอนเสิร์ตเรียบร้อย");
+    res.redirect("/concerts?success=The concert has been deleted");
   } catch (err) {
     console.error("Concert delete error:", err);
-    res.redirect("/concerts?error=ไม่สามารถลบคอนเสิร์ตได้");
+    res.redirect("/concerts?error=Unable to delete concert");
   }
 };

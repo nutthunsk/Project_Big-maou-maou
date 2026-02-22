@@ -5,15 +5,15 @@ const cleanText = (value) => String(value || "").trim();
 
 const validatePayload = ({ fullname, email, phoneNumber }) => {
   if (!cleanText(fullname) || !cleanText(email) || !cleanText(phoneNumber)) {
-    return "กรุณากรอกข้อมูลให้ครบถ้วน";
+    return "Please fill out the information completely";
   }
 
   if (!EMAIL_REGEX.test(cleanText(email))) {
-    return "อีเมลต้องมีรูปแบบที่ถูกต้อง (ต้องมี @)";
+    return "The email address must be in the correct format (it must include the @ symbol).";
   }
 
   if (!PHONE_REGEX.test(cleanText(phoneNumber))) {
-    return "เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก";
+    return "The phone number must be 8-15 digits long";
   }
 
   return null;
@@ -26,7 +26,7 @@ exports.index = async (_req, res) => {
     return res.render("customers/index", { customers });
   } catch (err) {
     console.error("Customer index error:", err);
-    return res.redirect("/?error=ไม่สามารถโหลดข้อมูลลูกค้าได้");
+    return res.redirect("/?error=Unable to load customer data");
   }
 };
 
@@ -41,7 +41,7 @@ exports.show = async (req, res) => {
     return res.render("customers/show", { customer });
   } catch (err) {
     console.error("Customer show error:", err);
-    return res.redirect("/customers?error=ไม่สามารถโหลดรายละเอียดลูกค้าได้");
+    return res.redirect("/customers?error=Unable to load customer details");
   }
 };
 
@@ -60,11 +60,11 @@ exports.create = async (req, res) => {
       return res.redirect(`/customers/new?error=${encodeURIComponent(error)}`);
 
     await Customer.create(payload);
-    return res.redirect("/customers?success=เพิ่มลูกค้าเรียบร้อย");
+    return res.redirect("/customers?success=Successfully added customer");
   } catch (err) {
     console.error("Customer create error:", err);
     return res.redirect(
-      "/customers/new?error=ไม่สามารถเพิ่มลูกค้าได้ (อีเมลอาจซ้ำ)",
+      "/customers/new?error=Unable to add customer (email may be a duplicate)",
     );
   }
 };
@@ -77,7 +77,7 @@ exports.editForm = async (req, res) => {
     return res.render("customers/edit", { customer });
   } catch (err) {
     console.error("Customer edit form error:", err);
-    return res.redirect("/customers?error=ไม่สามารถโหลดฟอร์มแก้ไขลูกค้าได้");
+    return res.redirect("/customers?error=The customer edit form could not be loaded");
   }
 };
 
@@ -101,12 +101,12 @@ exports.update = async (req, res) => {
 
     await customer.update(payload);
     return res.redirect(
-      `/customers/${customer.id}?success=แก้ไขข้อมูลลูกค้าเรียบร้อย`,
+      `/customers/${customer.id}?success=Customer information has been edited successfully`,
     );
   } catch (err) {
     console.error("Customer update error:", err);
     return res.redirect(
-      `/customers/${req.params.id}/edit?error=ไม่สามารถแก้ไขลูกค้าได้`,
+      `/customers/${req.params.id}/edit?error=Unable to edit custome`,
     );
   }
 };
@@ -121,9 +121,9 @@ exports.delete = async (req, res) => {
     await Booking.destroy({ where: { CustomerId: customer.id } });
     await customer.destroy();
 
-    return res.redirect("/customers?success=ลบลูกค้าเรียบร้อย");
+    return res.redirect("/customers?success=Customer successfully deleted");
   } catch (err) {
     console.error("Customer delete error:", err);
-    return res.redirect("/customers?error=ไม่สามารถลบลูกค้าได้");
+    return res.redirect("/customers?error=Unable to delete customers");
   }
 };

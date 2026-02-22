@@ -106,13 +106,13 @@ exports.login = async (req, res) => {
     return res.redirect(redirectTo || "/user/concerts");
   } catch (err) {
     console.error("User login error:", err);
-    return res.redirect("/user/login?error=ไม่สามารถเข้าสู่ระบบได้");
+    return res.redirect("/user/login?error=Unable to log in");
   }
 };
 
 exports.logout = (_req, res) => {
   clearAuthCookie(res);
-  return res.redirect("/user?success=ออกจากระบบเรียบร้อย");
+  return res.redirect("/user?success=Log out successfully");
 };
 
 exports.artists = async (_req, res) => {
@@ -125,7 +125,7 @@ exports.artists = async (_req, res) => {
     res.render("user/artists", { artists });
   } catch (err) {
     console.error("User artists error:", err);
-    res.redirect("/user?error=ไม่สามารถโหลดข้อมูลศิลปินได้");
+    res.redirect("/user?error=Unable to load artist information");
   }
 };
 
@@ -140,7 +140,7 @@ exports.concerts = async (_req, res) => {
     res.render("user/concerts", { concerts: concertsWithSeatStats });
   } catch (err) {
     console.error("User concerts error:", err);
-    res.redirect("/user?error=ไม่สามารถโหลดข้อมูลคอนเสิร์ตได้");
+    res.redirect("/user?error=The concert information could not be loaded");
   }
 };
 
@@ -205,16 +205,16 @@ exports.updateProfile = async (req, res) => {
     const phoneNumber = String(req.body.phoneNumber || "").trim();
 
     if (!fullname || !email || !phoneNumber) {
-      return res.redirect("/user/profile?error=กรุณากรอกข้อมูลให้ครบ");
+      return res.redirect("/user/profile?error=Please fill in complete information");
     }
 
     if (!EMAIL_REGEX.test(email)) {
-      return res.redirect("/user/profile?error=รูปแบบอีเมลไม่ถูกต้อง");
+      return res.redirect("/user/profile?error=Invalid email format");
     }
 
     if (!PHONE_REGEX.test(phoneNumber)) {
       return res.redirect(
-        "/user/profile?error=เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก",
+        "/user/profile?error=The phone number must be 8-15 digits long",
       );
     }
 
@@ -223,13 +223,13 @@ exports.updateProfile = async (req, res) => {
       duplicateEmail &&
       Number(duplicateEmail.id) !== Number(authCustomer.id)
     ) {
-      return res.redirect("/user/profile?error=อีเมลนี้ถูกใช้งานแล้ว");
+      return res.redirect("/user/profile?error=This email address is already in use");
     }
 
     await authCustomer.update({ fullname, email, phoneNumber });
-    return res.redirect("/user/profile?success=อัปเดตข้อมูลสำเร็จ");
+    return res.redirect("/user/profile?success=Data updated successfully");
   } catch (error) {
     console.error("User update profile error:", error);
-    return res.redirect("/user/profile?error=ไม่สามารถอัปเดตข้อมูลได้");
+    return res.redirect("/user/profile?error=Unable to update information");
   }
 };

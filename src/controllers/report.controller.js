@@ -160,6 +160,6 @@ exports.index = async (req, res) => {
     }
   } catch (err) {
     console.error("Report error:", err);
-    return res.redirect("/?error=โหลดรายงานไม่สำเร็จ");
+    return res.redirect("/?error=Report loading failed");
   }
 };

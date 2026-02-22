@@ -71,7 +71,7 @@ exports.index = async (_req, res) => {
     return res.render("bookings/index", { bookings });
   } catch (err) {
     console.error("Booking index error:", err);
-    return res.redirect("/?error=ไม่สามารถโหลดรายการจองได้");
+    return res.redirect("/?error=Unable to load booking details");
   }
 };
 
@@ -85,7 +85,7 @@ exports.show = async (req, res) => {
     return res.render("bookings/show", { booking });
   } catch (err) {
     console.error("Booking show error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถโหลดรายละเอียดการจองได้");
+    return res.redirect("/bookings?error=The booking details could not be loaded");
   }
 };
 
@@ -103,7 +103,7 @@ exports.newForm = async (req, res) => {
       String(selectedConcert.ConcertDate) < todayDateText()
     ) {
       return res.redirect(
-        "/user/concerts?error=คอนเสิร์ตรายการนี้จัดแสดงไปแล้ว ไม่สามารถจองได้",
+        "/user/concerts?error=This concert has already taken place and is no longer available for booking",
       );
     }
 
@@ -117,7 +117,7 @@ exports.newForm = async (req, res) => {
   } catch (err) {
     console.error("Booking new form error:", err);
     return res.redirect(
-      "/user/concerts?error=ไม่สามารถโหลดฟอร์มเพิ่มการจองได้",
+      "/user/concerts?error=The form for adding a booking cannot be loaded",
     );
   }
 };
@@ -142,35 +142,35 @@ exports.create = async (req, res) => {
       `${backUrl}${backUrl.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`;
 
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
-      return res.redirect(errorUrl("กรุณากรอกข้อมูลให้ถูกต้อง"));
+      return res.redirect(errorUrl("Please fill in the information correctly"));
     }
 
     if (!EMAIL_REGEX.test(email)) {
-      return res.redirect(errorUrl("รูปแบบอีเมลไม่ถูกต้อง"));
+      return res.redirect(errorUrl("Invalid email format"));
     }
 
     if (!PHONE_REGEX.test(phoneNumber)) {
-      return res.redirect(errorUrl("เบอร์โทรต้องเป็นตัวเลข 8-15 หลัก"));
+      return res.redirect(errorUrl("The phone number must be 8-15 digits long"));
     }
 
     if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(`จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`),
+        errorUrl(`You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`),
       );
     }
 
     if (!ALLOWED_STATUS.has(status)) {
-      return res.redirect(errorUrl("สถานะการจองไม่ถูกต้อง"));
+      return res.redirect(errorUrl("Invalid booking status"));
     }
 
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
-      return res.redirect(errorUrl("ไม่พบข้อมูลคอนเสิร์ต"));
+      return res.redirect(errorUrl("No concert information found"));
     }
 
     if (String(concert.ConcertDate) < todayDateText()) {
       return res.redirect(
-        errorUrl("คอนเสิร์ตรายการนี้จัดแสดงไปแล้ว ไม่สามารถจองได้"),
+        errorUrl("This concert has already taken place and is no longer available for booking"),
       );
     }
 
@@ -196,7 +196,7 @@ exports.create = async (req, res) => {
 
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(`1 อีเมล จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ`),
+        errorUrl(`One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`),
       );
     }
 
@@ -206,7 +206,7 @@ exports.create = async (req, res) => {
     if (quantity > remainingSeats) {
       return res.redirect(
         errorUrl(
-          `จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
+          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`,
         ),
       );
     }
@@ -221,10 +221,10 @@ exports.create = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect("/user?success=จองบัตรเรียบร้อย");
+    return res.redirect("/user?success=Already reserved tickets");
   } catch (err) {
     console.error("Booking create error:", err);
-    return res.redirect("/user/concerts?error=ไม่สามารถเพิ่มการจองได้");
+    return res.redirect("/user/concerts?error=Unable to add a booking");
   }
 };
 
@@ -242,7 +242,7 @@ exports.editForm = async (req, res) => {
     });
   } catch (err) {
     console.error("Booking edit form error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถโหลดฟอร์มแก้ไขการจองได้");
+    return res.redirect("/bookings?error=The booking modification form cannot be loaded");
   }
 };
 
@@ -258,26 +258,26 @@ exports.update = async (req, res) => {
 
     if (!ConcertId || !CustomerId || quantity <= 0) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=กรุณากรอกข้อมูลให้ถูกต้อง`,
+        `/bookings/${booking.id}/edit?error=Please fill in the information correctly`,
       );
     }
 
     if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`,
+        `/bookings/${booking.id}/edit?error=You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`,
       );
     }
 
     if (!ALLOWED_STATUS.has(status)) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=สถานะการจองไม่ถูกต้อง`,
+        `/bookings/${booking.id}/edit?error=Invalid booking status`,
       );
     }
 
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=ไม่พบข้อมูลคอนเสิร์ต`,
+        `/bookings/${booking.id}/edit?error=No concert information found`,
       );
     }
 
@@ -286,7 +286,7 @@ exports.update = async (req, res) => {
 
     if (quantity > remainingSeats) {
       return res.redirect(
-        `/bookings/${booking.id}/edit?error=จำนวนบัตรเกินที่นั่งคงเหลือ (${Math.max(remainingSeats, 0)} ที่นั่ง)`,
+        `/bookings/${booking.id}/edit?error=The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`,
       );
     }
 
@@ -300,11 +300,11 @@ exports.update = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect(`/bookings/${booking.id}?success=แก้ไขการจองเรียบร้อย`);
+    return res.redirect(`/bookings/${booking.id}?success=The reservation has been edited`);
   } catch (err) {
     console.error("Booking update error:", err);
     return res.redirect(
-      `/bookings/${req.params.id}/edit?error=ไม่สามารถแก้ไขการจองได้`,
+      `/bookings/${req.params.id}/edit?error=Unable to edit reservation`,
     );
   }
 };
@@ -315,10 +315,10 @@ exports.markAsPaid = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "paid" });
-    return res.redirect("/bookings?success=อัปเดตสถานะเป็น paid เรียบร้อย");
+    return res.redirect("/bookings?success=The status has been updated to paid");
   } catch (err) {
     console.error("Booking mark as paid error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
+    return res.redirect("/bookings?error=The booking status cannot be updated");
   }
 };
 
@@ -328,19 +328,19 @@ exports.markAsPending = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "pending" });
-    return res.redirect("/bookings?success=อัปเดตสถานะเป็น pending เรียบร้อย");
+    return res.redirect("/bookings?success=The status has been updated to pending");
   } catch (err) {
     console.error("Booking mark as pending error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถอัปเดตสถานะการจองได้");
+    return res.redirect("/bookings?error=The booking status cannot be updated");
   }
 };
 
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });
-    return res.redirect("/bookings?success=ลบการจองเรียบร้อย");
+    return res.redirect("/bookings?success=The reservation was successfully deleted");
   } catch (err) {
     console.error("Booking delete error:", err);
-    return res.redirect("/bookings?error=ไม่สามารถลบการจองได้");
+    return res.redirect("/bookings?error=Unable to delete reservation");
   }
 };

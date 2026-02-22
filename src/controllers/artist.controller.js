@@ -13,7 +13,7 @@ exports.index = async (_req, res) => {
     return res.render("artists/index", { artists });
   } catch (err) {
     console.error("Artist index error:", err);
-    return res.redirect("/artists?error=ไม่สามารถโหลดข้อมูลศิลปินได้");
+    return res.redirect("/artists?error=Unable to load artist information");
   }
 };
 
@@ -27,7 +27,7 @@ exports.show = async (req, res) => {
     return res.render("artists/show", { artist });
   } catch (err) {
     console.error("Artist show error:", err);
-    return res.redirect("/artists?error=ไม่สามารถโหลดรายละเอียดศิลปินได้");
+    return res.redirect("/artists?error=Unable to load artist details");
   }
 };
 
@@ -38,19 +38,19 @@ exports.create = async (req, res) => {
     const genre = cleanText(req.body.genre);
 
     if (!ArtistName || !genre) {
-      return res.redirect("/artists/new?error=กรุณากรอกข้อมูลให้ครบถ้วน");
+      return res.redirect("/artists/new?error=Please fill out the information completely");
     }
 
     const duplicatedArtist = await Artist.findOne({ where: { ArtistName } });
     if (duplicatedArtist) {
-      return res.redirect("/artists/new?error=ชื่อศิลปินนี้มีอยู่แล้ว");
+      return res.redirect("/artists/new?error=This artist's name already exists");
     }
 
     await Artist.create({ ArtistName, genre });
-    return res.redirect("/artists?success=เพิ่มศิลปินเรียบร้อย");
+    return res.redirect("/artists?success=Artist added successfully");
   } catch (err) {
     console.error("Artist create error:", err);
-    return res.redirect("/artists/new?error=ไม่สามารถเพิ่มศิลปินได้");
+    return res.redirect("/artists/new?error=Unable to add artists");
   }
 };
 
@@ -63,7 +63,7 @@ exports.editForm = async (req, res) => {
     return res.render("artists/edit", { artist });
   } catch (err) {
     console.error("Artist edit form error:", err);
-    return res.redirect("/artists?error=ไม่สามารถเปิดหน้าแก้ไขศิลปินได้");
+    return res.redirect("/artists?error=The artist editing page cannot be opened");
   }
 };
 
@@ -78,25 +78,25 @@ exports.update = async (req, res) => {
 
     if (!ArtistName || !genre) {
       return res.redirect(
-        `/artists/${artist.id}/edit?error=กรุณากรอกข้อมูลให้ครบถ้วน`,
+        `/artists/${artist.id}/edit?error=Please fill out the information completely`,
       );
     }
 
     const duplicatedArtist = await Artist.findOne({ where: { ArtistName } });
     if (duplicatedArtist && Number(duplicatedArtist.id) !== Number(artist.id)) {
       return res.redirect(
-        `/artists/${artist.id}/edit?error=ชื่อศิลปินนี้มีอยู่แล้ว`,
+        `/artists/${artist.id}/edit?error=This artist's name already exists`,
       );
     }
 
     await artist.update({ ArtistName, genre });
     return res.redirect(
-      `/artists/${artist.id}?success=แก้ไขข้อมูลศิลปินเรียบร้อย`,
+      `/artists/${artist.id}?success=The artist information has been edited`,
     );
   } catch (err) {
     console.error("Artist update error:", err);
     return res.redirect(
-      `/artists/${req.params.id}/edit?error=ไม่สามารถแก้ไขศิลปินได้`,
+      `/artists/${req.params.id}/edit?error=Unable to edit artist`,
     );
   }
 };
@@ -131,9 +131,9 @@ exports.delete = async (req, res) => {
 
     await artist.setConcerts([]);
     await artist.destroy();
-    return res.redirect("/artists?success=ลบศิลปินเรียบร้อย");
+    return res.redirect("/artists?success=Artist successfully deleted");
   } catch (err) {
     console.error("Artist delete error:", err);
-    return res.redirect("/artists?error=ไม่สามารถลบศิลปินได้");
+    return res.redirect("/artists?error=Unable to delete artist");
   }
 };

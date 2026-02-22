@@ -25,7 +25,7 @@
 <div class="action-row compact-actions">
   <a class="btn-ghost" href="/artists">Back</a>
   <a class="btn-inline" href="/artists/<%= artist.id %>/edit">Edit</a>
-  <form method="POST" action="/artists/<%= artist.id %>/delete" onsubmit="return confirm('ยืนยันการลบศิลปินนี้?')">
+  <form method="POST" action="/artists/<%= artist.id %>/delete" onsubmit="return confirm('Confirming the removal of this artist?')">
     <button class="btn-danger" type="submit">Deleat</button>
   </form>
 </div>
