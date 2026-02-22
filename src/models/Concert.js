@@ -27,6 +27,19 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
 
+      // เวลาเริ่มคอนเสิร์ต
+      ConcertTime: {
+        type: DataTypes.TIME,
+        allowNull: false,
+      },
+
+      // รูปโปสเตอร์
+      imagePath: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "/images/Poster.png",
+      },
+
       // จำนวนที่นั่ง
       totalSeats: {
         type: DataTypes.INTEGER,

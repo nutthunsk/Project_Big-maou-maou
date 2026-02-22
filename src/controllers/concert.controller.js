@@ -1,9 +1,12 @@
 const { Concert, Artist, Booking } = require("../models");
+const fs = require("fs/promises");
+const path = require("path");
 
 // ===== helpers =====
 const normalizeNumber = (value) => Number(value || 0);
 const cleanText = (value) => String(value || "").trim();
 const todayDateText = () => new Date().toISOString().slice(0, 10);
+const DEFAULT_CONCERT_IMAGE = "/images/Poster.png";
 
 const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 
@@ -14,7 +17,49 @@ const parseArtistIds = (value) => {
     ...new Set(
       raw.map((v) => Number(v)).filter((v) => Number.isInteger(v) && v > 0),
     ),
-  ]
+  ];
+};
+
+const getAvailableImagePaths = async () => {
+  const imagesDir = path.join(__dirname, "../../public/images");
+
+  try {
+    const files = await fs.readdir(imagesDir, { withFileTypes: true });
+    const imagePaths = files
+      .filter((entry) => entry.isFile())
+      .map((entry) => entry.name)
+      .filter((fileName) => /\.(png|jpe?g|gif|webp)$/i.test(fileName))
+      .sort((a, b) => a.localeCompare(b, "en"))
+      .map((fileName) => `/images/${fileName}`);
+
+    if (!imagePaths.length) return [DEFAULT_CONCERT_IMAGE];
+    return imagePaths;
+  } catch (error) {
+    console.error("Read concert images error:", error);
+    return [DEFAULT_CONCERT_IMAGE];
+  }
+};
+
+const normalizeConcertTime = (value) => {
+  const raw = cleanText(value);
+  if (!raw) return "";
+
+  const [hourText = "", minuteText = ""] = raw.split(":");
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+
+  if (
+    !Number.isInteger(hour) ||
+    !Number.isInteger(minute) ||
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59
+  ) {
+    return "";
+  }
+
+  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
 };
 
 const attachSeatStats = async (concerts) => {
@@ -111,8 +156,12 @@ exports.show = async (req, res) => {
 // GET /concerts/new
 exports.newForm = async (_req, res) => {
   try {
-    const artists = await getArtists();
-    res.render("concerts/create", { artists });
+    const [artists, imageOptions] = await Promise.all([
+      getArtists(),
+      getAvailableImagePaths(),
+    ]);
+
+    res.render("concerts/create", { artists, imageOptions });
   } catch (err) {
     console.error("Concert new form error:", err);
     res.redirect("/concerts?error=ไม่สามารถโหลดฟอร์มเพิ่มคอนเสิร์ตได้");
@@ -125,15 +174,22 @@ exports.create = async (req, res) => {
     const ConcertName = cleanText(req.body.ConcertName);
     const venue = cleanText(req.body.venue);
     const ConcertDate = cleanText(req.body.ConcertDate);
+    const ConcertTime = normalizeConcertTime(req.body.ConcertTime);
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
     const ArtistId = artistIds[0];
+    const imageOptions = await getAvailableImagePaths();
+    const selectedImage = cleanText(req.body.imagePath);
+    const imagePath = imageOptions.includes(selectedImage)
+      ? selectedImage
+      : DEFAULT_CONCERT_IMAGE;
 
     if (
       !ConcertName ||
       !venue ||
       !ConcertDate ||
+      !ConcertTime ||
       !ArtistId ||
       totalSeats <= 0 ||
       price <= 0
@@ -154,9 +210,11 @@ exports.create = async (req, res) => {
       ConcertName,
       venue,
       ConcertDate,
+      ConcertTime,
       totalSeats,
       price,
       ArtistId,
+      imagePath,
     });
 
     await concert.setArtists(artistIds);
@@ -177,10 +235,11 @@ exports.editForm = async (req, res) => {
       }),
       getArtists(),
     ]);
+    const imageOptions = await getAvailableImagePaths();
 
     if (!concert) return res.status(404).send("Concert not found");
 
-    res.render("concerts/edit", { concert, artists });
+    res.render("concerts/edit", { concert, artists, imageOptions });
   } catch (err) {
     console.error("Concert edit form error:", err);
     res.redirect("/concerts?error=ไม่สามารถโหลดฟอร์มแก้ไขคอนเสิร์ตได้");
@@ -196,15 +255,22 @@ exports.update = async (req, res) => {
     const ConcertName = cleanText(req.body.ConcertName);
     const venue = cleanText(req.body.venue);
     const ConcertDate = cleanText(req.body.ConcertDate);
+    const ConcertTime = normalizeConcertTime(req.body.ConcertTime);
     const totalSeats = normalizeNumber(req.body.totalSeats);
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
     const ArtistId = artistIds[0];
+    const imageOptions = await getAvailableImagePaths();
+    const selectedImage = cleanText(req.body.imagePath);
+    const imagePath = imageOptions.includes(selectedImage)
+      ? selectedImage
+      : DEFAULT_CONCERT_IMAGE;
 
     if (
       !ConcertName ||
       !venue ||
       !ConcertDate ||
+      !ConcertTime ||
       !ArtistId ||
       totalSeats <= 0 ||
       price <= 0
@@ -237,9 +303,11 @@ exports.update = async (req, res) => {
       ConcertName,
       venue,
       ConcertDate,
+      ConcertTime,
       totalSeats,
       price,
       ArtistId,
+      imagePath,
     });
 
     await concert.setArtists(artistIds);

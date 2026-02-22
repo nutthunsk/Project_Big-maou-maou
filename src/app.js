@@ -46,7 +46,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use(async (req, res, next) => {
   try {
     res.locals.authCustomer = await getAuthCustomer(req);
@@ -136,7 +135,7 @@ app.get("/admin", async (_req, res) => {
 // database init
 async function initDb() {
   await sequelize.authenticate();
-  await sequelize.sync();
+  await sequelize.sync({ alter: true });
 }
 
 // start server

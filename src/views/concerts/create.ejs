@@ -12,6 +12,18 @@
   <label for="ConcertDate">Date</label>
   <input id="ConcertDate" name="ConcertDate" type="date" required />
 
+  <label for="ConcertTime">Start Time</label>
+  <input id="ConcertTime" name="ConcertTime" type="time" required />
+
+  <label for="imagePath">Poster Image</label>
+  <select id="imagePath" name="imagePath">
+    <% (imageOptions || []).forEach((imagePath) => { %>
+      <option value="<%= imagePath %>"><%= imagePath %></option>
+    <% }) %>
+  </select>
+
+  <img id="imagePreview" class="form-image-preview" src="<%= (imageOptions && imageOptions[0]) || '/images/Poster.png' %>" alt="Poster preview" />
+
   <label for="totalSeats">Total Seats</label>
   <input id="totalSeats" name="totalSeats" type="number" min="1" required />
 
@@ -29,7 +41,7 @@
 
   <div class="action-row">
     <button class="btn-primary" type="submit">Save</button>
-    <a class="btn-ghost" href="/concerts">Cancle</a>
+    <a class="btn-ghost" href="/concerts">Cancel</a>
   </div>
 </form>
 
@@ -37,8 +49,7 @@
   (function () {
     const select = document.getElementById('ArtistIds');
     const tagsWrap = document.getElementById('selected-artist-tags');
-    const imageFileInput = document.getElementById('imageFile');
-    const imageUrlInput = document.getElementById('imageUrl');
+    const imagePathSelect = document.getElementById('imagePath');
     const imagePreview = document.getElementById('imagePreview');
 
     function renderTags() {
@@ -57,25 +68,14 @@
       });
     }
 
-        const updateImagePreview = () => {
-      const file = imageFileInput.files && imageFileInput.files[0];
-      if (!file) {
-        imageUrlInput.value = "";
-        imagePreview.style.display = "none";
-        imagePreview.removeAttribute("src");
-        return;
-      }
+    function updateImagePreview() {
+      imagePreview.src = imagePathSelect.value || '/images/Poster.png';
+    }
 
-      const fileReader = new FileReader();
-      fileReader.onload = () => {
-        imageUrlInput.value = String(fileReader.result || "");
-        imagePreview.src = imageUrlInput.value;
-        imagePreview.style.display = "block";
-      };
-      fileReader.readAsDataURL(file);
-    };
+    imagePathSelect.addEventListener('change', updateImagePreview);
+    select.addEventListener('change', renderTags);
 
-    imageFileInput.addEventListener('change', updateImagePreview);
+    updateImagePreview();
     select.addEventListener('change', renderTags);
     renderTags();
   })();

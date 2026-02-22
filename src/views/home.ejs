@@ -22,34 +22,6 @@
 
 <section>
   <div class="page-head">
-    <h2>Latest concert</h2>
-    <a href="/concerts" class="btn-inline btn-small">View all</a>
-  </div>
-  <ul class="concert-meta-list artist-concert-list">
-    <% if (!latestConcerts || !latestConcerts.length) { %>
-      <li class="empty-state">no concert yet.</li>
-    <% } else { %>
-      <% latestConcerts.forEach((concert) => {
-        const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
-      %>
-        <li>
-          <strong><a href="/concerts/<%= concert.id %>/book"><%= concert.ConcertName %></a></strong>
-          <% if (d) { %>
-            <span class="muted-inline">(
-              <%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %>
-            )</span>
-          <% } %>
-          <% if (concert.Artists && concert.Artists.length) { %>
-            <div class="muted-inline">Artists: <%= concert.Artists.map((artist) => artist.ArtistName).join(', ') %></div>
-          <% } %>
-        </li>
-      <% }) %>
-    <% } %>
-  </ul>
-</section>
-
-<section>
-  <div class="page-head">
     <h2>latest artist</h2>
     <a href="/artists" class="btn-inline btn-small">View all</a>
   </div>

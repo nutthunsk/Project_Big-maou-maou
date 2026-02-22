@@ -14,6 +14,18 @@
   <label for="ConcertDate">Date</label>
   <input id="ConcertDate" name="ConcertDate" type="date" value="<%= concert.ConcertDate %>" required />
 
+  <label for="ConcertTime">Start Time</label>
+  <input id="ConcertTime" name="ConcertTime" type="time" value="<%= String(concert.ConcertTime || '19:00:00').slice(0, 5) %>" required />
+
+  <label for="imagePath">Poster Image</label>
+  <select id="imagePath" name="imagePath">
+    <% (imageOptions || []).forEach((imagePath) => { %>
+      <option value="<%= imagePath %>" <%= imagePath === (concert.imagePath || '/images/Poster.png') ? 'selected' : '' %>><%= imagePath %></option>
+    <% }) %>
+  </select>
+
+  <img id="imagePreview" class="form-image-preview" src="<%= concert.imagePath || '/images/Poster.png' %>" alt="Poster preview" />
+
   <label for="totalSeats">Total Seats</label>
   <input id="totalSeats" name="totalSeats" type="number" min="1" value="<%= concert.totalSeats %>" required />
 
@@ -38,7 +50,7 @@
 
   <div class="action-row">
     <button class="btn-primary" type="submit">Update</button>
-    <a class="btn-ghost" href="/concerts/<%= concert.id %>">Cancle</a>
+    <a class="btn-ghost" href="/concerts/<%= concert.id %>">Cancel</a>
   </div>
 </form>
 
@@ -46,6 +58,8 @@
   (function () {
     const select = document.getElementById('ArtistIds');
     const tagsWrap = document.getElementById('selected-artist-tags');
+    const imagePathSelect = document.getElementById('imagePath');
+    const imagePreview = document.getElementById('imagePreview');
 
     function renderTags() {
       tagsWrap.innerHTML = '';
@@ -62,8 +76,13 @@
         tagsWrap.appendChild(tag);
       });
     }
+    function updateImagePreview() {
+      imagePreview.src = imagePathSelect.value || '/images/Poster.png';
+    }
+    imagePathSelect.addEventListener('change', updateImagePreview);
+    select.addEventListener('change', renderTags);
 
-
+    updateImagePreview();
 
     select.addEventListener('change', renderTags);
     renderTags();

@@ -677,6 +677,15 @@ a:focus {
   }
 }
 
+.form-image-preview {
+  width: min(380px, 100%);
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+}
+
 .help-text {
   color: var(--muted);
   font-size: 12px;
@@ -923,7 +932,7 @@ a:focus {
     #2a2350,
     #131328 35%,
     #060816 70%
-  );;
+  );
   color: var(--u-text);
 }
 
@@ -1177,11 +1186,19 @@ html[data-user-theme="light"] .user-app-header {
   background: var(--u-surface);
   border-radius: 16px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .discover-poster {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 16 / 10;
   background: linear-gradient(160deg, #323875, #161a38 60%, #111425);
+}
+
+.discover-poster .user-concert-poster {
+  height: 100%;
+  border-radius: 0;
+  border: 0;
 }
 
 .discover-poster-artist {
