@@ -52,8 +52,8 @@ exports.home = async (_req, res) => {
       Concert.findAll({
         include: [{ association: "Artists", through: { attributes: [] } }],
         order: [
-          ["ConcertDate", "ASC"],
-          ["id", "ASC"],
+          ["ConcertDate", "DESC"],
+          ["id", "DESC"],
         ],
         limit: 6,
       }),
@@ -136,7 +136,7 @@ exports.concerts = async (_req, res) => {
   try {
     const concerts = await Concert.findAll({
       include: [{ association: "Artists", through: { attributes: [] } }],
-      order: [["ConcertDate", "ASC"]],
+      order: [["ConcertDate", "DESC"], ["id", "DESC"]],
     });
 
     const concertsWithSeatStats = await attachSeatStats(concerts);
