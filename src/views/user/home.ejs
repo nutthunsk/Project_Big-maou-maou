@@ -16,7 +16,7 @@
       <p class="empty-state">no concerts yet</p>
     <% } else { %>
       <% latestConcerts.forEach((concert) => {
-        const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T00:00:00`) : null;
+        const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T${concert.ConcertTime || '00:00:00'}`) : null;
       %>
         <article class="discover-card">
           <div class="discover-poster"><img class="user-concert-poster" src="/images/Poster.png" alt="<%= concert.ConcertName %> poster" /></div>
@@ -24,6 +24,7 @@
             <h3><%= concert.ConcertName %></h3>
             <% if (d) { %>
               <p><%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %></p>
+              <small><%= d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) %> น.</small>
             <% } else { %>
               <p>-</p>
             <% } %>

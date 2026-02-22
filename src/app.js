@@ -135,7 +135,7 @@ app.get("/admin", async (_req, res) => {
 // database init
 async function initDb() {
   await sequelize.authenticate();
-  await sequelize.sync({ alter: true });
+  await sequelize.sync();
 }
 
 // start server
