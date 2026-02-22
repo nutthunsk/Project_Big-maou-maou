@@ -19,7 +19,11 @@
         const d = concert.ConcertDate ? new Date(`${concert.ConcertDate}T${concert.ConcertTime || '00:00:00'}`) : null;
       %>
         <article class="discover-card">
-          <div class="discover-poster"><img class="user-concert-poster" src="/images/Poster.png" alt="<%= concert.ConcertName %> poster" /></div>
+          <div class="discover-poster"><img
+            class="poster-image"
+            src="<%= concert.imagePath || '/images/Poster.png' %>"
+            alt="<%= concert.ConcertName %> poster"
+          /></div>
           <div class="discover-card-body">
             <h3><%= concert.ConcertName %></h3>
             <% if (d) { %>

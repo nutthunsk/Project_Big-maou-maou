@@ -1,5 +1,6 @@
 const express = require("express"); // framework สำหรับเว็บเซิร์ฟเวอร์
 const path = require("path"); // จัดการ path ให้ข้าม OS ได้
+const { DataTypes } = require("sequelize");
 const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
 
 // ===== routes =====
@@ -132,10 +133,38 @@ app.get("/admin", async (_req, res) => {
   return renderAdminDashboard(res);
 });
 
+const ensureConcertColumns = async () => {
+  const queryInterface = sequelize.getQueryInterface();
+
+  try {
+    const tableInfo = await queryInterface.describeTable("Concert");
+
+    if (!tableInfo.ConcertTime) {
+      await queryInterface.addColumn("Concert", "ConcertTime", {
+        type: DataTypes.TIME,
+        allowNull: false,
+        defaultValue: "19:00:00",
+      });
+    }
+
+    if (!tableInfo.imagePath) {
+      await queryInterface.addColumn("Concert", "imagePath", {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "/images/Poster.png",
+      });
+    }
+  } catch (error) {
+    if (String(error.message || "").includes("no such table")) return;
+    throw error;
+  }
+};
+
 // database init
 async function initDb() {
   await sequelize.authenticate();
   await sequelize.sync();
+  await ensureConcertColumns();
 }
 
 // start server

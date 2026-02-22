@@ -19,7 +19,8 @@
         <div class="poster-card poster-card-reference">
           <img
             class="poster-image"
-            src="/images/Poster.png"
+            src="<%= concert.imagePath || '/images/Poster.png' %>"
+            alt="<%= concert.ConcertName %> poster"
           />
           <div class="poster-card-fallback">
             <div class="poster-meta">BIG MAOU MAOU PRESENTS</div>
@@ -34,20 +35,28 @@
       <div class="booking-info booking-info-reference">
         <span><h1><%= concert.ConcertName %></h1></span>
 
+        <% 
+          const eventDateObj = concert.ConcertDate
+            ? new Date(`${concert.ConcertDate}T${concert.ConcertTime || '00:00:00'}+07:00`)
+            : null;
+          const displayDate = eventDateObj
+            ? eventDateObj.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' })
+            : '-';
+          const concertTimeText = String(concert.ConcertTime || '00:00:00');
+          const [timeHour = '00', timeMinute = '00'] = concertTimeText.split(':');
+          const displayTime = `${timeHour.padStart(2, '0')}:${timeMinute.padStart(2, '0')}`;
+        %>
+
         <ul class="event-meta">
-          <li> Event date: <strong><%= concert.ConcertDate %></strong></li>
-          <li> Time: <strong>15:00 - 23:59 น.</strong></li>
+          <li> Event date: <strong><%= displayDate %></strong></li>
+          <li> Time: <strong><%= displayTime %> น.</strong></li>
           <li> Location: <strong><%= concert.venue %></strong></li>
-          <li> Artist: <strong>
+          <li>
+            Artist: <strong>
             <%= concert.Artists && concert.Artists.length
               ? concert.Artists.map(a => a.ArtistName).join(', ')
               : '-' %>
-            </strong></li>
-            <% if (concert.seatStats.isSoldOut) { %>
-              <span class="sold-out-text">Sold out</span>
-            <% } else { %>
-              <%= concert.remainingSeats %>
-            <% } %>
+            </strong>
           </li>
         </ul>
         <% const todayText = new Date().toISOString().slice(0, 10); %>
