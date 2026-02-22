@@ -88,7 +88,7 @@ exports.update = async (req, res) => {
         `/artists/${artist.id}/edit?error=ชื่อศิลปินนี้มีอยู่แล้ว`,
       );
     }
-    
+
     await artist.update({ ArtistName, genre });
     return res.redirect(
       `/artists/${artist.id}?success=แก้ไขข้อมูลศิลปินเรียบร้อย`,
@@ -118,8 +118,8 @@ exports.delete = async (req, res) => {
       const fallbackArtist = (concert.Artists || []).find(
         (a) => Number(a.id) !== Number(artist.id),
       );
-    
-        if (!fallbackArtist) {
+
+      if (!fallbackArtist) {
         await concert.setArtists([]);
         await Booking.destroy({ where: { ConcertId: concert.id } });
         await concert.destroy();

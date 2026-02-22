@@ -26,6 +26,12 @@
           /></div>
           <div class="discover-card-body">
             <h3><%= concert.ConcertName %></h3>
+                    <li>
+          <strong>Artist:</strong>
+          <%= concert.Artists && concert.Artists.length
+            ? concert.Artists.map(a => a.ArtistName).join(', ')
+            : '-' %>
+        </li>
             <% if (d) { %>
               <p><%= d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' }) %></p>
               <small><%= d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) %> น.</small>

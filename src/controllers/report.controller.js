@@ -1,8 +1,8 @@
-const { Op } = require("sequelize")
+const { Op } = require("sequelize");
 const { Artist, Concert, Booking, Customer } = require("../models");
 
 exports.index = async (req, res) => {
-    const type = req.query.type || "concert"; // concert | customer | artist
+  const type = req.query.type || "concert"; // concert | customer | artist
 
   try {
     // =========================
@@ -26,7 +26,10 @@ exports.index = async (req, res) => {
 
       const rows = concerts.map((concert) => {
         const bookings = concert.Bookings || [];
-        const totalQty = bookings.reduce((s, b) => s + Number(b.quantity || 0), 0);
+        const totalQty = bookings.reduce(
+          (s, b) => s + Number(b.quantity || 0),
+          0,
+        );
         const totalRevenue = bookings.reduce(
           (s, b) => s + Number(b.totalPrice || 0),
           0,
@@ -93,7 +96,7 @@ exports.index = async (req, res) => {
       });
     }
 
-        // =========================
+    // =========================
     // REPORT: ARTIST + BOOKING
     // =========================
     if (type === "artist") {
@@ -155,7 +158,6 @@ exports.index = async (req, res) => {
         summary,
       });
     }
-    
   } catch (err) {
     console.error("Report error:", err);
     return res.redirect("/?error=โหลดรายงานไม่สำเร็จ");

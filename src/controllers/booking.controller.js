@@ -154,13 +154,15 @@ exports.create = async (req, res) => {
     }
 
     if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
-      return res.redirect(errorUrl(`จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`));
+      return res.redirect(
+        errorUrl(`จองได้ไม่เกิน ${MAX_BOOKING_QTY} ใบต่อรายการ`),
+      );
     }
 
     if (!ALLOWED_STATUS.has(status)) {
       return res.redirect(errorUrl("สถานะการจองไม่ถูกต้อง"));
     }
-    
+
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(errorUrl("ไม่พบข้อมูลคอนเสิร์ต"));
@@ -194,9 +196,7 @@ exports.create = async (req, res) => {
 
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(
-          `1 อีเมล จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ`,
-        ),
+        errorUrl(`1 อีเมล จองได้สูงสุด ${MAX_BOOKING_QTY} ใบ`),
       );
     }
 

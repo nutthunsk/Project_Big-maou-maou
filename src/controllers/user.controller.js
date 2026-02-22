@@ -182,7 +182,6 @@ exports.profile = async (req, res) => {
       return acc;
     }, {});
 
-
     return res.render("user/profile", {
       customer: req.authCustomer,
       concertBookings: Object.values(groupedConcertBookings),
