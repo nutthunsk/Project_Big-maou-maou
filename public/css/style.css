@@ -1335,9 +1335,11 @@ html[data-theme="light"] .site-body:not(.user-site) .report-card p {
   color: #3b4666;
 }
 
-html[data-theme="light"] .site-body:not(.user-site) .booking-table th {
-  background: #2a3563;
-  color: #f4f7ff;
+html[data-theme="light"] .site-body:not(.user-site) .concert-card,
+html[data-theme="light"] .site-body:not(.user-site) .entity-card {
+  background: linear-gradient(145deg, #ffffff, #f3f6ff);
+  border-color: #cfd6f4;
+  box-shadow: 0 8px 20px rgba(31, 42, 84, 0.08);
 }
 
 html[data-theme="light"] .site-body:not(.user-site) .booking-table td {
@@ -1349,14 +1351,23 @@ html[data-theme="light"] .site-body:not(.user-site) .artist-card {
   border-color: #2f3452;
 }
 
-html[data-theme="light"] .site-body:not(.user-site) .artist-card h3,
-html[data-theme="light"] .site-body:not(.user-site) .artist-card strong {
-  color: #eaf0ff;
+html[data-theme="light"] .site-body:not(.user-site) .concert-card:hover,
+html[data-theme="light"] .site-body:not(.user-site) .entity-card:hover {
+  border-color: #b8c4ef;
+  box-shadow: 0 12px 24px rgba(31, 42, 84, 0.12);
 }
 
-html[data-theme="light"] .site-body:not(.user-site) .artist-card p,
+html[data-theme="light"] .site-body:not(.user-site) .concert-title,
+html[data-theme="light"] .site-body:not(.user-site) .entity-card h3,
+html[data-theme="light"] .site-body:not(.user-site) .entity-card strong,
+html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list strong {
+  color: #101422;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list li,
+html[data-theme="light"] .site-body:not(.user-site) .entity-card p,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .concert-meta-list li,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .muted-inline,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .empty-state {
-  color: #9aa6cd;
+  color: #5b647f;
 }
