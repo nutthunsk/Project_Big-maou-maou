@@ -1062,6 +1062,23 @@ html[data-user-theme="light"] .user-site {
   color: var(--u-text);
 }
 
+.user-site .entity-card {
+  background: var(--u-surface);
+  border-color: var(--u-border);
+  color: var(--u-text);
+}
+
+.user-site .entity-card h3,
+.user-site .entity-card strong {
+  color: var(--u-text);
+}
+
+.user-site .entity-card p,
+.user-site .artist-card .concert-meta-list li,
+.user-site .artist-card .muted-inline {
+  color: var(--u-muted);
+}
+
 .user-site .concert-meta-list li,
 .user-site .muted-inline,
 .user-site .booking-form-subtitle,
