@@ -1343,3 +1343,20 @@ html[data-theme="light"] .site-body:not(.user-site) .booking-table th {
 html[data-theme="light"] .site-body:not(.user-site) .booking-table td {
   color: #101422;
 }
+
+html[data-theme="light"] .site-body:not(.user-site) .artist-card {
+  background: linear-gradient(145deg, #1a1e35, #14162b);
+  border-color: #2f3452;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .artist-card h3,
+html[data-theme="light"] .site-body:not(.user-site) .artist-card strong {
+  color: #eaf0ff;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .artist-card p,
+html[data-theme="light"] .site-body:not(.user-site) .artist-card .concert-meta-list li,
+html[data-theme="light"] .site-body:not(.user-site) .artist-card .muted-inline,
+html[data-theme="light"] .site-body:not(.user-site) .artist-card .empty-state {
+  color: #9aa6cd;
+}

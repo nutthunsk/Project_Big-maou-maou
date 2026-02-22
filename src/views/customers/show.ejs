@@ -31,7 +31,6 @@
 </table>
 
 <div class="action-row">
-  <a class="btn-inline" href="/customers/<%= customer.id %>/edit">Edit</a>
   <a class="btn-ghost" href="/customers">Back</a>
   <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('Confirm the deletion of this customer?')">
     <input type="hidden" name="_method" value="DELETE" />

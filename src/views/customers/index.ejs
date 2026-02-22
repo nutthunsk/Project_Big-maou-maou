@@ -26,7 +26,6 @@
         <td><%= customer.phoneNumber %></td>
         <td class="action-row table-actions">
           <a class="btn-inline btn-small" href="/customers/<%= customer.id %>">View</a>
-          <a class="btn-ghost btn-small" href="/customers/<%= customer.id %>/edit">Edit</a>
           <form method="POST" action="/customers/<%= customer.id %>" onsubmit="return confirm('Confirm the deletion of this customer?')">
             <input type="hidden" name="_method" value="DELETE" />
             <button class="btn-danger btn-small" type="submit">Delete</button>
