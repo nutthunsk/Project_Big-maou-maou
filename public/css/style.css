@@ -1254,3 +1254,75 @@ html[data-user-theme="light"] .user-app-header {
 .discover-card-body small {
   color: var(--u-muted);
 }
+
+.booking-theme-toggle {
+  min-width: 86px;
+}
+
+html[data-theme="light"] .booking-page {
+  background: linear-gradient(180deg, #f8f9ff 0%, #eef2fb 100%);
+  color: #101422;
+}
+
+html[data-theme="light"] .booking-back,
+html[data-theme="light"] .booking-share,
+html[data-theme="light"] .booking-info-reference h1,
+html[data-theme="light"] .event-meta,
+html[data-theme="light"] .ticket-price,
+html[data-theme="light"] .booking-detail-card,
+html[data-theme="light"] .booking-detail-card h2,
+html[data-theme="light"] .booking-detail-card li {
+  color: #101422;
+}
+
+html[data-theme="light"] .booking-info-reference .event-meta {
+  background: #ffffff;
+  border-color: #cfd6f4;
+}
+
+html[data-theme="light"] .booking-detail-card {
+  background: #ffffff;
+  border-color: #cfd6f4;
+}
+
+html[data-theme="light"] .poster-card {
+  border-color: #cfd6f4;
+}
+
+html[data-theme="light"] .ticket-bar {
+  background: #ffffff;
+  border: 1px solid #cfd6f4;
+}
+
+html[data-theme="light"] .ticket-label {
+  color: #5b647f;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .stack-form input,
+html[data-theme="light"] .site-body:not(.user-site) .stack-form select {
+  background: #ffffff;
+  border-color: #cfd6f4;
+  color: #101422;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .report-card {
+  background: #eef2ff;
+  border-color: #cfd6f4;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .report-card h3 {
+  color: #101422;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .report-card p {
+  color: #3b4666;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .booking-table th {
+  background: #2a3563;
+  color: #f4f7ff;
+}
+
+html[data-theme="light"] .site-body:not(.user-site) .booking-table td {
+  color: #101422;
+}
