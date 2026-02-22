@@ -46,12 +46,12 @@
 
 <script>
   (() => {
-    const storageKey = 'user-theme';
+    const storageKey = 'site-theme';
     const root = document.documentElement;
     const btn = document.getElementById('themeToggleBtn');
 
     const applyTheme = (theme) => {
-      root.setAttribute('data-user-theme', theme);
+      root.setAttribute('data-theme', theme);
       if (!btn) return;
       btn.textContent = theme === 'light' ? 'Light' : 'Dark';
     };
@@ -62,7 +62,7 @@
 
     if (!btn) return;
     btn.addEventListener('click', () => {
-      const current = root.getAttribute('data-user-theme') || 'dark';
+      const current = root.getAttribute('data-theme') || 'dark';
       const next = current === 'dark' ? 'light' : 'dark';
       localStorage.setItem(storageKey, next);
       applyTheme(next);
