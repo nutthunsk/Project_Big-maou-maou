@@ -1,7 +1,3 @@
-// ===============================
-// import operator และ model
-// ===============================
-
 // Op ใช้สำหรับ operator ของ Sequelize (เช่น !=, >, <)
 const { Op } = require("sequelize");
 
