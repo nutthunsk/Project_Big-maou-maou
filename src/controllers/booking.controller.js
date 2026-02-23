@@ -253,17 +253,7 @@ exports.create = async (req, res) => {
       totalPrice,
     });
 
-    try {
-      await sendBookingTicketEmail({
-        booking: createdBooking,
-        concert,
-        customer,
-      });
-    } catch (mailErr) {
-      console.error("Booking email error:", mailErr);
-    }
-
-     let mailStatusQuery = "";
+    let mailStatusQuery = "";
 
     try {
       const mailResult = await sendBookingTicketEmail({
@@ -273,9 +263,12 @@ exports.create = async (req, res) => {
       });
 
       if (mailResult?.sent) {
+        const successMessage = mailResult.usingFallbackSender
+          ? "จองสำเร็จและส่ง e-ticket แล้ว (โหมดทดสอบใช้ผู้ส่ง onboarding@resend.dev)"
+          : "จองสำเร็จและส่ง e-ticket ไปที่อีเมลเรียบร้อยแล้ว";
         mailStatusQuery =
           "&success=" +
-          encodeURIComponent("Booking confirmed and e-ticket email sent");
+          encodeURIComponent(successMessage);
       } else if (mailResult?.reason) {
         console.warn("Booking email skipped:", mailResult.reason);
         mailStatusQuery =

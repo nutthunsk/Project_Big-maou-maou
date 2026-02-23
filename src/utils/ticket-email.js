@@ -34,13 +34,23 @@ const buildTicketText = ({ booking, concert, customer }) => {
 
 const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
   const resendApiKey = String(process.env.RESEND_API_KEY || "").trim();
-  const mailFrom = String(process.env.BOOKING_MAIL_FROM || "").trim();
+  const configuredMailFrom = String(process.env.BOOKING_MAIL_FROM || "").trim();
+  const isProduction = String(process.env.NODE_ENV || "").trim() === "production";
+  const fallbackMailFrom = "Concert App <onboarding@resend.dev>";
+  const mailFrom = configuredMailFrom || (!isProduction ? fallbackMailFrom : "");
 
-  if (!resendApiKey || !mailFrom) {
+  if (!resendApiKey) {
+    return {
+      sent: false,
+      reason: "ยังไม่ได้ตั้งค่า RESEND_API_KEY",
+    };
+  }
+
+  if (!mailFrom) {
     return {
       sent: false,
       reason:
-        "ยังไม่ได้ตั้งค่า RESEND_API_KEY หรือ BOOKING_MAIL_FROM (และต้องใช้ผู้ส่งที่ยืนยันโดเมนแล้วใน Resend)",
+        "ยังไม่ได้ตั้งค่า BOOKING_MAIL_FROM (production ต้องใช้ผู้ส่งที่ยืนยันโดเมนแล้วใน Resend)",
     };
   }
 
@@ -90,7 +100,10 @@ const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
     throw new Error(`Send email failed (${response.status}): ${body}`);
   }
 
-  return { sent: true };
+  return {
+    sent: true,
+    usingFallbackSender: !configuredMailFrom && mailFrom === fallbackMailFrom,
+  };
 };
 
 module.exports = {
