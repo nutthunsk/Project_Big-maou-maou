@@ -105,7 +105,7 @@ exports.login = async (req, res) => {
     // ตรวจสอบข้อมูล
     if (!fullname || !email || !phoneNumber) {
       return res.redirect(
-        `/user/login?error=${encodeURIComponent("กรุณากรอกข้อมูลให้ครบ")}&redirect=${encodeURIComponent(redirectTo)}`,
+        `/user/login?error=${encodeURIComponent("Please fill in complete information")}&redirect=${encodeURIComponent(redirectTo)}`,
       );
     }
 

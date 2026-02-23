@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: 'คอนเสิร์ต' }) %>
+<%- include('../partials/header', { title: 'Concert' }) %>
 
 <div class="page-head">
   <h1>Concert</h1>
@@ -54,7 +54,7 @@
 
         <form class="card-action-form" method="POST"
               action="/concerts/<%= concert.id %>"
-              onsubmit="event.stopPropagation(); return confirm('ยืนยันการลบคอนเสิร์ตนี้?')">
+              onsubmit="event.stopPropagation(); return confirm('Confirming the removal of this concert?')">
           <input type="hidden" name="_method" value="DELETE">
           <button class="btn-danger btn-small" type="submit">
             Delete Concert

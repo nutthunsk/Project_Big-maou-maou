@@ -32,7 +32,7 @@
       <div class="booking-create-grid">
         <div>
           <label for="fullname">Name and surname</label>
-          <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" placeholder="เช่น สมชาย ใจดี" value="<%= authCustomer ? authCustomer.fullname : "" %>" required />
+          <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" placeholder=For example, Somchai Jaidee" value="<%= authCustomer ? authCustomer.fullname : "" %>" required />
         </div>
 
         <div>
@@ -42,7 +42,7 @@
       </div>
 
       <label for="email">Email for confirmation</label>
-      <input id="email" name="email" type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="กรอกอีเมลให้ถูกต้อง เช่น name@example.com" placeholder="example@email.com" value="<%= authCustomer ? authCustomer.email : "" %>" <%= authCustomer ? "readonly" : "" %> required />
+      <input id="email" name="email" type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Please enter a correct email address, for example name@example.com" placeholder="example@email.com" value="<%= authCustomer ? authCustomer.email : "" %>" <%= authCustomer ? "readonly" : "" %> required />
 
       <div class="booking-create-grid">
         <div>
