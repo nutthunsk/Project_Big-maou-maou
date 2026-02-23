@@ -1,79 +1,71 @@
 # Project Big maou maou
 
-เว็บแอปสำหรับจัดการข้อมูลคอนเสิร์ต ศิลปิน ลูกค้า และการจองบัตร โดยใช้
-**Node.js + Express + EJS + Sequelize ORM (SQLite)**
+เว็บแอปสำหรับจัดการงานคอนเสิร์ตแบบครบวงจร ทั้งฝั่งผู้ดูแลระบบ (Admin) และผู้ใช้งานทั่วไป (User) โดยรองรับการจัดการข้อมูลศิลปิน/คอนเสิร์ต/ลูกค้า และการจองบัตรผ่านหน้าเว็บที่พัฒนาด้วย EJS
 
-## Tech Stack
+## คำอธิบายโครงงาน
 
+โครงงานนี้พัฒนาด้วยสถาปัตยกรรม **MVC (Model-View-Controller)** บน **Node.js + Express** เชื่อมต่อฐานข้อมูลด้วย **Sequelize ORM + SQLite** เพื่อให้สามารถจัดการข้อมูลได้ง่ายและขยายระบบต่อได้สะดวก
+
+### กลุ่มผู้ใช้งานในระบบ
+- **Admin**: จัดการข้อมูลหลัก (Artists, Concerts, Customers, Bookings), ดูรายงาน และดูภาพรวมสถิติ
+- **User/Customer**: ดูข้อมูลศิลปินและคอนเสิร์ต, เข้าสู่ระบบแบบง่าย (ชื่อ-อีเมล-เบอร์โทร), แก้ไขโปรไฟล์ และทำรายการจองบัตร
+
+## เทคโนโลยีที่ใช้
 - Node.js (CommonJS)
 - Express
 - EJS (Template Engine)
 - Sequelize ORM
 - SQLite (`Database/database.sqlite`)
+- Nodemon (สำหรับพัฒนา)
 
-## โครงสร้างโปรเจกต์
-
-```text
-.
-├── Database/
-│   └── database.sqlite
-├── public/
-│   └── css/
-│       └── style.css
-├── src/
-│   ├── app.js
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   └── views/
-├── package.json
-└── README.md
+## วิธีติดตั้งและเริ่มใช้งาน
+###  ติดตั้ง dependencies
+```bash
+npm install
 ```
 
-## การติดตั้ง (Installation)
-
-1. ติดตั้ง dependencies
-   ```bash
-   npm install
-   ```
-
-## การรันโปรเจกต์ (Run)
-
-- โหมดปกติ:
+###  รันโปรเจกต์
+- โหมดปกติ
   ```bash
   npm run start
   ```
-- โหมดพัฒนา (auto-reload):
+
+- โหมดพัฒนา (auto-reload)
   ```bash
   npm run dev
   ```
 
-เมื่อรันสำเร็จ ระบบจะฟังที่ `http://localhost:3000`
+เมื่อรันสำเร็จ ระบบจะทำงานที่:
+- หน้า User: `http://localhost:3000/`
+- หน้า Admin Dashboard: `http://localhost:3000/admin`
 
-## โครงสร้าง API / Routes หลัก
+## ภาพหน้าจอหลัก
 
-> โปรเจกต์นี้ใช้ server-rendered views (EJS) เป็นหลัก แต่มี route แยกตาม resource ดังนี้
+ตัวอย่างหน้าหลักของระบบ
+![หน้าหลักของระบบ](public/images/Poster.png)
 
-### Artists
+## รายการฟีเจอร์ที่พัฒนาแล้ว
 
-- Base path: `/artists`
-- ไฟล์ route: `src/routes/artist.routes.js`
+### ฝั่งผู้ดูแลระบบ (Admin)
+- จัดการข้อมูล **ศิลปิน (Artists)**: เพิ่ม / ดู / แก้ไข / ลบ
+- จัดการข้อมูล **คอนเสิร์ต (Concerts)**: เพิ่ม / ดู / แก้ไข / ลบ
+- จัดการข้อมูล **ลูกค้า (Customers)**:  ดู / ลบ
+- จัดการข้อมูล **การจองบัตร (Bookings)**: ดูรายการ / แก้ไข / ลบ
+- เปลี่ยนสถานะการจองเป็น pendin หรือ paid
+- หน้า **Dashboard** แสดงสรุปจำนวนข้อมูลและรายการล่าสุด
+- หน้า **Reports** สำหรับดูข้อมูลรายงานภาพรวม
 
-### Concerts
+### ฝั่งผู้ใช้งานทั่วไป (User)
+- หน้าแรกผู้ใช้ แสดงคอนเสิร์ตล่าสุด
+- ดูรายการศิลปินทั้งหมด
+- ดูรายการคอนเสิร์ตพร้อมสถิติที่นั่ง
+- เข้าสู่ระบบด้วยข้อมูลลูกค้า (สร้าง/อัปเดตข้อมูลลูกค้าอัตโนมัติ)
+- ดูและแก้ไขข้อมูลโปรไฟล์ของตนเอง
+- ดูประวัติการจองที่จัดกลุ่มตามคอนเสิร์ต
+- จองบัตรคอนเสิร์ตผ่านระบบ
 
-- Base path: `/concerts`
-- ไฟล์ route: `src/routes/concert.routes.js`
-
-### Bookings
-
-- Base path: `/bookings`
-- ไฟล์ route: `src/routes/booking.routes.js`
-
-### Customers
-
-- Base path: `/customers`
-- ไฟล์ route: `src/routes/customer.routes.js`
-
-## หมายเหตุ
+### อื่นๆ
 
 - การเชื่อมฐานข้อมูลกำหนดไว้ใน `src/models/index.js`
+- โปรเจกต์นี้ใช้การ render หน้าเว็บฝั่งเซิร์ฟเวอร์ด้วย EJS เป็นหลัก
+- หากมีไฟล์ฐานข้อมูลเดิมอยู่แล้ว ระบบจะใช้งานข้อมูลชุดเดิมใน `Database/database.sqlite`
