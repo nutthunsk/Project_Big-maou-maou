@@ -1366,11 +1366,16 @@ html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list strong {
 
 html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list li,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card p,
-html[data-theme="light"] .site-body:not(.user-site) .artist-card .concert-meta-list li,
+html[data-theme="light"]
+  .site-body:not(.user-site)
+  .artist-card
+  .concert-meta-list
+  li,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .muted-inline,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .empty-state {
   color: #5b647f;
-}:root {
+}
+:root {
   --bg: #0a0a12;
   --bg-soft: #111322;
   --card: #171a2c;
@@ -2738,7 +2743,11 @@ html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list strong {
 
 html[data-theme="light"] .site-body:not(.user-site) .concert-meta-list li,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card p,
-html[data-theme="light"] .site-body:not(.user-site) .artist-card .concert-meta-list li,
+html[data-theme="light"]
+  .site-body:not(.user-site)
+  .artist-card
+  .concert-meta-list
+  li,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .muted-inline,
 html[data-theme="light"] .site-body:not(.user-site) .artist-card .empty-state {
   color: #101422;
@@ -2750,9 +2759,16 @@ html[data-theme="light"] .site-body:not(.user-site) .entity-card {
 }
 
 html[data-theme="light"] .site-body:not(.user-site) .concert-card p,
-html[data-theme="light"] .site-body:not(.user-site) .concert-card ,
-html[data-theme="light"] .site-body:not(.user-site) .concert-card .concert-meta-list li,
-html[data-theme="light"] .site-body:not(.user-site) .concert-card .concert-title,
+html[data-theme="light"] .site-body:not(.user-site) .concert-card,
+html[data-theme="light"]
+  .site-body:not(.user-site)
+  .concert-card
+  .concert-meta-list
+  li,
+html[data-theme="light"]
+  .site-body:not(.user-site)
+  .concert-card
+  .concert-title,
 html[data-theme="light"] .site-body:not(.user-site) .concert-card strong,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card h3,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card strong {
@@ -2760,7 +2776,11 @@ html[data-theme="light"] .site-body:not(.user-site) .entity-card strong {
 }
 
 html[data-theme="light"] .site-body:not(.user-site) .entity-card p,
-html[data-theme="light"] .site-body:not(.user-site) .entity-card .concert-meta-list li,
+html[data-theme="light"]
+  .site-body:not(.user-site)
+  .entity-card
+  .concert-meta-list
+  li,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card .muted-inline,
 html[data-theme="light"] .site-body:not(.user-site) .entity-card .empty-state {
   color: #9aa6cd !important;

@@ -45,13 +45,17 @@ exports.create = async (req, res) => {
 
     // ตรวจสอบว่ากรอกข้อมูลครบหรือไม่
     if (!ArtistName || !genre) {
-      return res.redirect("/artists/new?error=Please fill out the information completely");
+      return res.redirect(
+        "/artists/new?error=Please fill out the information completely",
+      );
     }
 
     // ตรวจสอบว่าชื่อศิลปินซ้ำหรือไม่
     const duplicatedArtist = await Artist.findOne({ where: { ArtistName } });
     if (duplicatedArtist) {
-      return res.redirect("/artists/new?error=This artist's name already exists");
+      return res.redirect(
+        "/artists/new?error=This artist's name already exists",
+      );
     }
 
     // บันทึกข้อมูลศิลปินใหม่ลง database
@@ -81,9 +85,11 @@ exports.editForm = async (req, res) => {
     return res.render("artists/edit", { artist });
   } catch (err) {
     console.error("Artist edit form error:", err);
-    return res.redirect("/artists?error=The artist editing page cannot be opened");
+    return res.redirect(
+      "/artists?error=The artist editing page cannot be opened",
+    );
   }
-};;
+};
 
 // POST /artists/edit/:id
 // แก้ไขข้อมูลศิลปิน
@@ -114,7 +120,7 @@ exports.update = async (req, res) => {
 
     // อัปเดตข้อมูลศิลปิน
     await artist.update({ ArtistName, genre });
-     // redirect ไปหน้ารายละเอียด
+    // redirect ไปหน้ารายละเอียด
     return res.redirect(
       `/artists/${artist.id}?success=The artist information has been edited`,
     );

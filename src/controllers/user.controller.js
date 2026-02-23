@@ -239,7 +239,9 @@ exports.updateProfile = async (req, res) => {
 
     // ตรวจสอบข้อมูล
     if (!fullname || !email || !phoneNumber) {
-      return res.redirect("/user/profile?error=Please fill in complete information");
+      return res.redirect(
+        "/user/profile?error=Please fill in complete information",
+      );
     }
 
     if (!EMAIL_REGEX.test(email)) {
@@ -258,7 +260,9 @@ exports.updateProfile = async (req, res) => {
       duplicateEmail &&
       Number(duplicateEmail.id) !== Number(authCustomer.id)
     ) {
-      return res.redirect("/user/profile?error=This email address is already in use");
+      return res.redirect(
+        "/user/profile?error=This email address is already in use",
+      );
     }
 
     // อัปเดตข้อมูล

@@ -4,7 +4,7 @@ const { Artist, Concert, Booking, Customer } = require("../models");
 // GET /reports
 // แสดงรายงานตามประเภทที่เลือก (concert / customer / artist)
 exports.index = async (req, res) => {
-    // อ่านประเภทของรายงานจาก query string
+  // อ่านประเภทของรายงานจาก query string
   const type = req.query.type || "concert";
   try {
     // REPORT: CONCERT SALES

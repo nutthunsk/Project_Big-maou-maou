@@ -1,4 +1,8 @@
-// Op ใช้สำหรับ operator ของ Sequelize
+// ===============================
+// import operator และ model
+// ===============================
+
+// Op ใช้สำหรับ operator ของ Sequelize (เช่น !=, >, <)
 const { Op } = require("sequelize");
 
 // Booking  = ตารางการจอง
@@ -6,26 +10,42 @@ const { Op } = require("sequelize");
 // Customer = ตารางลูกค้า
 const { Booking, Concert, Customer } = require("../models");
 
-const { sendBookingTicketEmail } = require("../utils/ticket-email");
-
+// ===============================
 // helper functions & constants
+// ===============================
+
+// แปลงค่าเป็น string และตัดช่องว่างหน้า-หลัง
 const cleanText = (value) => String(value || "").trim();
+
+// แปลงค่าเป็น number (ถ้าไม่มีให้เป็น 0)
 const normalizeNumber = (value) => Number(value || 0);
+
 // regex ตรวจสอบรูปแบบอีเมล
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // regex ตรวจสอบเบอร์โทร (ตัวเลข 8–15 หลัก)
 const PHONE_REGEX = /^[0-9]{8,15}$/;
+
+// สถานะการจองที่อนุญาต
 const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
+
+// จำนวนตั๋วสูงสุดต่อ 1 การจอง
 const MAX_BOOKING_QTY = 6;
+
+// คืนค่าวันปัจจุบันในรูปแบบ YYYY-MM-DD
 const todayDateText = () => new Date().toISOString().slice(0, 10);
 
+// ===============================
 // คำนวณจำนวนที่นั่งที่จองแล้ว
 // (อ้างอิงจาก email หรือ fullname)
+// ===============================
+
 const getBookedSeatsByIdentityInConcert = async ({
   ConcertId,
   email,
   fullname,
 }) => {
+  // ดึง booking ทั้งหมดของคอนเสิร์ตนั้น
   const bookings = await Booking.findAll({
     where: { ConcertId },
     include: [
@@ -41,23 +61,30 @@ const getBookedSeatsByIdentityInConcert = async ({
   return bookings.reduce((sum, booking) => {
     // ไม่นับ booking ที่ถูกยกเลิก
     if (booking.status === "cancelled") return sum;
+
     // เตรียมข้อมูลไว้เปรียบเทียบ
     const bookingEmail = cleanText(booking.Customer?.email).toLowerCase();
     const bookingFullname = cleanText(booking.Customer?.fullname).toLowerCase();
+
     // ตรวจสอบว่าตรงกันด้วย email หรือชื่อ
     const matchedByEmail =
       bookingEmail && bookingEmail === cleanText(email).toLowerCase();
     const matchedByName =
       bookingFullname && bookingFullname === cleanText(fullname).toLowerCase();
+
     // ถ้าไม่ตรงทั้งคู่ ไม่ต้องนับ
     if (!matchedByEmail && !matchedByName) return sum;
+
     // รวมจำนวนตั๋ว
     return sum + Number(booking.quantity || 0);
   }, 0);
 };
 
+// ===============================
 // คำนวณจำนวนที่นั่งที่ถูกจองแล้วทั้งหมด
 // (ใช้ตอนเช็คที่นั่งคงเหลือ)
+// ===============================
+
 const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   const where = { ConcertId };
 
@@ -75,15 +102,21 @@ const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   }, 0);
 };
 
+// ===============================
 // ดึงข้อมูลอ้างอิง (concert / customer)
+// ===============================
+
 const getRefs = async () => {
   const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
   const customers = await Customer.findAll({ order: [["fullname", "ASC"]] });
   return { concerts, customers };
 };
 
+// ===============================
 // GET /bookings
 // แสดงรายการการจองทั้งหมด
+// ===============================
+
 exports.index = async (_req, res) => {
   try {
     const bookings = await Booking.findAll({
@@ -98,8 +131,11 @@ exports.index = async (_req, res) => {
   }
 };
 
+// ===============================
 // GET /bookings/:id
 // แสดงรายละเอียดการจอง
+// ===============================
+
 exports.show = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id, {
@@ -114,17 +150,22 @@ exports.show = async (req, res) => {
   }
 };
 
+// ===============================
 // GET /bookings/new
 // แสดงฟอร์มจองตั๋ว
+// ===============================
+
 exports.newForm = async (req, res) => {
   try {
     const { concerts } = await getRefs();
+
     // concert ที่ถูกเลือก (ถ้ามาจากหน้า concert)
     const selectedConcertId = normalizeNumber(req.query.concertId);
     const selectedConcert =
       concerts.find(
         (concert) => Number(concert.id) === Number(selectedConcertId),
       ) || null;
+
     // ถ้าคอนเสิร์ตผ่านไปแล้ว ห้ามจอง
     if (
       selectedConcert &&
@@ -150,13 +191,17 @@ exports.newForm = async (req, res) => {
   }
 };
 
+// ===============================
 // POST /bookings/create
 // สร้างการจองใหม่
+// ===============================
+
 exports.create = async (req, res) => {
   try {
     // ดึงข้อมูลจาก form / user ที่ login
     const ConcertId = normalizeNumber(req.body.ConcertId);
     const authCustomer = req.authCustomer || null;
+
     const fullname = cleanText(req.body.fullname || authCustomer?.fullname);
     const email = cleanText(
       authCustomer?.email || req.body.email,
@@ -164,14 +209,18 @@ exports.create = async (req, res) => {
     const phoneNumber = cleanText(
       req.body.phoneNumber || authCustomer?.phoneNumber,
     );
+
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
+
     // URL กลับไปหน้าเดิมพร้อม error
     const backUrl = ConcertId
       ? `/bookings/new?concertId=${ConcertId}`
       : "/bookings/new";
+
     const errorUrl = (message) =>
       `${backUrl}${backUrl.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`;
+
     // ตรวจสอบข้อมูลพื้นฐาน
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
       return res.redirect(errorUrl("Please fill in the information correctly"));
@@ -195,6 +244,7 @@ exports.create = async (req, res) => {
       return res.redirect(errorUrl("Invalid booking status"));
     }
 
+    // ตรวจสอบ concert
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(errorUrl("No concert information found"));
@@ -206,13 +256,13 @@ exports.create = async (req, res) => {
       );
     }
 
-    // สร้างหรือค้นหา Customer (ใช้ email เป็นหลัก)
+    // ค้นหาหรือสร้าง customer (ใช้ email เป็นหลัก)
     const [customer] = await Customer.findOrCreate({
       where: { email },
       defaults: { fullname, email, phoneNumber },
     });
 
-    // ถ้าข้อมูลเปลี่ยนให้อัปเดต
+    // ถ้าข้อมูลลูกค้าเปลี่ยน ให้อัปเดต
     if (
       customer.fullname !== fullname ||
       customer.phoneNumber !== phoneNumber
@@ -220,17 +270,19 @@ exports.create = async (req, res) => {
       await customer.update({ fullname, phoneNumber });
     }
 
+    // ตรวจสอบการจองซ้ำต่อคน
     const alreadyReservedByIdentity = await getBookedSeatsByIdentityInConcert({
       ConcertId,
       email,
       fullname,
     });
-    // ตรวจสอบการจองซ้ำต่อคน
+
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
         errorUrl(`One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`),
       );
     }
+
     // ตรวจสอบจำนวนที่นั่งคงเหลือ
     const bookedSeats = await getBookedSeats(ConcertId);
     const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
@@ -238,14 +290,15 @@ exports.create = async (req, res) => {
     if (quantity > remainingSeats) {
       return res.redirect(
         errorUrl(
-          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`,
-        ),
+          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`),
       );
     }
+
     // คำนวณราคาทั้งหมด
     const totalPrice = Number(concert.price) * quantity;
 
-    const createdBooking = await Booking.create({
+    // สร้าง booking
+    await Booking.create({
       ConcertId,
       CustomerId: customer.id,
       quantity,
@@ -253,47 +306,17 @@ exports.create = async (req, res) => {
       totalPrice,
     });
 
-    let mailStatusQuery = "";
-
-    try {
-      const mailResult = await sendBookingTicketEmail({
-        booking: createdBooking,
-        concert,
-        customer,
-      });
-
-      if (mailResult?.sent) {
-        const successMessage = mailResult.usingFallbackSender
-          ? "จองสำเร็จและส่ง e-ticket แล้ว (โหมดทดสอบใช้ผู้ส่ง onboarding@resend.dev)"
-          : "จองสำเร็จและส่ง e-ticket ไปที่อีเมลเรียบร้อยแล้ว";
-        mailStatusQuery =
-          "&success=" +
-          encodeURIComponent(successMessage);
-      } else if (mailResult?.reason) {
-        console.warn("Booking email skipped:", mailResult.reason);
-        mailStatusQuery =
-          "&error=" +
-          encodeURIComponent(
-            `จองสำเร็จ แต่ยังไม่ได้ส่งอีเมล: ${mailResult.reason}`,
-          );
-      }
-    } catch (mailErr) {
-      console.error("Booking email error:", mailErr);
-      mailStatusQuery =
-        "&error=" +
-        encodeURIComponent("จองสำเร็จ แต่ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่าเมล");
-    }
-
-    return res.redirect(
-      `/user?success=${encodeURIComponent("Already reserved tickets")}${mailStatusQuery}`,
-    );
+    return res.redirect("/user?success=Already reserved tickets");
   } catch (err) {
     console.error("Booking create error:", err);
     return res.redirect("/user/concerts?error=Unable to add a booking");
   }
 };
- 
+
+// ===============================
 // GET /bookings/edit/:id
+// ===============================
+
 exports.editForm = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -312,7 +335,10 @@ exports.editForm = async (req, res) => {
   }
 };
 
+// ===============================
 // POST /bookings/edit/:id
+// ===============================
+
 exports.update = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -342,13 +368,14 @@ exports.update = async (req, res) => {
       );
     }
 
+    // ตรวจสอบจำนวนที่นั่ง
     const concert = await Concert.findByPk(ConcertId);
     if (!concert) {
       return res.redirect(
         `/bookings/${booking.id}/edit?error=No concert information found`,
       );
     }
-    // ตรวจสอบจำนวนที่นั่ง
+
     const bookedSeats = await getBookedSeats(ConcertId, booking.id);
     const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
 
@@ -377,7 +404,10 @@ exports.update = async (req, res) => {
   }
 };
 
+// ===============================
 // เปลี่ยนสถานะเป็น paid
+// ===============================
+
 exports.markAsPaid = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -391,7 +421,10 @@ exports.markAsPaid = async (req, res) => {
   }
 };
 
+// ===============================
 // เปลี่ยนสถานะเป็น pending
+// ===============================
+
 exports.markAsPending = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -405,7 +438,10 @@ exports.markAsPending = async (req, res) => {
   }
 };
 
+// ===============================
 // ลบการจอง
+// ===============================
+
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });

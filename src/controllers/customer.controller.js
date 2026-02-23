@@ -87,7 +87,9 @@ exports.editForm = async (req, res) => {
     return res.render("customers/edit", { customer });
   } catch (err) {
     console.error("Customer edit form error:", err);
-    return res.redirect("/customers?error=The customer edit form could not be loaded");
+    return res.redirect(
+      "/customers?error=The customer edit form could not be loaded",
+    );
   }
 };
 

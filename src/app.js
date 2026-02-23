@@ -1,4 +1,3 @@
-require("dotenv").config();
 // Express framework สำหรับสร้างเว็บเซิร์ฟเวอร์
 const express = require("express");
 // ใช้จัดการ path ของไฟล์ให้รองรับทุก OS
@@ -7,7 +6,6 @@ const path = require("path");
 const { DataTypes } = require("sequelize");
 // ดึง database instance และ model ต่าง ๆ
 const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
-
 
 // import routes
 // route จัดการข้อมูลศิลปิน
@@ -26,7 +24,6 @@ const userRoutes = require("./routes/user.routes");
 const userController = require("./controllers/user.controller");
 // ฟังก์ชันเช็คว่ามีลูกค้าล็อกอินอยู่หรือไม่
 const { getAuthCustomer } = require("./utils/user-auth");
-
 
 // สร้าง express app และกำหนด port
 const app = express();
@@ -90,10 +87,10 @@ const renderAdminDashboard = async (res) => {
       latestConcerts,
       latestArtists,
     ] = await Promise.all([
-      Artist.count(),          // จำนวนศิลปิน
-      Concert.count(),         // จำนวนคอนเสิร์ต
-      Customer.count(),        // จำนวนลูกค้า
-      Booking.count(),         // จำนวนการจอง
+      Artist.count(), // จำนวนศิลปิน
+      Concert.count(), // จำนวนคอนเสิร์ต
+      Customer.count(), // จำนวนลูกค้า
+      Booking.count(), // จำนวนการจอง
 
       // การจองล่าสุด 5 รายการ
       Booking.findAll({

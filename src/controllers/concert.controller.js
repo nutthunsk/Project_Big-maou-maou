@@ -142,7 +142,9 @@ exports.bookForm = async (req, res) => {
     return res.render("concerts/book", { concert: concertWithSeatStats });
   } catch (err) {
     console.error("Concert booking page error:", err);
-    return res.redirect("/concerts?error=The ticket booking page could not be loaded");
+    return res.redirect(
+      "/concerts?error=The ticket booking page could not be loaded",
+    );
   }
 };
 
@@ -177,7 +179,9 @@ exports.newForm = async (_req, res) => {
     res.render("concerts/create", { artists, imageOptions });
   } catch (err) {
     console.error("Concert new form error:", err);
-    res.redirect("/concerts?error=The form for adding a concert could not be loaded");
+    res.redirect(
+      "/concerts?error=The form for adding a concert could not be loaded",
+    );
   }
 };
 
@@ -210,7 +214,9 @@ exports.create = async (req, res) => {
       totalSeats <= 0 ||
       price <= 0
     ) {
-      return res.redirect("/concerts/new?error=Please fill in the information correctly");
+      return res.redirect(
+        "/concerts/new?error=Please fill in the information correctly",
+      );
     }
 
     // ห้ามเลือกวันที่ย้อนหลัง
@@ -221,7 +227,9 @@ exports.create = async (req, res) => {
     // ตรวจสอบชื่อซ้ำ
     const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
     if (duplicatedConcert) {
-      return res.redirect("/concerts/new?error=The name of this concert already exists");
+      return res.redirect(
+        "/concerts/new?error=The name of this concert already exists",
+      );
     }
 
     // สร้าง concert
@@ -262,7 +270,9 @@ exports.editForm = async (req, res) => {
     res.render("concerts/edit", { concert, artists, imageOptions });
   } catch (err) {
     console.error("Concert edit form error:", err);
-    res.redirect("/concerts?error=The concert editing form could not be loaded");
+    res.redirect(
+      "/concerts?error=The concert editing form could not be loaded",
+    );
   }
 };
 
@@ -335,7 +345,9 @@ exports.update = async (req, res) => {
 
     await concert.setArtists(artistIds);
 
-    res.redirect(`/concerts/${concert.id}?success=The concert arrangements have already been finalized`);
+    res.redirect(
+      `/concerts/${concert.id}?success=The concert arrangements have already been finalized`,
+    );
   } catch (err) {
     console.error("Concert update error:", err);
     res.redirect(
