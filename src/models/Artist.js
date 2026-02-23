@@ -1,4 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
+  // สร้าง Model ชื่อ Artist ผูกกับ Sequelize
   return sequelize.define(
     "Artist",
     {

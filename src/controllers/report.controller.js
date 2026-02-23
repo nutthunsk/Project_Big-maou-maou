@@ -1,21 +1,24 @@
 const { Op } = require("sequelize");
 const { Artist, Concert, Booking, Customer } = require("../models");
 
+// GET /reports
+// แสดงรายงานตามประเภทที่เลือก (concert / customer / artist)
 exports.index = async (req, res) => {
-  const type = req.query.type || "concert"; // concert | customer | artist
-
+    // อ่านประเภทของรายงานจาก query string
+  const type = req.query.type || "concert";
   try {
-    // =========================
     // REPORT: CONCERT SALES
-    // =========================
+    // รายงานยอดขายแยกตามคอนเสิร์ต
     if (type === "concert") {
       const status = req.query.status || "all";
 
+      // เงื่อนไข include booking ตามสถานะ
       const bookingInclude =
         status === "all"
           ? { model: Booking, required: false }
           : { model: Booking, where: { status }, required: false };
 
+      // ดึงข้อมูลคอนเสิร์ต พร้อมศิลปินและการจอง
       const concerts = await Concert.findAll({
         include: [
           { association: "Artists", through: { attributes: [] } },
@@ -24,6 +27,7 @@ exports.index = async (req, res) => {
         order: [["ConcertDate", "ASC"]],
       });
 
+      // คำนวณจำนวนบัตรและรายได้ต่อคอนเสิร์ต
       const rows = concerts.map((concert) => {
         const bookings = concert.Bookings || [];
         const totalQty = bookings.reduce(
@@ -38,6 +42,7 @@ exports.index = async (req, res) => {
         return { concert, totalQty, totalRevenue };
       });
 
+      // สรุปภาพรวมทั้งหมด
       const summary = rows.reduce(
         (a, r) => {
           a.totalConcerts++;
@@ -56,15 +61,16 @@ exports.index = async (req, res) => {
       });
     }
 
-    // =========================
     // REPORT: CUSTOMER SPENDING
-    // =========================
+    // รายงานยอดใช้จ่ายของลูกค้า
     if (type === "customer") {
+      // ดึงข้อมูลลูกค้าพร้อม booking
       const customers = await Customer.findAll({
         include: [{ model: Booking }],
         order: [["fullname", "ASC"]],
       });
 
+      // คำนวณยอดใช้จ่ายของลูกค้าแต่ละคน
       const rows = customers.map((customer) => {
         const bookings = customer.Bookings || [];
         const totalSpent = bookings.reduce((sum, b) => {
@@ -79,6 +85,7 @@ exports.index = async (req, res) => {
         };
       });
 
+      // สรุปรวมลูกค้าและรายได้ทั้งหมด
       const summary = rows.reduce(
         (a, r) => {
           a.customerCount++;
@@ -96,15 +103,18 @@ exports.index = async (req, res) => {
       });
     }
 
-    // =========================
     // REPORT: ARTIST + BOOKING
-    // =========================
+    // รายงานศิลปิน คอนเสิร์ต และการจอง
     if (type === "artist") {
+      // คำค้นหาชื่อศิลปิน
       const artistQuery = String(req.query.q || "").trim();
 
+      // เงื่อนไขค้นหาศิลปินตามชื่อ
       const artistWhere = artistQuery
         ? { ArtistName: { [Op.like]: `${artistQuery}%` } }
         : undefined;
+
+      // ดึงข้อมูลศิลปิน พร้อมคอนเสิร์ตและการจอง
       const artists = await Artist.findAll({
         where: artistWhere,
         include: [
@@ -118,6 +128,7 @@ exports.index = async (req, res) => {
         order: [["ArtistName", "ASC"]],
       });
 
+      // คำนวณข้อมูลรายงานต่อศิลปิน
       const rows = artists.map((artist) => {
         const concerts = artist.Concerts || [];
         const bookings = concerts.flatMap((concert) => concert.Bookings || []);
@@ -140,6 +151,7 @@ exports.index = async (req, res) => {
         };
       });
 
+      // สรุปภาพรวมรายงานศิลปินทั้งหมด
       const summary = rows.reduce(
         (acc, row) => {
           acc.artistCount += 1;

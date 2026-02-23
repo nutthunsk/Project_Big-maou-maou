@@ -1,35 +1,53 @@
-const express = require("express"); // framework สำหรับเว็บเซิร์ฟเวอร์
-const path = require("path"); // จัดการ path ให้ข้าม OS ได้
+
+// Express framework สำหรับสร้างเว็บเซิร์ฟเวอร์
+const express = require("express");
+// ใช้จัดการ path ของไฟล์ให้รองรับทุก OS
+const path = require("path");
+// DataTypes ใช้กำหนดชนิดข้อมูลของ column ใน Sequelize
 const { DataTypes } = require("sequelize");
+// ดึง database instance และ model ต่าง ๆ
 const { sequelize, Artist, Concert, Customer, Booking } = require("./models");
 
-// ===== routes =====
+
+// import routes
+// route จัดการข้อมูลศิลปิน
 const artistRoutes = require("./routes/artist.routes");
+// route จัดการข้อมูลคอนเสิร์ต
 const concertRoutes = require("./routes/concert.routes");
+// route จัดการการจองบัตร
 const bookingRoutes = require("./routes/booking.routes");
+// route จัดการข้อมูลลูกค้า
 const customerRoutes = require("./routes/customer.routes");
+// route รายงาน (report)
 const reportRoutes = require("./routes/report.routes");
+// route ฝั่ง user
 const userRoutes = require("./routes/user.routes");
+// controller สำหรับหน้า user
 const userController = require("./controllers/user.controller");
+// ฟังก์ชันเช็คว่ามีลูกค้าล็อกอินอยู่หรือไม่
 const { getAuthCustomer } = require("./utils/user-auth");
 
+
+// สร้าง express app และกำหนด port
 const app = express();
+// ใช้ port จาก environment ถ้ามี ไม่งั้นใช้ 3000
 const PORT = process.env.PORT || 3000;
 
-// view engine
+// ตั้งค่า view engine
+// ใช้ EJS เป็น template engine
 app.set("view engine", "ejs");
+// กำหนดโฟลเดอร์เก็บไฟล์ .ejs
 app.set("views", path.join(__dirname, "views"));
-
-// middleware
+// รับข้อมูลจาก form (POST)
 app.use(express.urlencoded({ extended: false }));
+// รับข้อมูลแบบ JSON
 app.use(express.json());
-
-// static files
+// เปิดให้เข้าถึงไฟล์ในโฟลเดอร์ public
 app.use(express.static(path.join(__dirname, "../public")));
-
-// method override (?_method=PUT / DELETE)
+// ใช้กรณีส่ง _method=PUT หรือ DELETE ผ่าน form
 app.use((req, _res, next) => {
   if (req.body && typeof req.body === "object" && req.body._method) {
+    // เปลี่ยน method ของ request
     req.method = String(req.body._method).toUpperCase();
     delete req.body._method;
   }
@@ -37,6 +55,7 @@ app.use((req, _res, next) => {
 });
 
 // flash message ผ่าน query string
+// ส่งข้อความ success / error ไปใช้ใน view
 app.use((req, res, next) => {
   res.locals.flash = {
     success: req.query.success || "",
@@ -45,8 +64,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// แนบข้อมูลลูกค้าที่ล็อกอิน
+// ตรวจสอบว่ามี customer login อยู่หรือไม่
 app.use(async (req, res, next) => {
   try {
+    // เก็บข้อมูลลูกค้าที่ล็อกอินไว้ใช้ใน EJS
     res.locals.authCustomer = await getAuthCustomer(req);
   } catch (error) {
     console.error("Attach auth customer error:", error);
@@ -55,8 +77,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// ฟังก์ชัน render หน้า admin dashboard
 const renderAdminDashboard = async (res) => {
   try {
+    // ดึงข้อมูลหลายอย่างพร้อมกันเพื่อความเร็ว
     const [
       artistCount,
       concertCount,
@@ -66,15 +90,19 @@ const renderAdminDashboard = async (res) => {
       latestConcerts,
       latestArtists,
     ] = await Promise.all([
-      Artist.count(),
-      Concert.count(),
-      Customer.count(),
-      Booking.count(),
+      Artist.count(),          // จำนวนศิลปิน
+      Concert.count(),         // จำนวนคอนเสิร์ต
+      Customer.count(),        // จำนวนลูกค้า
+      Booking.count(),         // จำนวนการจอง
+
+      // การจองล่าสุด 5 รายการ
       Booking.findAll({
         include: [Concert, Customer],
         order: [["id", "DESC"]],
         limit: 5,
       }),
+
+      // ศิลปินล่าสุด 5 รายการ
       Concert.findAll({
         include: [{ association: "Artists", through: { attributes: [] } }],
         order: [
@@ -83,6 +111,8 @@ const renderAdminDashboard = async (res) => {
         ],
         limit: 5,
       }),
+
+      // ศิลปินล่าสุด 5 รายการ
       Artist.findAll({
         include: [{ association: "Concerts", through: { attributes: [] } }],
         order: [["id", "DESC"]],
@@ -90,6 +120,7 @@ const renderAdminDashboard = async (res) => {
       }),
     ]);
 
+    // render หน้า home (admin dashboard)
     return res.render("home", {
       stats: {
         artistCount,
@@ -102,6 +133,7 @@ const renderAdminDashboard = async (res) => {
       latestArtists,
     });
   } catch (err) {
+    // ถ้า error ให้ render หน้าเดิมแต่ข้อมูลว่าง
     console.error("Home page error:", err);
     return res.render("home", {
       stats: {
@@ -117,7 +149,7 @@ const renderAdminDashboard = async (res) => {
   }
 };
 
-// routes
+// routes หลักของระบบ
 app.use("/artists", artistRoutes);
 app.use("/concerts", concertRoutes);
 app.use("/bookings", bookingRoutes);
@@ -125,18 +157,22 @@ app.use("/customers", customerRoutes);
 app.use("/reports", reportRoutes);
 app.use("/user", userRoutes);
 
+// หน้าแรกของเว็บ
 app.get("/", userController.home);
-
+// หน้า admin dashboard
 app.get("/admin", async (_req, res) => {
   return renderAdminDashboard(res);
 });
 
+// ตรวจสอบและเพิ่ม column ให้ตาราง Concert
 const ensureConcertColumns = async () => {
   const queryInterface = sequelize.getQueryInterface();
 
   try {
+    // อ่านโครงสร้างตาราง Concert
     const tableInfo = await queryInterface.describeTable("Concert");
 
+    // ถ้ายังไม่มี ConcertTime ให้เพิ่ม
     if (!tableInfo.ConcertTime) {
       await queryInterface.addColumn("Concert", "ConcertTime", {
         type: DataTypes.TIME,
@@ -145,6 +181,7 @@ const ensureConcertColumns = async () => {
       });
     }
 
+    // ถ้ายังไม่มี imagePath ให้เพิ่ม
     if (!tableInfo.imagePath) {
       await queryInterface.addColumn("Concert", "imagePath", {
         type: DataTypes.STRING,
@@ -153,22 +190,29 @@ const ensureConcertColumns = async () => {
       });
     }
   } catch (error) {
+    // ถ้ายังไม่มีตาราง Concert ให้ข้าม
     if (String(error.message || "").includes("no such table")) return;
     throw error;
   }
 };
 
-// database init
+// init database
 async function initDb() {
+  // ตรวจสอบการเชื่อมต่อ database
   await sequelize.authenticate();
+  // sync model กับ database
   await sequelize.sync();
+  // ตรวจสอบ column ที่จำเป็น
   await ensureConcertColumns();
 }
 
 // start server
+
 async function startServer() {
   try {
+    // เตรียม database ก่อน
     await initDb();
+    // เปิด server
     app.listen(PORT, () => {
       console.log(`Server running at http://localhost:${PORT}`);
     });
@@ -178,11 +222,12 @@ async function startServer() {
   }
 }
 
-// รัน server เฉพาะตอนเรียกไฟล์นี้ตรง ๆ
+// รัน server เฉพาะตอนเรียกไฟล์นี้โดยตรง
 if (require.main === module) {
   startServer();
 }
 
-// exports
+// export app สำหรับใช้กับ test หรือไฟล์อื่น
 module.exports = app;
+// export initDb เผื่อเรียกใช้งานภายนอก
 module.exports.initDb = initDb;

@@ -1,4 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
+  // Model Customer ใช้เก็บข้อมูลลูกค้าที่ทำการจองบัตรคอนเสิร์ต
   return sequelize.define(
     "Customer",
     {

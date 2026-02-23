@@ -1,14 +1,26 @@
+// import operator และ model
+
+// Op ใช้สำหรับ operator ของ Sequelize (เช่น !=, >, <)
 const { Op } = require("sequelize");
+
+// Booking  = ตารางการจอง
+// Concert  = ตารางคอนเสิร์ต
+// Customer = ตารางลูกค้า
 const { Booking, Concert, Customer } = require("../models");
 
+// helper functions & constants
 const cleanText = (value) => String(value || "").trim();
 const normalizeNumber = (value) => Number(value || 0);
+// regex ตรวจสอบรูปแบบอีเมล
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// regex ตรวจสอบเบอร์โทร (ตัวเลข 8–15 หลัก)
 const PHONE_REGEX = /^[0-9]{8,15}$/;
 const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
 const MAX_BOOKING_QTY = 6;
 const todayDateText = () => new Date().toISOString().slice(0, 10);
 
+// คำนวณจำนวนที่นั่งที่จองแล้ว
+// (อ้างอิงจาก email หรือ fullname)
 const getBookedSeatsByIdentityInConcert = async ({
   ConcertId,
   email,
@@ -25,23 +37,31 @@ const getBookedSeatsByIdentityInConcert = async ({
     attributes: ["quantity", "status"],
   });
 
+  // รวมจำนวนที่นั่งที่จองแล้ว
   return bookings.reduce((sum, booking) => {
+    // ไม่นับ booking ที่ถูกยกเลิก
     if (booking.status === "cancelled") return sum;
-
+    // เตรียมข้อมูลไว้เปรียบเทียบ
     const bookingEmail = cleanText(booking.Customer?.email).toLowerCase();
     const bookingFullname = cleanText(booking.Customer?.fullname).toLowerCase();
+    // ตรวจสอบว่าตรงกันด้วย email หรือชื่อ
     const matchedByEmail =
       bookingEmail && bookingEmail === cleanText(email).toLowerCase();
     const matchedByName =
       bookingFullname && bookingFullname === cleanText(fullname).toLowerCase();
-
+    // ถ้าไม่ตรงทั้งคู่ ไม่ต้องนับ
     if (!matchedByEmail && !matchedByName) return sum;
+    // รวมจำนวนตั๋ว
     return sum + Number(booking.quantity || 0);
   }, 0);
 };
 
+// คำนวณจำนวนที่นั่งที่ถูกจองแล้วทั้งหมด
+// (ใช้ตอนเช็คที่นั่งคงเหลือ)
 const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   const where = { ConcertId };
+
+  // กรณีแก้ไข booking ให้ไม่นับตัวเอง
   if (excludeBookingId) where.id = { [Op.ne]: excludeBookingId };
 
   const bookings = await Booking.findAll({
@@ -55,12 +75,15 @@ const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   }, 0);
 };
 
+// ดึงข้อมูลอ้างอิง (concert / customer)
 const getRefs = async () => {
   const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
   const customers = await Customer.findAll({ order: [["fullname", "ASC"]] });
   return { concerts, customers };
 };
 
+// GET /bookings
+// แสดงรายการการจองทั้งหมด
 exports.index = async (_req, res) => {
   try {
     const bookings = await Booking.findAll({
@@ -75,6 +98,8 @@ exports.index = async (_req, res) => {
   }
 };
 
+// GET /bookings/:id
+// แสดงรายละเอียดการจอง
 exports.show = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id, {
@@ -89,15 +114,18 @@ exports.show = async (req, res) => {
   }
 };
 
+// GET /bookings/new
+// แสดงฟอร์มจองตั๋ว
 exports.newForm = async (req, res) => {
   try {
     const { concerts } = await getRefs();
+    // concert ที่ถูกเลือก (ถ้ามาจากหน้า concert)
     const selectedConcertId = normalizeNumber(req.query.concertId);
     const selectedConcert =
       concerts.find(
         (concert) => Number(concert.id) === Number(selectedConcertId),
       ) || null;
-
+    // ถ้าคอนเสิร์ตผ่านไปแล้ว ห้ามจอง
     if (
       selectedConcert &&
       String(selectedConcert.ConcertDate) < todayDateText()
@@ -122,8 +150,11 @@ exports.newForm = async (req, res) => {
   }
 };
 
+// POST /bookings/create
+// สร้างการจองใหม่
 exports.create = async (req, res) => {
   try {
+    // ดึงข้อมูลจาก form / user ที่ login
     const ConcertId = normalizeNumber(req.body.ConcertId);
     const authCustomer = req.authCustomer || null;
     const fullname = cleanText(req.body.fullname || authCustomer?.fullname);
@@ -135,12 +166,13 @@ exports.create = async (req, res) => {
     );
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
+    // URL กลับไปหน้าเดิมพร้อม error
     const backUrl = ConcertId
       ? `/bookings/new?concertId=${ConcertId}`
       : "/bookings/new";
     const errorUrl = (message) =>
       `${backUrl}${backUrl.includes("?") ? "&" : "?"}error=${encodeURIComponent(message)}`;
-
+    // ตรวจสอบข้อมูลพื้นฐาน
     if (!ConcertId || !fullname || !email || !phoneNumber || quantity <= 0) {
       return res.redirect(errorUrl("Please fill in the information correctly"));
     }
@@ -174,7 +206,7 @@ exports.create = async (req, res) => {
       );
     }
 
-    // 🔥 สร้างหรือค้นหา Customer (เหลือแค่รอบเดียว)
+    // สร้างหรือค้นหา Customer (ใช้ email เป็นหลัก)
     const [customer] = await Customer.findOrCreate({
       where: { email },
       defaults: { fullname, email, phoneNumber },
@@ -193,13 +225,13 @@ exports.create = async (req, res) => {
       email,
       fullname,
     });
-
+    // ตรวจสอบการจองซ้ำต่อคน
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
         errorUrl(`One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`),
       );
     }
-
+    // ตรวจสอบจำนวนที่นั่งคงเหลือ
     const bookedSeats = await getBookedSeats(ConcertId);
     const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
 
@@ -210,7 +242,7 @@ exports.create = async (req, res) => {
         ),
       );
     }
-
+    // คำนวณราคาทั้งหมด
     const totalPrice = Number(concert.price) * quantity;
 
     await Booking.create({
@@ -227,7 +259,8 @@ exports.create = async (req, res) => {
     return res.redirect("/user/concerts?error=Unable to add a booking");
   }
 };
-
+ 
+// GET /bookings/edit/:id
 exports.editForm = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -246,6 +279,7 @@ exports.editForm = async (req, res) => {
   }
 };
 
+// POST /bookings/edit/:id
 exports.update = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -256,6 +290,7 @@ exports.update = async (req, res) => {
     const quantity = normalizeNumber(req.body.quantity);
     const status = cleanText(req.body.status) || "pending";
 
+    // ตรวจสอบข้อมูล
     if (!ConcertId || !CustomerId || quantity <= 0) {
       return res.redirect(
         `/bookings/${booking.id}/edit?error=Please fill in the information correctly`,
@@ -280,7 +315,7 @@ exports.update = async (req, res) => {
         `/bookings/${booking.id}/edit?error=No concert information found`,
       );
     }
-
+    // ตรวจสอบจำนวนที่นั่ง
     const bookedSeats = await getBookedSeats(ConcertId, booking.id);
     const remainingSeats = Number(concert.totalSeats || 0) - bookedSeats;
 
@@ -309,6 +344,7 @@ exports.update = async (req, res) => {
   }
 };
 
+// เปลี่ยนสถานะเป็น paid
 exports.markAsPaid = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -322,6 +358,7 @@ exports.markAsPaid = async (req, res) => {
   }
 };
 
+// เปลี่ยนสถานะเป็น pending
 exports.markAsPending = async (req, res) => {
   try {
     const booking = await Booking.findByPk(req.params.id);
@@ -335,6 +372,7 @@ exports.markAsPending = async (req, res) => {
   }
 };
 
+// ลบการจอง
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });

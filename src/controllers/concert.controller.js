@@ -1,15 +1,22 @@
+//ดึง model
 const { Concert, Artist, Booking } = require("../models");
+// ใช้จัดการไฟล์แบบ async
 const fs = require("fs/promises");
+// ใช้จัดการ path ไฟล์ให้ข้าม OS ได้
 const path = require("path");
 
-// ===== helpers =====
+// helpers
+// แปลงตัวเลข
 const normalizeNumber = (value) => Number(value || 0);
 const cleanText = (value) => String(value || "").trim();
+// วันที่
 const todayDateText = () => new Date().toISOString().slice(0, 10);
+// รูปโปสเตอร์เริ่มต้น
 const DEFAULT_CONCERT_IMAGE = "/images/Poster.png";
-
+// ดึงรายชื่อศิลปินทั้งหมด เรียงตามชื่อ
 const getArtists = () => Artist.findAll({ order: [["ArtistName", "ASC"]] });
 
+// แปลง ArtistIds จาก form เป็น array ของตัวเลขที่ไม่ซ้ำและมากกว่า 0
 const parseArtistIds = (value) => {
   const raw = Array.isArray(value) ? value : [value];
 
@@ -20,6 +27,7 @@ const parseArtistIds = (value) => {
   ];
 };
 
+// อ่านรูปทั้งหมดจาก public/images
 const getAvailableImagePaths = async () => {
   const imagesDir = path.join(__dirname, "../../public/images");
 
@@ -40,6 +48,7 @@ const getAvailableImagePaths = async () => {
   }
 };
 
+// แปลงเวลา ตรวจสอบความถูกต้อง
 const normalizeConcertTime = (value) => {
   const raw = cleanText(value);
   if (!raw) return "";
@@ -62,17 +71,20 @@ const normalizeConcertTime = (value) => {
   return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`;
 };
 
+// คำนวณจำนวนที่นั่ง (ทั้งหมด / ถูกจอง / คงเหลือ)
 const attachSeatStats = async (concerts) => {
   const concertRows = Array.isArray(concerts) ? concerts : [];
   if (concertRows.length === 0) return [];
 
   const concertIds = concertRows.map((c) => c.id);
 
+  // ดึงข้อมูลการจองของ concert เหล่านี้
   const bookings = await Booking.findAll({
     where: { ConcertId: concertIds },
     attributes: ["ConcertId", "quantity", "status"],
   });
 
+  // รวมจำนวนที่นั่งที่ถูกจอง (ไม่รวม cancelled
   const bookedByConcertId = bookings.reduce((acc, b) => {
     if (b.status === "cancelled") return acc;
     const concertId = Number(b.ConcertId);
@@ -80,6 +92,7 @@ const attachSeatStats = async (concerts) => {
     return acc;
   }, {});
 
+  // แนบ seatStats เข้าไปใน concert แต่ละตัว
   return concertRows.map((concert) => {
     const c = concert.toJSON();
     const totalSeats = Number(c.totalSeats || 0);
@@ -98,9 +111,9 @@ const attachSeatStats = async (concerts) => {
   });
 };
 
-// ===== controllers =====
+// controllers
 
-// GET /concerts
+// GET /concerts หน้าแสดงคอนเสิร์ตทั้งหมด
 exports.index = async (_req, res) => {
   try {
     const concerts = await Concert.findAll({
@@ -116,7 +129,7 @@ exports.index = async (_req, res) => {
   }
 };
 
-// GET /concerts/:id/book
+// GET /concerts/:id/book ฟอร์มจองบัตร
 exports.bookForm = async (req, res) => {
   try {
     const concert = await Concert.findByPk(req.params.id, {
@@ -133,7 +146,7 @@ exports.bookForm = async (req, res) => {
   }
 };
 
-// GET /concerts/:id
+// GET /concerts/:id ดูรายละเอียดคอนเสิร์ต
 exports.show = async (req, res) => {
   try {
     const concert = await Concert.findByPk(req.params.id, {
@@ -153,7 +166,7 @@ exports.show = async (req, res) => {
   }
 };
 
-// GET /concerts/new
+// GET /concerts/new ฟอร์มเพิ่มคอนเสิร์ต
 exports.newForm = async (_req, res) => {
   try {
     const [artists, imageOptions] = await Promise.all([
@@ -168,9 +181,10 @@ exports.newForm = async (_req, res) => {
   }
 };
 
-// POST /concerts
+// POST /concerts สร้างคอนเสิร์ตใหม่
 exports.create = async (req, res) => {
   try {
+    // ดึงและ normalize ข้อมูลจาก form
     const ConcertName = cleanText(req.body.ConcertName);
     const venue = cleanText(req.body.venue);
     const ConcertDate = cleanText(req.body.ConcertDate);
@@ -179,12 +193,14 @@ exports.create = async (req, res) => {
     const price = normalizeNumber(req.body.price);
     const artistIds = parseArtistIds(req.body.ArtistIds);
     const ArtistId = artistIds[0];
+    // ตรวจสอบรูปที่เลือก
     const imageOptions = await getAvailableImagePaths();
     const selectedImage = cleanText(req.body.imagePath);
     const imagePath = imageOptions.includes(selectedImage)
       ? selectedImage
       : DEFAULT_CONCERT_IMAGE;
 
+    // validation ข้อมูล
     if (
       !ConcertName ||
       !venue ||
@@ -197,15 +213,18 @@ exports.create = async (req, res) => {
       return res.redirect("/concerts/new?error=Please fill in the information correctly");
     }
 
+    // ห้ามเลือกวันที่ย้อนหลัง
     if (ConcertDate < todayDateText()) {
       return res.redirect("/concerts/new?error=The date has passed!!!");
     }
 
+    // ตรวจสอบชื่อซ้ำ
     const duplicatedConcert = await Concert.findOne({ where: { ConcertName } });
     if (duplicatedConcert) {
       return res.redirect("/concerts/new?error=The name of this concert already exists");
     }
 
+    // สร้าง concert
     const concert = await Concert.create({
       ConcertName,
       venue,
@@ -217,6 +236,7 @@ exports.create = async (req, res) => {
       imagePath,
     });
 
+    // ผูก artist (many-to-many)
     await concert.setArtists(artistIds);
 
     res.redirect("/concerts?success=The concert has been added");
@@ -246,12 +266,13 @@ exports.editForm = async (req, res) => {
   }
 };
 
-// PUT /concerts/:id
+// PUT /concerts/:id แก้ไขคอนเสิร์ต
 exports.update = async (req, res) => {
   try {
     const concert = await Concert.findByPk(req.params.id);
     if (!concert) return res.status(404).send("Concert not found");
 
+    // normalize ข้อมูลใหม่
     const ConcertName = cleanText(req.body.ConcertName);
     const venue = cleanText(req.body.venue);
     const ConcertDate = cleanText(req.body.ConcertDate);
@@ -285,6 +306,7 @@ exports.update = async (req, res) => {
       return res.redirect("/concerts/new?error=The date has passed!!");
     }
 
+    // ตรวจสอบชื่อซ้ำ (เฉพาะตอนเปลี่ยนชื่อ)
     const normalizedCurrentName = cleanText(concert.ConcertName).toLowerCase();
     const normalizedIncomingName = cleanText(ConcertName).toLowerCase();
 
@@ -299,6 +321,7 @@ exports.update = async (req, res) => {
       }
     }
 
+    // update ข้อมูล
     await concert.update({
       ConcertName,
       venue,
@@ -321,12 +344,13 @@ exports.update = async (req, res) => {
   }
 };
 
-// DELETE /concerts/:id
+// DELETE /concerts/:id ลบคอนเสิร์ต
 exports.delete = async (req, res) => {
   try {
     const concert = await Concert.findByPk(req.params.id);
     if (!concert) return res.status(404).send("Concert not found");
 
+    // ลบ booking ที่เกี่ยวข้องก่อน
     await Booking.destroy({ where: { ConcertId: concert.id } });
     await concert.destroy();
 

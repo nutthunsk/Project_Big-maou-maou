@@ -1,4 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
+  // สร้าง Model ชื่อ Booking สำหรับเก็บข้อมูลการจองบัตร
   return sequelize.define(
     "Booking",
     {

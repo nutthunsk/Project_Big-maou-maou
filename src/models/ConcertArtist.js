@@ -1,4 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
+  // Model ConcertArtist ใช้เป็นตารางกลาง (Junction Table)
+  // สำหรับเชื่อมความสัมพันธ์แบบ Many-to-Many
+  // ระหว่าง Concert และ Artist
   return sequelize.define(
     "ConcertArtist",
     {

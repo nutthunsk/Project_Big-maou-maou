@@ -1,4 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
+  // สร้าง Model Concert สำหรับเก็บข้อมูลคอนเสิร์ต
   return sequelize.define(
     "Concert",
     {

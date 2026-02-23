@@ -3,6 +3,7 @@ const PHONE_REGEX = /^[0-9]{8,15}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const cleanText = (value) => String(value || "").trim();
 
+// ตรวจสอบความถูกต้องของข้อมูลลูกค้า
 const validatePayload = ({ fullname, email, phoneNumber }) => {
   if (!cleanText(fullname) || !cleanText(email) || !cleanText(phoneNumber)) {
     return "Please fill out the information completely";
@@ -20,6 +21,7 @@ const validatePayload = ({ fullname, email, phoneNumber }) => {
 };
 
 // GET /customers
+// แสดงรายชื่อลูกค้าทั้งหมด
 exports.index = async (_req, res) => {
   try {
     const customers = await Customer.findAll({ order: [["id", "ASC"]] });
@@ -31,6 +33,7 @@ exports.index = async (_req, res) => {
 };
 
 // GET /customers/:id
+// แสดงรายละเอียดลูกค้า 1 คน พร้อมประวัติการจอง
 exports.show = async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id, {
@@ -45,10 +48,15 @@ exports.show = async (req, res) => {
   }
 };
 
+// GET /customers/new
+// เปิดฟอร์มเพิ่มลูกค้า
 exports.newForm = (_req, res) => res.render("customers/create");
 
+// POST /customers
+// บันทึกข้อมูลลูกค้าใหม่
 exports.create = async (req, res) => {
   try {
+    // เตรียมข้อมูลจากฟอร์ม
     const payload = {
       fullname: cleanText(req.body.fullname),
       email: cleanText(req.body.email),
@@ -59,6 +67,7 @@ exports.create = async (req, res) => {
     if (error)
       return res.redirect(`/customers/new?error=${encodeURIComponent(error)}`);
 
+    // เพิ่มข้อมูลลูกค้าในฐานข้อมูล
     await Customer.create(payload);
     return res.redirect("/customers?success=Successfully added customer");
   } catch (err) {
@@ -69,7 +78,8 @@ exports.create = async (req, res) => {
   }
 };
 
-// POST /customers
+// GET /customers/:id/edit
+// เปิดฟอร์มแก้ไขข้อมูลลูกค้า
 exports.editForm = async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id);
@@ -81,6 +91,8 @@ exports.editForm = async (req, res) => {
   }
 };
 
+// POST /customers/:id
+// อัปเดตข้อมูลลูกค้า
 exports.update = async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id);
@@ -112,6 +124,7 @@ exports.update = async (req, res) => {
 };
 
 // POST /customers/:id/delete
+// ลบลูกค้าและข้อมูลการจองที่เกี่ยวข้อง
 exports.delete = async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id);
