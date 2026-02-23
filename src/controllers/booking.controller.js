@@ -263,7 +263,37 @@ exports.create = async (req, res) => {
       console.error("Booking email error:", mailErr);
     }
 
-    return res.redirect("/user?success=Already reserved tickets");
+     let mailStatusQuery = "";
+
+    try {
+      const mailResult = await sendBookingTicketEmail({
+        booking: createdBooking,
+        concert,
+        customer,
+      });
+
+      if (mailResult?.sent) {
+        mailStatusQuery =
+          "&success=" +
+          encodeURIComponent("Booking confirmed and e-ticket email sent");
+      } else if (mailResult?.reason) {
+        console.warn("Booking email skipped:", mailResult.reason);
+        mailStatusQuery =
+          "&error=" +
+          encodeURIComponent(
+            `จองสำเร็จ แต่ยังไม่ได้ส่งอีเมล: ${mailResult.reason}`,
+          );
+      }
+    } catch (mailErr) {
+      console.error("Booking email error:", mailErr);
+      mailStatusQuery =
+        "&error=" +
+        encodeURIComponent("จองสำเร็จ แต่ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่าเมล");
+    }
+
+    return res.redirect(
+      `/user?success=${encodeURIComponent("Already reserved tickets")}${mailStatusQuery}`,
+    );
   } catch (err) {
     console.error("Booking create error:", err);
     return res.redirect("/user/concerts?error=Unable to add a booking");

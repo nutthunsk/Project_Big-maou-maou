@@ -40,7 +40,7 @@ const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
     return {
       sent: false,
       reason:
-        "RESEND_API_KEY or BOOKING_MAIL_FROM is not configured. Skip sending email.",
+        "ยังไม่ได้ตั้งค่า RESEND_API_KEY หรือ BOOKING_MAIL_FROM (และต้องใช้ผู้ส่งที่ยืนยันโดเมนแล้วใน Resend)",
     };
   }
 

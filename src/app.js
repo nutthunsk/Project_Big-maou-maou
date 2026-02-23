@@ -1,4 +1,4 @@
-
+require("dotenv").config();
 // Express framework สำหรับสร้างเว็บเซิร์ฟเวอร์
 const express = require("express");
 // ใช้จัดการ path ของไฟล์ให้รองรับทุก OS
