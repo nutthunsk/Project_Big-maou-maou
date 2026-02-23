@@ -1,12 +1,12 @@
-// import operator และ model
-
-// Op ใช้สำหรับ operator ของ Sequelize (เช่น !=, >, <)
+// Op ใช้สำหรับ operator ของ Sequelize
 const { Op } = require("sequelize");
 
 // Booking  = ตารางการจอง
 // Concert  = ตารางคอนเสิร์ต
 // Customer = ตารางลูกค้า
 const { Booking, Concert, Customer } = require("../models");
+
+const { sendBookingTicketEmail } = require("../utils/ticket-email");
 
 // helper functions & constants
 const cleanText = (value) => String(value || "").trim();
@@ -245,13 +245,23 @@ exports.create = async (req, res) => {
     // คำนวณราคาทั้งหมด
     const totalPrice = Number(concert.price) * quantity;
 
-    await Booking.create({
+    const createdBooking = await Booking.create({
       ConcertId,
       CustomerId: customer.id,
       quantity,
       status,
       totalPrice,
     });
+
+    try {
+      await sendBookingTicketEmail({
+        booking: createdBooking,
+        concert,
+        customer,
+      });
+    } catch (mailErr) {
+      console.error("Booking email error:", mailErr);
+    }
 
     return res.redirect("/user?success=Already reserved tickets");
   } catch (err) {
