@@ -39,11 +39,6 @@ npm install
 - หน้า User: `http://localhost:3000/`
 - หน้า Admin Dashboard: `http://localhost:3000/admin`
 
-## ภาพหน้าจอหลัก
-
-ตัวอย่างหน้าหลักของระบบ
-![หน้าหลักของระบบ](public/images/Poster.png)
-
 ## รายการฟีเจอร์ที่พัฒนาแล้ว
 
 ### ฝั่งผู้ดูแลระบบ (Admin)
