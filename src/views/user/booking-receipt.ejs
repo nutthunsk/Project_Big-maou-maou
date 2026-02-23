@@ -1,0 +1,36 @@
+<%- include('../partials/user_header', { title: 'Booking receipt' }) %>
+
+<section class="booking-form-layout">
+  <article class="booking-form-card booking-form-card-main">
+    <h1>ใบจอง #<%= booking.id %></h1>
+    <p class="booking-form-subtitle">รายละเอียดการจองคอนเสิร์ตของคุณ</p>
+
+    <% const concert = booking.Concert; %>
+    <ul class="concert-meta-list">
+      <li><strong>ชื่อผู้จอง:</strong> <%= booking.Customer ? booking.Customer.fullname : (customer ? customer.fullname : '-') %></li>
+      <li><strong>อีเมล:</strong> <%= booking.Customer ? booking.Customer.email : (customer ? customer.email : '-') %></li>
+      <li><strong>คอนเสิร์ต:</strong> <%= concert ? concert.ConcertName : '-' %></li>
+      <li><strong>วันที่:</strong>
+        <%= concert && concert.ConcertDate
+          ? new Date(`${concert.ConcertDate}T00:00:00`).toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: 'numeric' })
+          : '-' %>
+      </li>
+      <li><strong>เวลา:</strong> <%= concert && concert.ConcertTime ? String(concert.ConcertTime).slice(0, 5) : '-' %></li>
+      <li><strong>สถานที่:</strong> <%= concert ? concert.venue : '-' %></li>
+      <li><strong>ศิลปิน:</strong>
+        <%= concert && concert.Artists && concert.Artists.length
+          ? concert.Artists.map((a) => a.ArtistName).join(', ')
+          : '-' %>
+      </li>
+      <li><strong>จำนวนบัตร:</strong> <%= booking.quantity %> ใบ</li>
+      <li><strong>ยอดรวม:</strong> ฿<%= Number(booking.totalPrice || 0).toLocaleString() %></li>
+      <li><strong>สถานะ:</strong> <%= booking.status %></li>
+    </ul>
+
+    <div class="action-row">
+      <a class="btn-ghost" href="/user/profile">← Back to profile</a>
+    </div>
+  </article>
+</section>
+
+<%- include('../partials/footer') %>

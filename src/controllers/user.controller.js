@@ -200,6 +200,7 @@ exports.profile = async (req, res) => {
           totalTicketsPurchased: 0,
           totalAmount: 0,
           latestStatus: booking.status,
+          latestBookingId: booking.id,
         };
       }
 
@@ -223,6 +224,45 @@ exports.profile = async (req, res) => {
       customer: req.authCustomer,
       concertBookings: [],
     });
+  }
+};
+
+// GET /user/bookings/:id/receipt
+// แสดงใบจองของผู้ใช้ที่ล็อกอินอยู่
+exports.bookingReceipt = async (req, res) => {
+  try {
+    const bookingId = Number(req.params.id);
+    if (!Number.isInteger(bookingId) || bookingId <= 0) {
+      return res.redirect('/user/profile?error=Invalid booking id');
+    }
+
+    const booking = await Booking.findOne({
+      where: {
+        id: bookingId,
+        CustomerId: req.authCustomer.id,
+      },
+      include: [
+        {
+          model: Concert,
+          include: [{ association: 'Artists', through: { attributes: [] } }],
+        },
+        {
+          model: Customer,
+        },
+      ],
+    });
+
+    if (!booking) {
+      return res.redirect('/user/profile?error=Booking not found');
+    }
+
+    return res.render('user/booking-receipt', {
+      booking,
+      customer: req.authCustomer,
+    });
+  } catch (error) {
+    console.error('User booking receipt error:', error);
+    return res.redirect('/user/profile?error=Unable to load booking receipt');
   }
 };
 

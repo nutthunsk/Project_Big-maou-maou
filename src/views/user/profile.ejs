@@ -12,7 +12,7 @@
       <label for="email">Email</label>
       <input id="email" name="email" type="email" value="<%= customer ? customer.email : '' %>" required />
 
-      <label for="phoneNumber">=Phone number</label>
+      <label for="phoneNumber">Phone number</label>
       <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{8,15}" maxlength="15" value="<%= customer ? customer.phoneNumber : '' %>" required />
 
       <div class="action-row">
@@ -56,6 +56,11 @@
           <p class="profile-booking-status status-<%= item.latestStatus %>">
             สถานะล่าสุด: <strong><%= item.latestStatus %></strong>
           </p>
+
+           <div class="action-row">
+            <a class="btn-inline" href="/user/bookings/<%= item.latestBookingId %>/receipt">View receipt</a>
+          </div>
+
         </article>
       <% }) %>
     </div>

@@ -35,4 +35,8 @@ router.get("/profile", requireUserLogin, controller.profile);
 // อัปเดตข้อมูลโปรไฟล์ผู้ใช้ (ต้องล็อกอินก่อน)
 router.post("/profile", requireUserLogin, controller.updateProfile);
 
+// แสดงใบจองของผู้ใช้ (ต้องล็อกอินก่อน)
+router.get("/bookings/:id/receipt", requireUserLogin, controller.bookingReceipt);
+
+
 module.exports = router;
