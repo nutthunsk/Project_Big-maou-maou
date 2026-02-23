@@ -4,6 +4,15 @@
   <h1>Artists</h1>
 </div>
 
+<form method="GET" action="/user/artists" class="user-search-form" role="search" aria-label="Find an artist">
+  <label class="sr-only" for="q">Find an artist</label>
+  <div class="user-search-input-wrap">
+    <span class="user-search-icon" aria-hidden="true">🔍</span>
+    <input id="q" name="q" type="text" placeholder="ค้นหาคอนเสิร์ตที่นี่" value="<%= artistQuery || '' %>" />
+  </div>
+  <button class="user-search-btn" type="submit">ค้นหา</button>
+</form>
+
 <section class="entity-grid">
   <% if (!artists || artists.length === 0) { %>
     <p class="empty-state">no artist information yet</p>

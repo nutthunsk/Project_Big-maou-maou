@@ -141,14 +141,30 @@ exports.logout = (_req, res) => {
 
 // GET /user/artists
 // แสดงรายชื่อศิลปิน
-exports.artists = async (_req, res) => {
+exports.artists = async (req, res) => {
   try {
+    const artistQuery = String(req.query.q || "").trim();
     const artists = await Artist.findAll({
       include: [{ association: "Concerts", through: { attributes: [] } }],
       order: [["id", "ASC"]],
     });
 
-    res.render("user/artists", { artists });
+    const normalizedArtistQuery = artistQuery.toLowerCase();
+    const filteredArtists = normalizedArtistQuery
+      ? artists.filter((artist) => {
+          const artistName = String(artist.ArtistName || "").toLowerCase();
+          const genre = String(artist.genre || "").toLowerCase();
+          return (
+            artistName.includes(normalizedArtistQuery) ||
+            genre.includes(normalizedArtistQuery)
+          );
+        })
+      : artists;
+
+    res.render("user/artists", {
+      artists: filteredArtists,
+      artistQuery,
+    });
   } catch (err) {
     console.error("User artists error:", err);
     res.redirect("/user?error=Unable to load artist information");
@@ -157,15 +173,39 @@ exports.artists = async (_req, res) => {
 
 // GET /user/concerts
 // แสดงคอนเสิร์ตทั้งหมด พร้อมจำนวนที่นั่ง
-exports.concerts = async (_req, res) => {
+exports.concerts = async (req, res) => {
   try {
+    const concertQuery = String(req.query.q || "").trim();
     const concerts = await Concert.findAll({
       include: [{ association: "Artists", through: { attributes: [] } }],
       order: [["id", "DESC"]],
     });
 
     const concertsWithSeatStats = await attachSeatStats(concerts);
-    res.render("user/concerts", { concerts: concertsWithSeatStats });
+    const normalizedConcertQuery = concertQuery.toLowerCase();
+
+    const filteredConcerts = normalizedConcertQuery
+      ? concertsWithSeatStats.filter((concert) => {
+          const concertName = String(concert.ConcertName || "").toLowerCase();
+          const venue = String(concert.venue || "").toLowerCase();
+          const artistNames = Array.isArray(concert.Artists)
+            ? concert.Artists.map((artist) =>
+                String(artist.ArtistName || "").toLowerCase(),
+              )
+            : [];
+
+          return (
+            concertName.includes(normalizedConcertQuery) ||
+            venue.includes(normalizedConcertQuery) ||
+            artistNames.some((name) => name.includes(normalizedConcertQuery))
+          );
+        })
+      : concertsWithSeatStats;
+
+    res.render("user/concerts", {
+      concerts: filteredConcerts,
+      concertQuery,
+    });
   } catch (err) {
     console.error("User concerts error:", err);
     res.redirect("/user?error=The concert information could not be loaded");
