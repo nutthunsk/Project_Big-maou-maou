@@ -9,7 +9,7 @@ const {
 
 // regex สำหรับตรวจสอบ email และเบอร์โทร
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^[0-9]{8,15}$/;
+const PHONE_REGEX = /^[0-9]{10}$/;
 
 // helper: คำนวณจำนวนที่นั่งที่จองแล้วของแต่ละ concert
 const attachSeatStats = async (concerts) => {
@@ -256,9 +256,42 @@ exports.bookingReceipt = async (req, res) => {
       return res.redirect('/user/profile?error=Booking not found');
     }
 
+    const concertId = booking.Concert ? Number(booking.Concert.id) : null;
+    let receiptSummary = {
+      totalTicketsPurchased: Number(booking.quantity || 0),
+      totalAmount: Number(booking.totalPrice || 0),
+      latestStatus: booking.status,
+    };
+
+    if (concertId) {
+      const concertBookings = await Booking.findAll({
+        where: {
+          CustomerId: req.authCustomer.id,
+          ConcertId: concertId,
+        },
+        order: [['id', 'DESC']],
+      });
+
+      receiptSummary = concertBookings.reduce(
+        (acc, concertBooking) => {
+          if (concertBooking.status !== 'cancelled') {
+            acc.totalTicketsPurchased += Number(concertBooking.quantity || 0);
+            acc.totalAmount += Number(concertBooking.totalPrice || 0);
+          }
+          return acc;
+        },
+        {
+          totalTicketsPurchased: 0,
+          totalAmount: 0,
+          latestStatus: concertBookings[0]?.status || booking.status,
+        },
+      );
+    }
+
     return res.render('user/booking-receipt', {
       booking,
       customer: req.authCustomer,
+      receiptSummary,
     });
   } catch (error) {
     console.error('User booking receipt error:', error);

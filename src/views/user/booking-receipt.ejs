@@ -21,10 +21,9 @@
         <%= concert && concert.Artists && concert.Artists.length
           ? concert.Artists.map((a) => a.ArtistName).join(', ')
           : '-' %>
-      </li>
-      <li><strong>Number of cards:</strong> <%= booking.quantity %> blade</li>
-      <li><strong>Total:</strong> ฿<%= Number(booking.totalPrice || 0).toLocaleString() %></li>
-      <li><strong>Status:</strong> <%= booking.status %></li>
+      <li><strong>Number of tickets purchased:</strong> <%= receiptSummary ? receiptSummary.totalTicketsPurchased : booking.quantity %> blade</li>
+      <li><strong>Total:</strong> ฿<%= Number(receiptSummary ? receiptSummary.totalAmount : booking.totalPrice || 0).toLocaleString() %></li>
+      <li><strong>Status:</strong> <%= receiptSummary ? receiptSummary.latestStatus : booking.status %></li>
     </ul>
 
     <div class="action-row">

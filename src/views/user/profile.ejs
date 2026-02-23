@@ -13,7 +13,7 @@
       <input id="email" name="email" type="email" value="<%= customer ? customer.email : '' %>" required />
 
       <label for="phoneNumber">Phone number</label>
-      <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{8,15}" maxlength="15" value="<%= customer ? customer.phoneNumber : '' %>" required />
+      <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{10}" maxlength="10" value="<%= customer ? customer.phoneNumber : '' %>" required />
 
       <div class="action-row">
         <button class="btn-primary" type="submit">Save data</button>
