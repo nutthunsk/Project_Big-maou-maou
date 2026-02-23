@@ -1,3 +1,7 @@
+const https = require("https");
+
+const RESEND_API_ENDPOINT = "https://api.resend.com/emails";
+
 const formatDate = (value) => {
   if (!value) return "-";
   const date = new Date(value);
@@ -31,6 +35,52 @@ const buildTicketText = ({ booking, concert, customer }) => {
     "กรุณานำอีเมลฉบับนี้มาแสดงเพื่อยืนยันการเข้าชมงาน",
   ].join("\n");
 };
+
+const postResendEmail = (payload, resendApiKey) =>
+  new Promise((resolve, reject) => {
+    const requestBody = JSON.stringify(payload);
+    const request = https.request(
+      RESEND_API_ENDPOINT,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(requestBody),
+        },
+        timeout: 15_000,
+      },
+      (response) => {
+        let rawData = "";
+
+        response.setEncoding("utf8");
+        response.on("data", (chunk) => {
+          rawData += chunk;
+        });
+
+        response.on("end", () => {
+          const status = Number(response.statusCode || 500);
+          if (status >= 200 && status < 300) {
+            resolve({ ok: true, status, body: rawData });
+            return;
+          }
+
+          resolve({ ok: false, status, body: rawData });
+        });
+      },
+    );
+
+    request.on("error", (error) => {
+      reject(error);
+    });
+
+    request.on("timeout", () => {
+      request.destroy(new Error("Request to Resend API timed out"));
+    });
+
+    request.write(requestBody);
+    request.end();
+  });
 
 const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
   const resendApiKey = String(process.env.RESEND_API_KEY || "").trim();
@@ -75,13 +125,8 @@ const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
     </div>
   `;
 
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendApiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+  const response = await postResendEmail(
+    {
       from: mailFrom,
       to: [customer.email],
       subject,
@@ -92,14 +137,13 @@ const sendBookingTicketEmail = async ({ booking, concert, customer }) => {
           content: Buffer.from(ticketText, "utf8").toString("base64"),
         },
       ],
-    }),
-  });
+    },
+    resendApiKey,
+  );
 
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`Send email failed (${response.status}): ${body}`);
+    throw new Error(`Send email failed (${response.status}): ${response.body}`);
   }
-
   return {
     sent: true,
     usingFallbackSender: !configuredMailFrom && mailFrom === fallbackMailFrom,
