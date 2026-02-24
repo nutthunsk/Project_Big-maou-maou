@@ -142,7 +142,9 @@ exports.show = async (req, res) => {
     return res.render("bookings/show", { booking });
   } catch (err) {
     console.error("Booking show error:", err);
-    return res.redirect("/bookings?error=The booking details could not be loaded");
+    return res.redirect(
+      "/bookings?error=The booking details could not be loaded",
+    );
   }
 };
 
@@ -227,12 +229,16 @@ exports.create = async (req, res) => {
     }
 
     if (!PHONE_REGEX.test(phoneNumber)) {
-      return res.redirect(errorUrl("The phone number must be 8-15 digits long"));
+      return res.redirect(
+        errorUrl("The phone number must be 8-15 digits long"),
+      );
     }
 
     if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(`You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`),
+        errorUrl(
+          `You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`,
+        ),
       );
     }
 
@@ -248,7 +254,9 @@ exports.create = async (req, res) => {
 
     if (String(concert.ConcertDate) < todayDateText()) {
       return res.redirect(
-        errorUrl("This concert has already taken place and is no longer available for booking"),
+        errorUrl(
+          "This concert has already taken place and is no longer available for booking",
+        ),
       );
     }
 
@@ -275,7 +283,9 @@ exports.create = async (req, res) => {
 
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(`One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`),
+        errorUrl(
+          `One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`,
+        ),
       );
     }
 
@@ -286,7 +296,8 @@ exports.create = async (req, res) => {
     if (quantity > remainingSeats) {
       return res.redirect(
         errorUrl(
-          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`),
+          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`,
+        ),
       );
     }
 
@@ -327,7 +338,9 @@ exports.editForm = async (req, res) => {
     });
   } catch (err) {
     console.error("Booking edit form error:", err);
-    return res.redirect("/bookings?error=The booking modification form cannot be loaded");
+    return res.redirect(
+      "/bookings?error=The booking modification form cannot be loaded",
+    );
   }
 };
 
@@ -391,7 +404,9 @@ exports.update = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect(`/bookings/${booking.id}?success=The reservation has been edited`);
+    return res.redirect(
+      `/bookings/${booking.id}?success=The reservation has been edited`,
+    );
   } catch (err) {
     console.error("Booking update error:", err);
     return res.redirect(
@@ -410,7 +425,9 @@ exports.markAsPaid = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "paid" });
-    return res.redirect("/bookings?success=The status has been updated to paid");
+    return res.redirect(
+      "/bookings?success=The status has been updated to paid",
+    );
   } catch (err) {
     console.error("Booking mark as paid error:", err);
     return res.redirect("/bookings?error=The booking status cannot be updated");
@@ -427,7 +444,9 @@ exports.markAsPending = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "pending" });
-    return res.redirect("/bookings?success=The status has been updated to pending");
+    return res.redirect(
+      "/bookings?success=The status has been updated to pending",
+    );
   } catch (err) {
     console.error("Booking mark as pending error:", err);
     return res.redirect("/bookings?error=The booking status cannot be updated");
@@ -441,7 +460,9 @@ exports.markAsPending = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });
-    return res.redirect("/bookings?success=The reservation was successfully deleted");
+    return res.redirect(
+      "/bookings?success=The reservation was successfully deleted",
+    );
   } catch (err) {
     console.error("Booking delete error:", err);
     return res.redirect("/bookings?error=Unable to delete reservation");
