@@ -14,7 +14,7 @@ const validatePayload = ({ fullname, email, phoneNumber }) => {
   }
 
   if (!PHONE_REGEX.test(cleanText(phoneNumber))) {
-    return "The phone number must be 8-15 digits long";
+    return "The phone number must be 8-10 digits long";
   }
 
   return null;
