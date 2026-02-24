@@ -6,10 +6,7 @@ const { Op } = require("sequelize");
 // Customer = ตารางลูกค้า
 const { Booking, Concert, Customer } = require("../models");
 
-// ===============================
-// helper functions & constants
-// ===============================
-
+ 
 // แปลงค่าเป็น string และตัดช่องว่างหน้า-หลัง
 const cleanText = (value) => String(value || "").trim();
 
@@ -19,8 +16,8 @@ const normalizeNumber = (value) => Number(value || 0);
 // regex ตรวจสอบรูปแบบอีเมล
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// regex ตรวจสอบเบอร์โทร (ตัวเลข 8–15 หลัก)
-const PHONE_REGEX = /^[0-9]{8,15}$/;
+// regex ตรวจสอบเบอร์โทร
+const PHONE_REGEX = /^[0-9]{10}$/;
 
 // สถานะการจองที่อนุญาต
 const ALLOWED_STATUS = new Set(["pending", "paid", "cancelled"]);
@@ -31,11 +28,7 @@ const MAX_BOOKING_QTY = 6;
 // คืนค่าวันปัจจุบันในรูปแบบ YYYY-MM-DD
 const todayDateText = () => new Date().toISOString().slice(0, 10);
 
-// ===============================
-// คำนวณจำนวนที่นั่งที่จองแล้ว
-// (อ้างอิงจาก email หรือ fullname)
-// ===============================
-
+ 
 const getBookedSeatsByIdentityInConcert = async ({
   ConcertId,
   email,
@@ -76,10 +69,7 @@ const getBookedSeatsByIdentityInConcert = async ({
   }, 0);
 };
 
-// ===============================
-// คำนวณจำนวนที่นั่งที่ถูกจองแล้วทั้งหมด
-// (ใช้ตอนเช็คที่นั่งคงเหลือ)
-// ===============================
+
 
 const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   const where = { ConcertId };
@@ -98,9 +88,7 @@ const getBookedSeats = async (ConcertId, excludeBookingId = null) => {
   }, 0);
 };
 
-// ===============================
-// ดึงข้อมูลอ้างอิง (concert / customer)
-// ===============================
+
 
 const getRefs = async () => {
   const concerts = await Concert.findAll({ order: [["ConcertDate", "ASC"]] });
@@ -108,10 +96,7 @@ const getRefs = async () => {
   return { concerts, customers };
 };
 
-// ===============================
-// GET /bookings
-// แสดงรายการการจองทั้งหมด
-// ===============================
+
 
 exports.index = async (_req, res) => {
   try {
@@ -127,10 +112,7 @@ exports.index = async (_req, res) => {
   }
 };
 
-// ===============================
-// GET /bookings/:id
-// แสดงรายละเอียดการจอง
-// ===============================
+
 
 exports.show = async (req, res) => {
   try {
@@ -142,16 +124,11 @@ exports.show = async (req, res) => {
     return res.render("bookings/show", { booking });
   } catch (err) {
     console.error("Booking show error:", err);
-    return res.redirect(
-      "/bookings?error=The booking details could not be loaded",
-    );
+    return res.redirect("/bookings?error=The booking details could not be loaded");
   }
 };
 
-// ===============================
-// GET /bookings/new
-// แสดงฟอร์มจองตั๋ว
-// ===============================
+
 
 exports.newForm = async (req, res) => {
   try {
@@ -189,11 +166,7 @@ exports.newForm = async (req, res) => {
   }
 };
 
-// ===============================
-// POST /bookings/create
-// สร้างการจองใหม่
-// ===============================
-
+ 
 exports.create = async (req, res) => {
   try {
     // ดึงข้อมูลจาก form / user ที่ login
@@ -229,16 +202,12 @@ exports.create = async (req, res) => {
     }
 
     if (!PHONE_REGEX.test(phoneNumber)) {
-      return res.redirect(
-        errorUrl("The phone number must be 8-15 digits long"),
-      );
+      return res.redirect(errorUrl("The phone number must be 8-15 digits long"));
     }
 
     if (!Number.isInteger(quantity) || quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(
-          `You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`,
-        ),
+        errorUrl(`You can reserve no more than ${MAX_BOOKING_QTY} invoice per item`),
       );
     }
 
@@ -254,9 +223,7 @@ exports.create = async (req, res) => {
 
     if (String(concert.ConcertDate) < todayDateText()) {
       return res.redirect(
-        errorUrl(
-          "This concert has already taken place and is no longer available for booking",
-        ),
+        errorUrl("This concert has already taken place and is no longer available for booking"),
       );
     }
 
@@ -283,9 +250,7 @@ exports.create = async (req, res) => {
 
     if (alreadyReservedByIdentity + quantity > MAX_BOOKING_QTY) {
       return res.redirect(
-        errorUrl(
-          `One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`,
-        ),
+        errorUrl(`One email address can be used for bookings up to a maximum of ${MAX_BOOKING_QTY} blade`),
       );
     }
 
@@ -296,8 +261,7 @@ exports.create = async (req, res) => {
     if (quantity > remainingSeats) {
       return res.redirect(
         errorUrl(
-          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`,
-        ),
+          `The number of tickets exceeds the number of seats available (${Math.max(remainingSeats, 0)} seats)`),
       );
     }
 
@@ -320,9 +284,7 @@ exports.create = async (req, res) => {
   }
 };
 
-// ===============================
-// GET /bookings/edit/:id
-// ===============================
+
 
 exports.editForm = async (req, res) => {
   try {
@@ -338,15 +300,11 @@ exports.editForm = async (req, res) => {
     });
   } catch (err) {
     console.error("Booking edit form error:", err);
-    return res.redirect(
-      "/bookings?error=The booking modification form cannot be loaded",
-    );
+    return res.redirect("/bookings?error=The booking modification form cannot be loaded");
   }
 };
 
-// ===============================
-// POST /bookings/edit/:id
-// ===============================
+
 
 exports.update = async (req, res) => {
   try {
@@ -404,9 +362,7 @@ exports.update = async (req, res) => {
       totalPrice,
     });
 
-    return res.redirect(
-      `/bookings/${booking.id}?success=The reservation has been edited`,
-    );
+    return res.redirect(`/bookings/${booking.id}?success=The reservation has been edited`);
   } catch (err) {
     console.error("Booking update error:", err);
     return res.redirect(
@@ -415,9 +371,7 @@ exports.update = async (req, res) => {
   }
 };
 
-// ===============================
-// เปลี่ยนสถานะเป็น paid
-// ===============================
+
 
 exports.markAsPaid = async (req, res) => {
   try {
@@ -425,18 +379,14 @@ exports.markAsPaid = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "paid" });
-    return res.redirect(
-      "/bookings?success=The status has been updated to paid",
-    );
+    return res.redirect("/bookings?success=The status has been updated to paid");
   } catch (err) {
     console.error("Booking mark as paid error:", err);
     return res.redirect("/bookings?error=The booking status cannot be updated");
   }
 };
 
-// ===============================
-// เปลี่ยนสถานะเป็น pending
-// ===============================
+
 
 exports.markAsPending = async (req, res) => {
   try {
@@ -444,25 +394,19 @@ exports.markAsPending = async (req, res) => {
     if (!booking) return res.status(404).send("Booking not found");
 
     await booking.update({ status: "pending" });
-    return res.redirect(
-      "/bookings?success=The status has been updated to pending",
-    );
+    return res.redirect("/bookings?success=The status has been updated to pending");
   } catch (err) {
     console.error("Booking mark as pending error:", err);
     return res.redirect("/bookings?error=The booking status cannot be updated");
   }
 };
 
-// ===============================
-// ลบการจอง
-// ===============================
+
 
 exports.delete = async (req, res) => {
   try {
     await Booking.destroy({ where: { id: req.params.id } });
-    return res.redirect(
-      "/bookings?success=The reservation was successfully deleted",
-    );
+    return res.redirect("/bookings?success=The reservation was successfully deleted");
   } catch (err) {
     console.error("Booking delete error:", err);
     return res.redirect("/bookings?error=Unable to delete reservation");
