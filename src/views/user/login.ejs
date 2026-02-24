@@ -9,6 +9,10 @@
       <div class="flash flash-error"><%= errorMessage %></div>
     <% } %>
 
+    <% if (successMessage) { %>
+      <div class="flash flash-success"><%= successMessage %></div>
+    <% } %>
+
     <form class="stack-form booking-create-form" method="POST" action="/user/login">
       <input type="hidden" name="redirectTo" value="<%= redirectTo || '/user/concerts' %>" />
 
@@ -27,6 +31,7 @@
       <div class="action-row">
         <button class="btn-primary" type="submit">เข้าสู่ระบบ</button>
         <a class="btn-ghost" href="/user/register?redirect=<%= encodeURIComponent(redirectTo || '/user/concerts') %>">สมัครสมาชิกใหม่</a>
+        <a class="btn-ghost" href="/user/forgot-password">ลืมรหัสผ่าน</a>
       </div>
     </form>
   </div>

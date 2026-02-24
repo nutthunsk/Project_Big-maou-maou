@@ -32,6 +32,12 @@ router.get("/register", controller.registerForm);
 // สมัครสมาชิกผู้ใช้ใหม่
 router.post("/register", controller.register);
 
+// แสดงฟอร์มลืมรหัสผ่าน
+router.get("/forgot-password", controller.forgotPasswordForm);
+
+// รีเซ็ตรหัสผ่านผู้ใช้
+router.post("/forgot-password", controller.forgotPassword);
+
 // ออกจากระบบผู้ใช้
 router.post("/logout", controller.logout);
 

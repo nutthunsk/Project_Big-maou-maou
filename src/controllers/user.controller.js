@@ -120,6 +120,7 @@ exports.loginForm = async (req, res) => {
   return res.render("user/login", {
     redirectTo: String(req.query.redirect || "/user/concerts"),
     errorMessage: String(req.query.error || "").trim(),
+    successMessage: String(req.query.success || "").trim(),
     formValues: {
       email: String(req.query.email || "").trim(),
     },
@@ -144,6 +145,118 @@ exports.registerForm = async (req, res) => {
       phoneNumber: String(req.query.phoneNumber || "").trim(),
     },
   });
+};
+
+// GET /user/forgot-password
+// แสดงหน้าฟอร์มรีเซ็ตรหัสผ่าน
+exports.forgotPasswordForm = async (req, res) => {
+  const authCustomer = await getAuthCustomer(req);
+  if (authCustomer) {
+    return res.redirect("/user/profile");
+  }
+
+  return res.render("user/forgot-password", {
+    errorMessage: String(req.query.error || "").trim(),
+    successMessage: String(req.query.success || "").trim(),
+    formValues: {
+      email: String(req.query.email || "").trim(),
+      phoneNumber: String(req.query.phoneNumber || "").trim(),
+    },
+  });
+};
+
+// POST /user/forgot-password
+// รีเซ็ตรหัสผ่านด้วยการยืนยัน email + เบอร์โทร
+exports.forgotPassword = async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+    const phoneNumber = String(req.body.phoneNumber || "").trim();
+    const password = String(req.body.password || "");
+    const confirmPassword = String(req.body.confirmPassword || "");
+
+    const forgotQuery = {
+      email,
+      phoneNumber,
+    };
+
+    if (!email || !phoneNumber || !password || !confirmPassword) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Please fill in complete information",
+        })}`,
+      );
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Please enter a valid email",
+        })}`,
+      );
+    }
+
+    if (!PHONE_REGEX.test(phoneNumber)) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Please enter a 10-digit phone number",
+        })}`,
+      );
+    }
+
+    if (!PASSWORD_POLICY_REGEX.test(password)) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error:
+            "Password must be at least 8 characters and include letters and numbers",
+        })}`,
+      );
+    }
+
+    if (password !== confirmPassword) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Password and confirm password do not match",
+        })}`,
+      );
+    }
+
+    const customer = await Customer.findOne({ where: { email } });
+    if (!customer) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Account not found",
+        })}`,
+      );
+    }
+
+    if (String(customer.phoneNumber || "").trim() !== phoneNumber) {
+      return res.redirect(
+        `/user/forgot-password?${buildQuery({
+          ...forgotQuery,
+          error: "Email and phone number do not match",
+        })}`,
+      );
+    }
+
+    await customer.update({
+      passwordHash: createPasswordHash(password),
+    });
+
+    return res.redirect(
+      "/user/login?success=Password reset successfully. Please log in again",
+    );
+  } catch (err) {
+    console.error("User forgot password error:", err);
+    return res.redirect("/user/forgot-password?error=Unable to reset password");
+  }
 };
 
 // POST /user/register
