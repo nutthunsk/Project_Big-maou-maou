@@ -193,6 +193,25 @@ const ensureConcertColumns = async () => {
   }
 };
 
+// ตรวจสอบและเพิ่ม column ให้ตาราง Customers
+const ensureCustomerColumns = async () => {
+  const queryInterface = sequelize.getQueryInterface();
+
+  try {
+    const tableInfo = await queryInterface.describeTable("Customers");
+
+    if (!tableInfo.passwordHash) {
+      await queryInterface.addColumn("Customers", "passwordHash", {
+        type: DataTypes.STRING,
+        allowNull: true,
+      });
+    }
+  } catch (error) {
+    if (String(error.message || "").includes("no such table")) return;
+    throw error;
+  }
+};
+
 // init database
 async function initDb() {
   // ตรวจสอบการเชื่อมต่อ database
@@ -201,6 +220,7 @@ async function initDb() {
   await sequelize.sync();
   // ตรวจสอบ column ที่จำเป็น
   await ensureConcertColumns();
+  await ensureCustomerColumns();
 }
 
 // start server

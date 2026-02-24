@@ -2884,3 +2884,18 @@ html[data-theme="light"] .site-body:not(.user-site) .booking-table td {
   max-width: 560px;
   width: min(560px, 100%);
 }
+
+
+.user-concert-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 340px));
+  justify-content: start;
+}
+
+.user-login-layout {
+  justify-content: center;
+}
+
+.user-login-card {
+  max-width: 560px;
+  width: min(560px, 100%);
+}

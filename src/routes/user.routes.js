@@ -26,6 +26,12 @@ router.get("/login", controller.loginForm);
 // เข้าสู่ระบบผู้ใช้ (สร้าง session / cookie)
 router.post("/login", controller.login);
 
+// แสดงฟอร์มสมัครสมาชิกผู้ใช้
+router.get("/register", controller.registerForm);
+
+// สมัครสมาชิกผู้ใช้ใหม่
+router.post("/register", controller.register);
+
 // ออกจากระบบผู้ใช้
 router.post("/logout", controller.logout);
 
@@ -36,7 +42,10 @@ router.get("/profile", requireUserLogin, controller.profile);
 router.post("/profile", requireUserLogin, controller.updateProfile);
 
 // แสดงใบจองของผู้ใช้ (ต้องล็อกอินก่อน)
-router.get("/bookings/:id/receipt", requireUserLogin, controller.bookingReceipt);
-
+router.get(
+  "/bookings/:id/receipt",
+  requireUserLogin,
+  controller.bookingReceipt,
+);
 
 module.exports = router;

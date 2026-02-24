@@ -1,4 +1,5 @@
 // import model ที่เกี่ยวข้อง
+const crypto = require("crypto");
 const { Artist, Concert, Booking, Customer } = require("../models");
 // import ฟังก์ชันจัดการ auth ของผู้ใช้
 const {
@@ -10,6 +11,39 @@ const {
 // regex สำหรับตรวจสอบ email และเบอร์โทร
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9]{10}$/;
+
+const PASSWORD_POLICY_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+
+const buildQuery = (params) => new URLSearchParams(params).toString();
+
+const createPasswordHash = (plainPassword) => {
+  const normalized = String(plainPassword || "");
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = crypto
+    .scryptSync(normalized, salt, 64, { N: 16384, r: 8, p: 1 })
+    .toString("hex");
+
+  return `scrypt$${salt}$${derivedKey}`;
+};
+
+const isPasswordValid = (plainPassword, passwordHash) => {
+  const normalized = String(plainPassword || "");
+  const stored = String(passwordHash || "");
+  if (!normalized || !stored.startsWith("scrypt$")) return false;
+
+  const [, salt, hashedKey] = stored.split("$");
+  if (!salt || !hashedKey) return false;
+
+  const derivedKey = crypto
+    .scryptSync(normalized, salt, 64, { N: 16384, r: 8, p: 1 })
+    .toString("hex");
+
+  const left = Buffer.from(derivedKey, "hex");
+  const right = Buffer.from(hashedKey, "hex");
+  if (left.length !== right.length) return false;
+
+  return crypto.timingSafeEqual(left, right);
+};
 
 // helper: คำนวณจำนวนที่นั่งที่จองแล้วของแต่ละ concert
 const attachSeatStats = async (concerts) => {
@@ -77,53 +111,195 @@ exports.home = async (_req, res) => {
 // GET /user/login
 // แสดงหน้า login
 exports.loginForm = async (req, res) => {
-  // ตรวจสอบว่ามี user login อยู่แล้วหรือไม่
   const authCustomer = await getAuthCustomer(req);
   if (authCustomer) {
-    // ถ้ามีแล้ว redirect ไปหน้าหลัก
     const redirectTo = String(req.query.redirect || "/user/concerts");
     return res.redirect(redirectTo);
   }
 
-  // แสดงหน้า login
   return res.render("user/login", {
     redirectTo: String(req.query.redirect || "/user/concerts"),
+    errorMessage: String(req.query.error || "").trim(),
+    formValues: {
+      email: String(req.query.email || "").trim(),
+    },
   });
 };
 
-// POST /user/login
-// login หรือสมัคร user ใหม่
-exports.login = async (req, res) => {
+// GET /user/register
+// แสดงหน้าสมัครสมาชิก
+exports.registerForm = async (req, res) => {
+  const authCustomer = await getAuthCustomer(req);
+  if (authCustomer) {
+    const redirectTo = String(req.query.redirect || "/user/concerts");
+    return res.redirect(redirectTo);
+  }
+
+  return res.render("user/register", {
+    redirectTo: String(req.query.redirect || "/user/concerts"),
+    errorMessage: String(req.query.error || "").trim(),
+    formValues: {
+      fullname: String(req.query.fullname || "").trim(),
+      email: String(req.query.email || "").trim(),
+      phoneNumber: String(req.query.phoneNumber || "").trim(),
+    },
+  });
+};
+
+// POST /user/register
+// สมัครสมาชิก user ใหม่
+exports.register = async (req, res) => {
   try {
     const fullname = String(req.body.fullname || "").trim();
     const email = String(req.body.email || "")
       .trim()
       .toLowerCase();
     const phoneNumber = String(req.body.phoneNumber || "").trim();
+    const password = String(req.body.password || "");
+    const confirmPassword = String(req.body.confirmPassword || "");
     const redirectTo = String(req.body.redirectTo || "/user/concerts");
 
-    // ตรวจสอบข้อมูล
-    if (!fullname || !email || !phoneNumber) {
+    const registerQuery = {
+      redirect: redirectTo,
+      fullname,
+      email,
+      phoneNumber,
+    };
+
+    if (!fullname || !email || !phoneNumber || !password || !confirmPassword) {
       return res.redirect(
-        `/user/login?error=${encodeURIComponent("Please fill in complete information")}&redirect=${encodeURIComponent(redirectTo)}`,
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error: "Please fill in complete information",
+        })}`,
       );
     }
 
-    // ค้นหาหรือสร้าง customer จาก email
-    const [customer] = await Customer.findOrCreate({
-      where: { email },
-      defaults: { fullname, email, phoneNumber },
-    });
-
-    // ถ้าข้อมูลเปลี่ยน ให้อัปเดต
-    if (
-      customer.fullname !== fullname ||
-      customer.phoneNumber !== phoneNumber
-    ) {
-      await customer.update({ fullname, phoneNumber });
+    if (!EMAIL_REGEX.test(email)) {
+      return res.redirect(
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error: "Please enter a valid email",
+        })}`,
+      );
     }
 
-    // ตั้ง cookie login
+    if (!PHONE_REGEX.test(phoneNumber)) {
+      return res.redirect(
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error: "Please enter a 10-digit phone number",
+        })}`,
+      );
+    }
+
+    if (!PASSWORD_POLICY_REGEX.test(password)) {
+      return res.redirect(
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error:
+            "Password must be at least 8 characters and include letters and numbers",
+        })}`,
+      );
+    }
+
+    if (password !== confirmPassword) {
+      return res.redirect(
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error: "Password and confirm password do not match",
+        })}`,
+      );
+    }
+
+    const duplicateCustomer = await Customer.findOne({ where: { email } });
+    if (duplicateCustomer && duplicateCustomer.passwordHash) {
+      return res.redirect(
+        `/user/register?${buildQuery({
+          ...registerQuery,
+          error: "This email is already registered",
+        })}`,
+      );
+    }
+
+    let customer;
+    if (duplicateCustomer && !duplicateCustomer.passwordHash) {
+      await duplicateCustomer.update({
+        fullname,
+        phoneNumber,
+        passwordHash: createPasswordHash(password),
+      });
+      customer = duplicateCustomer;
+    } else {
+      customer = await Customer.create({
+        fullname,
+        email,
+        phoneNumber,
+        passwordHash: createPasswordHash(password),
+      });
+    }
+
+    setAuthCookie(res, customer.id);
+    return res.redirect(redirectTo || "/user/concerts");
+  } catch (err) {
+    console.error("User register error:", err);
+    return res.redirect("/user/register?error=Unable to register account");
+  }
+};
+
+// POST /user/login
+// login user ที่สมัครแล้ว
+exports.login = async (req, res) => {
+  try {
+    const email = String(req.body.email || "")
+      .trim()
+      .toLowerCase();
+    const password = String(req.body.password || "");
+    const redirectTo = String(req.body.redirectTo || "/user/concerts");
+
+    const loginQuery = {
+      redirect: redirectTo,
+      email,
+    };
+
+    if (!email || !password) {
+      return res.redirect(
+        `/user/login?${buildQuery({
+          ...loginQuery,
+          error: "Please fill in email and password",
+        })}`,
+      );
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      return res.redirect(
+        `/user/login?${buildQuery({
+          ...loginQuery,
+          error: "Please enter a valid email",
+        })}`,
+      );
+    }
+
+    const customer = await Customer.findOne({ where: { email } });
+    if (!customer || !customer.passwordHash) {
+      return res.redirect(
+        `/user/login?${buildQuery({
+          ...loginQuery,
+          error:
+            "Account not found or password not set. Please register before login",
+        })}`,
+      );
+    }
+
+    if (!isPasswordValid(password, customer.passwordHash)) {
+      return res.redirect(
+        `/user/login?${buildQuery({
+          ...loginQuery,
+          error: "Invalid email or password",
+        })}`,
+      );
+    }
+
     setAuthCookie(res, customer.id);
     return res.redirect(redirectTo || "/user/concerts");
   } catch (err) {
@@ -273,7 +449,7 @@ exports.bookingReceipt = async (req, res) => {
   try {
     const bookingId = Number(req.params.id);
     if (!Number.isInteger(bookingId) || bookingId <= 0) {
-      return res.redirect('/user/profile?error=Invalid booking id');
+      return res.redirect("/user/profile?error=Invalid booking id");
     }
 
     const booking = await Booking.findOne({
@@ -284,7 +460,7 @@ exports.bookingReceipt = async (req, res) => {
       include: [
         {
           model: Concert,
-          include: [{ association: 'Artists', through: { attributes: [] } }],
+          include: [{ association: "Artists", through: { attributes: [] } }],
         },
         {
           model: Customer,
@@ -293,7 +469,7 @@ exports.bookingReceipt = async (req, res) => {
     });
 
     if (!booking) {
-      return res.redirect('/user/profile?error=Booking not found');
+      return res.redirect("/user/profile?error=Booking not found");
     }
 
     const concertId = booking.Concert ? Number(booking.Concert.id) : null;
@@ -309,12 +485,12 @@ exports.bookingReceipt = async (req, res) => {
           CustomerId: req.authCustomer.id,
           ConcertId: concertId,
         },
-        order: [['id', 'DESC']],
+        order: [["id", "DESC"]],
       });
 
       receiptSummary = concertBookings.reduce(
         (acc, concertBooking) => {
-          if (concertBooking.status !== 'cancelled') {
+          if (concertBooking.status !== "cancelled") {
             acc.totalTicketsPurchased += Number(concertBooking.quantity || 0);
             acc.totalAmount += Number(concertBooking.totalPrice || 0);
           }
@@ -328,14 +504,14 @@ exports.bookingReceipt = async (req, res) => {
       );
     }
 
-    return res.render('user/booking-receipt', {
+    return res.render("user/booking-receipt", {
       booking,
       customer: req.authCustomer,
       receiptSummary,
     });
   } catch (error) {
-    console.error('User booking receipt error:', error);
-    return res.redirect('/user/profile?error=Unable to load booking receipt');
+    console.error("User booking receipt error:", error);
+    return res.redirect("/user/profile?error=Unable to load booking receipt");
   }
 };
 

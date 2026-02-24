@@ -1,25 +1,32 @@
 <%- include('../partials/user_header', { title: 'Login' }) %>
 
-<section class="booking-form-layout">
-  <div class="booking-form-card booking-form-card-main">
-    <h1>Login before booking tickets</h1>
-    <p class="booking-form-subtitle">Log in with your username to be able to book the concert</p>
+<section class="booking-form-layout user-login-layout">
+  <div class="booking-form-card booking-form-card-main user-login-card">
+    <h1>เข้าสู่ระบบผู้ใช้งาน</h1>
+    <p class="booking-form-subtitle">เข้าสู่ระบบด้วยอีเมลและรหัสผ่านเพื่อจองบัตรคอนเสิร์ต</p>
+
+    <% if (errorMessage) { %>
+      <div class="flash flash-error"><%= errorMessage %></div>
+    <% } %>
 
     <form class="stack-form booking-create-form" method="POST" action="/user/login">
       <input type="hidden" name="redirectTo" value="<%= redirectTo || '/user/concerts' %>" />
 
-      <label for="fullname">Name - Surname</label>
-      <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" required />
+      <label for="email">อีเมล</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        value="<%= formValues?.email || '' %>"
+        required
+      />
 
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" required />
-
-      <label for="phoneNumber">Phone number</label>
-      <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{10}" maxlength="10" required />
+      <label for="password">รหัสผ่าน</label>
+      <input id="password" name="password" type="password" minlength="8" required />
 
       <div class="action-row">
-        <button class="btn-primary" type="submit">Login</button>
-        <a class="btn-ghost" href="/user/concerts">Go back to see the concert</a>
+        <button class="btn-primary" type="submit">เข้าสู่ระบบ</button>
+        <a class="btn-ghost" href="/user/register?redirect=<%= encodeURIComponent(redirectTo || '/user/concerts') %>">สมัครสมาชิกใหม่</a>
       </div>
     </form>
   </div>

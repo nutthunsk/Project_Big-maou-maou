@@ -1,0 +1,39 @@
+<%- include('../partials/user_header', { title: 'Register' }) %>
+
+<section class="booking-form-layout user-login-layout">
+  <div class="booking-form-card booking-form-card-main user-login-card">
+    <h1>สมัครสมาชิกผู้ใช้งาน</h1>
+    <p class="booking-form-subtitle">สร้างบัญชีใหม่เพื่อใช้งานระบบจองบัตรฝั่งผู้ใช้</p>
+
+    <% if (errorMessage) { %>
+      <div class="flash flash-error"><%= errorMessage %></div>
+    <% } %>
+
+    <form class="stack-form booking-create-form" method="POST" action="/user/register">
+      <input type="hidden" name="redirectTo" value="<%= redirectTo || '/user/concerts' %>" />
+
+      <label for="fullname">ชื่อ - นามสกุล</label>
+      <input id="fullname" name="fullname" type="text" minlength="2" maxlength="120" value="<%= formValues?.fullname || '' %>" required />
+
+      <label for="email">อีเมล</label>
+      <input id="email" name="email" type="email" value="<%= formValues?.email || '' %>" required />
+
+      <label for="phoneNumber">เบอร์โทรศัพท์</label>
+      <input id="phoneNumber" name="phoneNumber" type="tel" pattern="[0-9]{10}" maxlength="10" value="<%= formValues?.phoneNumber || '' %>" required />
+
+      <label for="password">รหัสผ่าน</label>
+      <input id="password" name="password" type="password" minlength="8" required />
+      <small class="muted-inline">อย่างน้อย 8 ตัวอักษร และต้องมีตัวอักษรภาษาอังกฤษกับตัวเลข</small>
+
+      <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+      <input id="confirmPassword" name="confirmPassword" type="password" minlength="8" required />
+
+      <div class="action-row">
+        <button class="btn-primary" type="submit">สมัครสมาชิก</button>
+        <a class="btn-ghost" href="/user/login?redirect=<%= encodeURIComponent(redirectTo || '/user/concerts') %>">กลับไปหน้าเข้าสู่ระบบ</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>
