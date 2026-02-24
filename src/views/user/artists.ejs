@@ -7,8 +7,7 @@
 <form method="GET" action="/user/artists" class="user-search-form" role="search" aria-label="Find an artist">
   <label class="sr-only" for="q">Find an artist</label>
   <div class="user-search-input-wrap">
-    <span class="user-search-icon" aria-hidden="true">🔍</span>
-    <input id="q" name="q" type="text" placeholder="ค้นหาคอนเสิร์ตที่นี่" value="<%= artistQuery || '' %>" />
+    <input id="q" name="q" type="text" placeholder="ค้นหา" value="<%= artistQuery || '' %>" />
   </div>
   <button class="user-search-btn" type="submit">ค้นหา</button>
 </form>
