@@ -27,9 +27,11 @@ const { getAuthCustomer } = require("./utils/user-auth");
 
 // สร้าง express app และกำหนด port
 const app = express();
-// ใช้ port จาก environment ถ้ามี ไม่งั้นใช้ 3000
-const PORT = process.env.PORT || 3000;
+// ใช้ port จาก environment ถ้ามี ไม่งั้นใช้ 5000
+const PORT = process.env.PORT || 5000;
+const cors = require("cors");
 
+app.use(cors());
 // ตั้งค่า view engine
 // ใช้ EJS เป็น template engine
 app.set("view engine", "ejs");
