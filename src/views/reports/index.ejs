@@ -171,7 +171,11 @@
             <% } else { %>
               <% r.concertDetails.forEach((detail, idx) => { %>
                 <tr>
-                  <td><%= idx === 0 ? r.artist.ArtistName : '' %></td>
+                  <% if (idx === 0) { %>
+                    <td rowspan="<%= r.concertDetails.length %>" style="vertical-align: middle; text-align: center;">
+                      <%= r.artist.ArtistName %>
+                    </td>
+                  <% } %>
                   <td><%= detail.concertName %></td>
                   <td><%= detail.bookingCount %></td>
                   <td><%= detail.paidCount %></td>
