@@ -160,13 +160,25 @@
         </thead>
         <tbody>
           <% rows.forEach(r => { %>
-            <tr>
-              <td><%= r.artist.ArtistName %></td>
-              <td><%= r.concertCount %></td>
-              <td><%= r.bookingCount %></td>
-              <td><%= r.paidCount %></td>
-              <td><%= Number(r.revenue).toLocaleString() %></td>
-            </tr>
+                        <% if (!r.concertDetails.length) { %>
+              <tr>
+                <td><%= r.artist.ArtistName %></td>
+                <td>-</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            <% } else { %>
+              <% r.concertDetails.forEach((detail, idx) => { %>
+                <tr>
+                  <td><%= idx === 0 ? r.artist.ArtistName : '' %></td>
+                  <td><%= detail.concertName %></td>
+                  <td><%= detail.bookingCount %></td>
+                  <td><%= detail.paidCount %></td>
+                  <td><%= Number(detail.revenue).toLocaleString() %></td>
+                </tr>
+              <% }) %>
+            <% } %>
           <% }) %>
         </tbody>
       </table>

@@ -131,6 +131,25 @@ exports.index = async (req, res) => {
       // คำนวณข้อมูลรายงานต่อศิลปิน
       const rows = artists.map((artist) => {
         const concerts = artist.Concerts || [];
+        const concertDetails = concerts.map((concert) => {
+          const bookings = concert.Bookings || [];
+          const bookingCount = bookings.length;
+          const paidCount = bookings.filter(
+            (booking) => booking.status === "paid",
+          ).length;
+          const revenue = bookings.reduce((sum, booking) => {
+            if (booking.status === "cancelled") return sum;
+            return sum + Number(booking.totalPrice || 0);
+          }, 0);
+
+          return {
+            concertName: concert.concertName,
+            bookingCount,
+            paidCount,
+            revenue,
+          };
+        });
+
         const bookings = concerts.flatMap((concert) => concert.Bookings || []);
 
         const bookingCount = bookings.length;
@@ -145,6 +164,7 @@ exports.index = async (req, res) => {
         return {
           artist,
           concertCount: concerts.length,
+          concertDetails,
           bookingCount,
           paidCount,
           revenue,
