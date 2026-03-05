@@ -143,7 +143,7 @@ exports.index = async (req, res) => {
           }, 0);
 
           return {
-            concertName: concert.concertName,
+            concertName: concert.ConcertName || concert.concertName || "-",
             bookingCount,
             paidCount,
             revenue,
